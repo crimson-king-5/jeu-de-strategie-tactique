@@ -19,9 +19,9 @@ public class ItemWindow : OdinMenuEditorWindow
         CreateConsumable consumable = new CreateConsumable();
         var tree = new OdinMenuTree();
 
-        tree.Add("Create New Consumable", consumable);
-        tree.Add("Create New Equipement", equipement);
-        tree.AddAllAssetsAtPath("Character", "Assets/Database/Item/Equipement", typeof(Equipement));
+        tree.Add("New Consumable", consumable);
+        tree.Add("New Equipement", equipement);
+        tree.AddAllAssetsAtPath("Equipement", "Assets/Database/Item/Equipement", typeof(Equipement));
         tree.AddAllAssetsAtPath("Consumable", "Assets/Database/Item/Consumable", typeof(Consumable));
 
         return tree;
