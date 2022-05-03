@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
+    public static GridManager Instance;
     [SerializeField] private int _width, _height;
     [SerializeField] private Tile _grassTile, _mountaineTile;
     [SerializeField] private Transform _cam;
@@ -11,16 +12,16 @@ public class GridManager : MonoBehaviour
   
     private Dictionary<Vector2, Tile> _tiles;
 
-
-
-    private void Start()
+    private void Awake()
     {
-        GenerateGrid();
+        Instance = this;
     }
 
+    
 
 
-    void GenerateGrid()
+
+    public void GenerateGrid()
     {
         _tiles = new Dictionary<Vector2, Tile>();
         for (int x = 0; x < _width; x++)
@@ -43,6 +44,8 @@ public class GridManager : MonoBehaviour
             }
         }
         _cam.transform.position = new Vector3((float)_width/2 -0.5f, (float)_height / 2 - 0.5f, -10);
+
+        GameManager.Instance.ChangeState(GameManager.GameState.SpawnHeroses);
     }
     public Tile GetTileAtPosition(Vector2 pos)
     {
