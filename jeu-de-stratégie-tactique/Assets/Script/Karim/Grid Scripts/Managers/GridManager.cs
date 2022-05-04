@@ -47,12 +47,15 @@ public class GridManager : MonoBehaviour
 
         GameManager.Instance.ChangeState(GameManager.GameState.SpawnHeroses);
     }
+
+    public Tile GetHeroSpawnTile()
+    {
+        return _tiles.Where(t=>t.key.x < _width/2).OrderBy(t=>Random.value).First().Value;
+    }
     public Tile GetTileAtPosition(Vector2 pos)
     {
-        if(_tiles.TryGetValue(pos,out var tile))
-        {
-            return tile;
-        }
+        if (_tiles.TryGetValue(pos, out var tile)) return tile;
         return null;
+       
     }
 }
