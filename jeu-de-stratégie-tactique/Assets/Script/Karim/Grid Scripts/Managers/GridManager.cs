@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using Random = UnityEngine.Random;
 
 public class GridManager : MonoBehaviour
 {
@@ -18,9 +21,6 @@ public class GridManager : MonoBehaviour
     }
 
     
-
-
-
     public void GenerateGrid()
     {
         _tiles = new Dictionary<Vector2, Tile>();
@@ -48,10 +48,15 @@ public class GridManager : MonoBehaviour
         GameManager.Instance.ChangeState(GameManager.GameState.SpawnHeroses);
     }
 
-    public Tile GetHeroSpawnTile()
+     public Tile GetHeroSpawnTile()
     {
-        return _tiles.Where(t=>t.key.x < _width/2).OrderBy(t=>Random.value).First().Value;
+        return _tiles.Where(t => t.Key.x < _width / 2 && t.Value.Walkable).OrderBy(t => Random.value).First().Value;
     }
+    public Tile GetEnemySpawnTile()
+    {
+        return _tiles.Where(t => t.Key.x > _width / 2 && t.Value.Walkable).OrderBy(t => Random.value).First().Value;
+    }
+
     public Tile GetTileAtPosition(Vector2 pos)
     {
         if (_tiles.TryGetValue(pos, out var tile)) return tile;

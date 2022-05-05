@@ -29,9 +29,10 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.SpawnHeroses:
-                
+                UnitManager.Instance.SpawnHeroes();
                 break;
             case GameState.SpawnEnemies:
+                UnitManager.Instance.SpawnEnemies();
                 break;
             case GameState.HerosTurn:
                 break;
