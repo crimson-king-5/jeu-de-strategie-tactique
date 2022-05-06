@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 
 public class GridInit : MonoBehaviour
 {
     public float cellSize = 1;
     public int fontsize = 1;
-    private BattleGrid grid;
+    [ShowInInspector] private BattleGrid grid;
     public int width = 4;
     public int height = 4;
     public GridType gridType;
@@ -19,29 +20,63 @@ public class GridInit : MonoBehaviour
     private GameObject parentGrid;
     private GameObject parentOfTiles;
 
+    void Start()
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            DeleteBattleGrid();
+            BuildBattleGrid();
+        }
+    }
+
     [HorizontalGroup("Split")]
     [Button("Build Battle Grid", ButtonSizes.Large), GUIColor(0, 1, 0)]
     public void BuildBattleGrid()
     {
-        if (grid == null)
+        if (grid == null && GameObject.FindGameObjectWithTag("Grid") == null)
         {
             parentGrid = new GameObject("Grid");
+            parentGrid.tag = "Grid";
             grid = parentGrid.AddComponent<BattleGrid>();
-            grid =  grid.SetBattleGrid(width, height, cellSize, fontsize, transform.position, ref parentGrid,grid);
+            grid = grid.SetBattleGrid(width, height, cellSize, fontsize, transform.position, ref parentGrid, grid);
         }
-    }
-
-    void Start()
-    {
-        BuildBattleGrid();
+        else
+        {
+            grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<BattleGrid>();
+        }
     }
     [HorizontalGroup("Split/Right")]
     [Button("Delete Battle Grid", ButtonSizes.Large), GUIColor(1, 0, 0, 1)]
     public void DeleteBattleGrid()
     {
-        DestroyImmediate(grid);
-        DestroyImmediate(parentGrid);
-        DestroyImmediate(parentOfTiles);
+        if (grid != null && GameObject.FindGameObjectWithTag("Grid") != null)
+        {
+            DestroyImmediate(grid.gameObject);
+            DestroyImmediate(parentGrid);
+            DestroyImmediate(parentOfTiles);
+            parentOfTiles = null;
+        }
+        else if (GameObject.FindGameObjectWithTag("Grid") != null)
+        {
+            grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<BattleGrid>();
+        }
+    }
+
+    [Button("Save Map", ButtonSizes.Large), GUIColor(1, 0, 1)]
+    public void SaveTilemap()
+    {
+        if (grid != null && GameObject.FindGameObjectWithTag("Grid") != null)
+        {
+            GameObject saveMap = new GameObject("new Map");
+            GameObject parentG =  Instantiate(parentGrid, saveMap.transform);
+            GameObject parentT = Instantiate(parentOfTiles, saveMap.transform);
+            parentT.name = "Parent Tiles";
+            parentG.name = "Parent Grid";
+            string localPath = "Assets/Prefabs/Grid Map/" + saveMap.name + ".prefab";
+
+            PrefabUtility.SaveAsPrefabAsset(saveMap,localPath);
+            Destroy(saveMap);
+        }
     }
 
     void Update()
@@ -52,8 +87,19 @@ public class GridInit : MonoBehaviour
             {
                 gridType++;
             }
-            grid.SetValue(GetMouseWorldPosition(), (int)gridType);
-            grid.SetObjectToGrid(GetMouseWorldPosition(), currentTilesRef, tilesObjects, ref parentOfTiles);
+
+            if (grid == null)
+            {
+                DeleteBattleGrid();
+                BuildBattleGrid();
+            }
+
+            if (grid != null)
+            {
+                grid.SetValue(GetMouseWorldPosition(), (int)gridType);
+                grid.SetObjectToGrid(GetMouseWorldPosition(), currentTilesRef, tilesObjects, ref parentOfTiles);
+            }
+            // parentOfTiles.transform.SetParent(parentGrid.transform);
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -62,8 +108,17 @@ public class GridInit : MonoBehaviour
             {
                 gridType--;
             }
-            grid.SetValue(GetMouseWorldPosition(), (int)gridType);
-            grid.DeleteObjectToGrid(GetMouseWorldPosition(), tilesObjects);
+
+            if (grid == null)
+            {
+                DeleteBattleGrid();
+                BuildBattleGrid();
+            }
+            else
+            {
+                grid.SetValue(GetMouseWorldPosition(), (int)gridType);
+                grid.DeleteObjectToGrid(GetMouseWorldPosition(), tilesObjects);
+            }
         }
     }
 
