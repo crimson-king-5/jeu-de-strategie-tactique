@@ -2,23 +2,31 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 
 public class GridInit : MonoBehaviour
 {
-    public float cellSize = 1;
-    public int fontsize = 1;
-    [ShowInInspector] private BattleGrid grid;
+    private float cellSize = 1;
+    private int fontsize = 10;
+    private BattleGrid grid;
     public int width = 4;
     public int height = 4;
     public GridType gridType;
     private List<Transform> gridTransforms;
     private List<GameObject> tilesObjects = new List<GameObject>();
-    public GameObject currentTilesRef;
+    [HideInEditorMode]public GameObject currentTilesRef;
     private GameObject parentGrid;
     private GameObject parentOfTiles;
+
+    [MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
+    static void InstanceGridEditor()
+    {
+        GameObject instanceGridEditor = new GameObject("Grid Editor",typeof(GridInit));
+        instanceGridEditor.tag = "Grid Editor";
+    }
 
     void Start()
     {
@@ -65,7 +73,7 @@ public class GridInit : MonoBehaviour
     [Button("Save Map", ButtonSizes.Large), GUIColor(1, 0, 1)]
     public void SaveTilemap()
     {
-        if (grid != null && GameObject.FindGameObjectWithTag("Grid") != null)
+        if (grid != null && GameObject.FindGameObjectWithTag("Grid") != null && parentOfTiles != null)
         {
             GameObject saveMap = new GameObject("new Map");
             GameObject parentG =  Instantiate(parentGrid, saveMap.transform);

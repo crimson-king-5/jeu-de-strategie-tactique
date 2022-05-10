@@ -13,7 +13,6 @@ public class TilesSelector : OdinEditorWindow
     {
         GetWindow<TilesSelector>().Show();
     }
-
     public TileList Editor;
 }
 
@@ -24,10 +23,13 @@ public class TileList
     [PreviewField(70, Sirenix.OdinInspector.ObjectFieldAlignment.Center)]
     public GameObject SomePrefab;
     [TableColumnWidth(160)]
-    [Button("Selection Tile", ButtonSizes.Medium),GUIColor(0,1,0,1)]
+    [Button("Selection Tile", ButtonSizes.Medium), GUIColor(0, 1, 0, 1)]
     public void PickupThePrefab()
     {
-        GridInit gridInit = GameObject.FindGameObjectWithTag("Grid Editor").GetComponent<GridInit>();
-        gridInit.currentTilesRef = SomePrefab;
+        if (GameObject.FindGameObjectWithTag("Grid Editor").GetComponent<GridInit>() != null)
+        {
+            GridInit gridInit = GameObject.FindGameObjectWithTag("Grid Editor").GetComponent<GridInit>();
+            gridInit.currentTilesRef = SomePrefab;
+        }
     }
 }
