@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2942218837676256216, guid: 281cf7419a076dc48b9a0c1f7c8a9767, type: 3}
       propertyPath: m_Name
-      value: tile sprite Red
+      value: tile sprite Red Variant
       objectReference: {fileID: 0}
     - target: {fileID: 5571544789134583305, guid: 281cf7419a076dc48b9a0c1f7c8a9767, type: 3}
       propertyPath: m_RootOrder

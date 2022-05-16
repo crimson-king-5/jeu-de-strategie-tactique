@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5571544789134583305}
   - component: {fileID: 7544314418160178712}
   m_Layer: 0
-  m_Name: tile sprite Green
+  m_Name: green
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
