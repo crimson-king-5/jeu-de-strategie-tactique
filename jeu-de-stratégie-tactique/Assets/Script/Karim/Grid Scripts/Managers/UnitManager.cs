@@ -9,7 +9,7 @@ public class UnitManager : MonoBehaviour
 
     private List<ScriptableUnit> _units;
 
-    public BaseHero SelectedHero;
+    public BaseUnit SelectedHero;
 
     private void Awake()
     {
@@ -18,44 +18,53 @@ public class UnitManager : MonoBehaviour
         _units = Resources.LoadAll<ScriptableUnit>("Units").ToList();
     }
 
-    public void SpawnHeroes()
+    public void SpawnHeroes(int unitCount)
     {
-        var heroCount = 1;
+        int heroCount = unitCount;
 
         for(int i = 0; i < heroCount; i++)
         {
-            var randomPrefab = GetRandomUnit<BaseHero>(Faction.Hero);
-            var spawnedHero = Instantiate(randomPrefab);
-            var randomSpawnTile = GridManager.Instance.GetHeroSpawnTile();
+            BaseUnit randomPrefab = GetRandomUnitPerFaction(Faction.Hero);
+            BaseUnit spawnedHero = Instantiate(randomPrefab);
+            Tile randomSpawnTile = BattleGrid.instance.SpawnUnit();
 
-            randomSpawnTile.SetUint(spawnedHero);
+            randomSpawnTile.SetUnit(spawnedHero);
         }
 
-        GameManager.Instance.ChangeState(GameManager.GameState.SpawnEnemies);
+        GameManager.Instance.ChangeState(GameManager.GameState.EnemiesTurn);
     }
     public void SpawnEnemies()
     {
-        var enemyCount = 1;
+        int enemyCount = 1;
 
         for (int i = 0; i < enemyCount; i++)
         {
-            var randomPrefab = GetRandomUnit<BaseEnemy>(Faction.Enemy);
-            var spawnedEnemy = Instantiate(randomPrefab);
-            var randomSpawnTile = GridManager.Instance.GetEnemySpawnTile();
+            BaseUnit randomPrefab = GetRandomUnitPerFaction(Faction.Enemy);
+            BaseUnit spawnedEnemy = Instantiate(randomPrefab);
+            Tile randomSpawnTile = BattleGrid.instance.SpawnUnit();
 
-            randomSpawnTile.SetUint(spawnedEnemy);
+            randomSpawnTile.SetUnit(spawnedEnemy);
         }
         GameManager.Instance.ChangeState(GameManager.GameState.HerosTurn);
     }
-    private T GetRandomUnit<T>(Faction faction) where T : BaseUnit
+    private BaseUnit GetRandomUnitPerFaction(Faction faction)
     {
-       
-        return(T)_units.Where(u => u.Faction == faction).OrderBy(o=> Random.value).First().UnitPrefab;
-
-
+        List<BaseUnit> FactionUnit = new List<BaseUnit>();
+        for (int i = 0; i < _units.Count; i++)
+        {
+            if (_units[i].Faction == faction)
+            {
+                GameObject unitObj = new GameObject("Null Unit", typeof(BaseUnit));
+                BaseUnit newUnit = unitObj.GetComponent<BaseUnit>();
+                newUnit.scriptableUnit = _units[i];
+                FactionUnit.Add(newUnit);
+            }
+        }
+        int randomIndex = Random.Range(0, FactionUnit.Count);
+        return FactionUnit[randomIndex];
     }
 
-    public void SetSelectedHero(BaseHero hero)
+    public void SetSelectedHero(BaseUnit hero)
     {
         SelectedHero = hero;
         MenuManager.Instance.ShowSelectedHero(hero);

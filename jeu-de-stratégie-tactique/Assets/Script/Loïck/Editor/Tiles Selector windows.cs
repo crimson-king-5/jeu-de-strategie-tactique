@@ -26,9 +26,9 @@ public class TileList
     [Button("Selection Tile", ButtonSizes.Medium), GUIColor(0, 1, 0, 1)]
     public void PickupThePrefab()
     {
-        if (GameObject.FindGameObjectWithTag("Grid Editor").GetComponent<GridInit>() != null)
+        if (GameObject.FindGameObjectWithTag("Grid").GetComponent<BattleGrid>() != null)
         {
-            GridInit gridInit = GameObject.FindGameObjectWithTag("Grid Editor").GetComponent<GridInit>();
+            BattleGrid gridInit = GameObject.FindGameObjectWithTag("Grid").GetComponent<BattleGrid>();
             gridInit.currentTilesRef = SomePrefab;
         }
     }

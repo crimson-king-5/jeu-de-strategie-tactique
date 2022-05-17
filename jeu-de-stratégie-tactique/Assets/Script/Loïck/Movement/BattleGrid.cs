@@ -1,50 +1,194 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using Sirenix.OdinInspector;
+using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class BattleGrid : MonoBehaviour
 {
-    private int width;
-    private int height;
-    private float cellSize;
+    public static BattleGrid instance;
     private Vector2 originPosition;
     private int[,] gridArray;
     private TextMesh[,] debugTextArray;
-    public BattleGrid(int width, int height, float cellSize, int fontSize, Vector2 originPosition, ref GameObject gridParent)
+    private List<GameObject> tiles;
+    private float cellSize = 1;
+    private int fontSize;
+    private bool canCreateGrid = true;
+    [ShowInInspector] private GridLoader loader;
+    public int width = 4;
+    public int height = 4;
+    public Tile.TileType tileType;
+    [HideInEditorMode] public GameObject currentTilesRef;
+    [ReadOnly]
+    private List<GameObject> tilesRender;
+
+    #region Grid Init
+    #region Editor Function
+    [MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
+    static void InstanceGridEditor()
     {
-        this.width = width;
-        this.height = height;
-        this.cellSize = cellSize;
-        int xOrginPos = Mathf.FloorToInt(originPosition.x);
-        int yOrginPos = Mathf.FloorToInt(originPosition.y);
-        originPosition = new Vector2(xOrginPos, yOrginPos);
-        this.originPosition = originPosition;
-        gridArray = new int[width, height];
-        debugTextArray = new TextMesh[width, height];
-        for (int x = 0; x < gridArray.GetLength(0); x++)
-        {
-            for (int y = 0; y < gridArray.GetLength(1); y++)
-            {
-                debugTextArray[x, y] = CreateText(null, gridArray[x, y].ToString(), GetWorldPosition(x, y) + new Vector2(cellSize, cellSize) * .5f, fontSize);
-                debugTextArray[x, y].transform.SetParent(gridParent.transform);
-                Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 1f);
-                Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 1f);
-            }
-        }
-        Debug.DrawLine(GetWorldPosition(0, this.height), GetWorldPosition(this.width, this.height), Color.white, 1f);
-        Debug.DrawLine(GetWorldPosition(this.width, 0), GetWorldPosition(this.width, this.height), Color.white, 1f);
+        GameObject instanceGridEditor = new GameObject("Grid Editor", typeof(BattleGrid));
+        instanceGridEditor.tag = "Grid";
     }
 
-    public BattleGrid SetBattleGrid(int width, int height, float cellSize, int fontSize, Vector2 originPosition, ref GameObject gridParent,BattleGrid grid)
+    [HorizontalGroup("Split")]
+    [Button("Build Battle Grid", ButtonSizes.Large), GUIColor(0, 1, 0)]
+    public void BuildBattleGrid()
     {
-        grid.width = width;
-        grid.height = height;
-        grid.cellSize = cellSize;
-        int xOrginPos = Mathf.FloorToInt(originPosition.x);
-        int yOrginPos = Mathf.FloorToInt(originPosition.y);
-        originPosition = new Vector2(xOrginPos, yOrginPos);
-        grid.originPosition = originPosition;
+        UpdateGridList();
+        if (canCreateGrid)
+        {
+            SetBattleGrid();
+            tiles = AllGridChild();
+            canCreateGrid = false;
+            if (loader == null)
+            {
+                GameObject GridLoader = new GameObject("Grid Loader", typeof(GridLoader));
+                GridLoader.transform.SetParent(transform);
+                loader = GridLoader.GetComponent<GridLoader>();
+                loader.debugTextArray = debugTextArray;
+                loader.gridArray = gridArray;
+                loader.width = width;
+                loader.height = height;
+            }
+        }
+    }
+
+
+    [HorizontalGroup("Split/Right")]
+    [Button("Delete Battle Grid", ButtonSizes.Large), GUIColor(1, 0, 0, 1)]
+    public void DeleteBattleGrid()
+    {
+        UpdateGridList();
+        if (tiles != null)
+        {
+            for (int i = 0; i < tiles.Count; i++)
+            {
+                DestroyImmediate(tiles[i]);
+            }
+            tiles.Clear();
+            canCreateGrid = true;
+        }
+
+        if (tilesRender != null)
+        {
+            tilesRender.Clear();
+        }
+    }
+
+    [Button("Save Map", ButtonSizes.Large), GUIColor(1, 0, 1)]
+    public void SaveTilemap()
+    {
+        GameObject saveMap = new GameObject("New Map");
+        GameObject parentG = Instantiate(gameObject, saveMap.transform);
+        parentG.name = "Grid";
+        parentG.transform.SetParent(saveMap.transform);
+        string localPath = "Assets/Prefabs/Grid Map/" + saveMap.name + ".prefab";
+
+        PrefabUtility.SaveAsPrefabAsset(saveMap, localPath);
+        Destroy(saveMap);
+    }
+    #endregion
+
+    #region Unity Function
+
+    void Start()
+    {
+        instance = this;
+        UpdateGridList();
+        if (tiles != null)
+        {
+            canCreateGrid = false;
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (tileType < Enum.GetValues(typeof(Tile.TileType)).Cast<Tile.TileType>().Last())
+            {
+                tileType++;
+            }
+            SetValue(GetMouseWorldPosition(), (int)tileType);
+            SetObjectToGrid(GetMouseWorldPosition(), currentTilesRef);
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (tileType > 0)
+            {
+                tileType--;
+            }
+            SetValue(GetMouseWorldPosition(), (int)tileType);
+            DeleteObjectToGrid(GetMouseWorldPosition());
+        }
+    }
+    #endregion
+
+
+    #region Runtime Function
+    public List<Tile> GetValidTiles()
+    {
+        List<Tile> tiles = new List<Tile>();
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Tile currentiles = transform.GetChild(i).GetComponent(typeof(Tile)) as Tile;
+            if (currentiles.Walkable)
+                tiles.Add(currentiles);
+        }
+
+        return tiles;
+    }
+    private void UpdateGridList()
+    {
+        tiles = AllGridChild();
+        if (loader != null)
+        {
+            gridArray = loader.gridArray;
+            debugTextArray = loader.debugTextArray;
+            height = loader.height;
+            width = loader.width;
+        }
+        else
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                GridLoader localLoader = transform.GetChild(i).GetComponent<GridLoader>();
+                if (localLoader != null)
+                {
+                    loader = localLoader;
+                }
+            }
+        }
+    }
+
+    public Tile SpawnUnit()
+    {
+        int index = Random.Range(0, GetValidTiles().Count);
+        return GetValidTiles()[index];
+    }
+
+    #endregion
+    public static Vector2 GetMouseWorldPosition()
+    {
+        Vector2 vec = GetMouseWorldPositionWithZ(Camera.main, Input.mousePosition);
+        return vec;
+    }
+    public static Vector2 GetMouseWorldPositionWithZ(Camera worldCamera, Vector2 screenPosition)
+    {
+        Vector2 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition);
+        return worldPosition;
+    }
+    #endregion
+
+    public void SetBattleGrid()
+    {
         gridArray = new int[width, height];
         debugTextArray = new TextMesh[width, height];
         for (int x = 0; x < gridArray.GetLength(0); x++)
@@ -52,14 +196,13 @@ public class BattleGrid : MonoBehaviour
             for (int y = 0; y < gridArray.GetLength(1); y++)
             {
                 debugTextArray[x, y] = CreateText(null, gridArray[x, y].ToString(), GetWorldPosition(x, y) + new Vector2(cellSize, cellSize) * .5f, fontSize);
-                debugTextArray[x, y].transform.SetParent(gridParent.transform);
+                debugTextArray[x, y].transform.SetParent(transform);
                 Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 1f);
                 Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 1f);
             }
         }
-        Debug.DrawLine(GetWorldPosition(0, grid.height), GetWorldPosition(grid.width, grid.height), Color.white, 1f);
-        Debug.DrawLine(GetWorldPosition(grid.width, 0), GetWorldPosition(grid.width, grid.height), Color.white, 1f);
-        return grid;
+        Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 1f);
+        Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 1f);
     }
 
     public int GetValue(int x, int y)
@@ -68,14 +211,18 @@ public class BattleGrid : MonoBehaviour
         {
             return gridArray[x, y];
         }
-        else
-        {
-            return 0;
-        }
+        return 0;
     }
 
     public void SetValue(int x, int y, int value)
     {
+        if (gridArray == null || debugTextArray == null)
+        {
+            gridArray = loader.gridArray;
+            debugTextArray = loader.debugTextArray;
+            height = loader.height;
+            width = loader.width;
+        }
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
             gridArray[x, y] = value;
@@ -90,51 +237,68 @@ public class BattleGrid : MonoBehaviour
         SetValue(x, y, value);
     }
 
-    public void SetObjectToGrid(Vector2 worldPosition, GameObject obj, List<GameObject> objects, ref GameObject tilesParent)
+    public void SetObjectToGrid(Vector2 worldPosition, GameObject obj)
     {
         int x, y;
         GetXY(worldPosition, out x, out y);
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
-            for (int i = 0; i < objects.Count; i++)
+            bool isdoublon = false;
+            if (tilesRender != null)
             {
-                if (objects[i].transform.position == debugTextArray[x, y].transform.position)
+                for (int i = 0; i < tilesRender.Count; i++)
                 {
-                    DestroyImmediate(objects[i]);
-                    objects.Remove(objects[i]);
+                    if (tilesRender[i].transform.position == debugTextArray[x, y].transform.position)
+                    {
+                        isdoublon = true;
+                    }
                 }
-            }
-            GameObject instanceObj = Instantiate(obj);
-            if (tilesParent == null)
-            {
-                tilesParent = new GameObject("Grid Objects");
-                instanceObj.transform.SetParent(tilesParent.transform);
             }
             else
             {
-                instanceObj.transform.SetParent(tilesParent.transform);
+                tilesRender = new List<GameObject>();
             }
-            instanceObj.transform.position = debugTextArray[x, y].transform.position;
-            objects.Add(instanceObj);
+            if (!isdoublon)
+            {
+                GameObject instanceObj = Instantiate(obj);
+                instanceObj.transform.position = debugTextArray[x, y].transform.position;
+                instanceObj.transform.SetParent(transform);
+                tilesRender.Add(instanceObj);
+            }
         }
     }
 
-    public void DeleteObjectToGrid(Vector2 worldPosition, List<GameObject> objects)
+    public void DeleteObjectToGrid(Vector2 worldPosition)
     {
         int x, y;
         GetXY(worldPosition, out x, out y);
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
-            for (int i = 0; i < objects.Count; i++)
+            if (this.tilesRender != null)
             {
-                if (objects[i].transform.position == debugTextArray[x, y].transform.position)
+                for (int i = 0; i < tilesRender.Count; i++)
                 {
-                    DestroyImmediate(objects[i]);
-                    objects.Remove(objects[i]);
+                    if (tilesRender[i].transform.position == debugTextArray[x, y].transform.position)
+                    {
+                        Destroy(tilesRender[i]);
+                        tilesRender.Remove(tilesRender[i]);
+                    }
                 }
             }
         }
     }
+
+    public List<GameObject> AllGridChild()
+    {
+        List<GameObject> allChild = new List<GameObject>();
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            allChild.Add(transform.GetChild(i).gameObject);
+        }
+
+        return allChild;
+    }
+
 
     private void GetXY(Vector2 worldPosition, out int x, out int y)
     {
@@ -149,7 +313,7 @@ public class BattleGrid : MonoBehaviour
 
     public static TextMesh CreateText(Transform parent, string text, Vector2 localPosition, int fontSize)
     {
-        GameObject textObj = new GameObject("World_Text", typeof(TextMesh));
+        GameObject textObj = new GameObject("World_Text", typeof(TextMesh), typeof(Tile));
         Transform localTransform = textObj.transform;
         localTransform.SetParent(parent, false);
         localTransform.localPosition = localPosition;
