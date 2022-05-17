@@ -1,6 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:jeu-de-stratégie-tactique/Assets/Scenes/Loïck/Multi test.unity.meta
+guid: a8ee98624a573904e8a2f464ce687248
+========
 guid: 442cf402c20f8914998e986fd250816b
 folderAsset: yes
+>>>>>>>> dev-karim:jeu-de-stratégie-tactique/Assets/Prefabs/Karim.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
