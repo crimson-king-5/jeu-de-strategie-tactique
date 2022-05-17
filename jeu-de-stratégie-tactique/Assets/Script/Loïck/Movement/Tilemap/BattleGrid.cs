@@ -141,6 +141,7 @@ public class BattleGrid : MonoBehaviour
 
         return tiles;
     }
+
     private void UpdateGridList()
     {
         tiles = AllGridChild();
@@ -163,10 +164,34 @@ public class BattleGrid : MonoBehaviour
         }
     }
 
-    public Tile SpawnUnit()
+    public Tile SpawnRandomUnit()
     {
         int index = Random.Range(0, GetValidTiles().Count);
         return GetValidTiles()[index];
+    }
+
+    public Tile GetTile(int x,int y)
+    {
+        if (debugTextArray[x,y] != null)
+        {
+        return debugTextArray[x, y].GetComponent<Tile>();
+
+        }
+        Debug.LogError("Erreur sortie de Grille");
+        return null;
+    }
+
+
+    public bool OntheGrid(int x , int y)
+    {
+        bool onGrid = false;
+
+        if (x >= 0 && y >= 0 && x <= width - 1 && y <= height - 1)
+        {
+            onGrid = true;
+        }
+
+        return onGrid;
     }
 
     #endregion
@@ -191,6 +216,9 @@ public class BattleGrid : MonoBehaviour
             for (int y = 0; y < gridArray.GetLength(1); y++)
             {
                 debugTextArray[x, y] = CreateText(null, gridArray[x, y].ToString(), GetWorldPosition(x, y) + new Vector2(cellSize, cellSize) * .5f, fontSize);
+                Tile debugTiles = debugTextArray[x, y].GetComponent<Tile>();
+                debugTiles.tileXPos = x;
+                debugTiles.tileYPos = y;
                 debugTextArray[x, y].transform.SetParent(transform);
                 Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 1f);
                 Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 1f);

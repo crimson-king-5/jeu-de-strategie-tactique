@@ -2,37 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitStateMachine 
+public class UnitStateMachine
 {
     public enum UnitState
     {
-        MoveTo,Wait,Attack,Defend
+        MoveTo, Wait, Attack, Defend
     }
 
     public UnitState currentState;
 
-  public void SetSate(UnitState newState) {
+    public void SetSate(UnitState newState, BaseUnit unit)
+    {
         switch (newState)
         {
             case UnitState.MoveTo:
-                MoveTo();
+                MoveTo(unit);
                 break;
             case UnitState.Wait:
-                Wait();
+                Wait(unit);
                 break;
             case UnitState.Attack:
-                Attack();
+                Attack(unit);
                 break;
             case UnitState.Defend:
-                Defend();
+                Defend(unit);
                 break;
             default:
                 break;
         }
     }
-    public void Attack() { currentState = UnitState.Wait; }
-    public void MoveTo() { currentState = UnitState.Wait; }
-    public void Defend(){ currentState = UnitState.Wait; }
-    public void Wait(){ currentState = UnitState.Wait; }
+    public void Attack(BaseUnit unitTarget) { 
+        currentState = UnitState.Wait;
+    }
+    public void MoveTo(BaseUnit unit) { 
+
+        currentState = UnitState.Wait; 
+    }
+    public void Defend(BaseUnit unit) { currentState = UnitState.Wait; }
+    public void Wait(BaseUnit unit) { currentState = UnitState.Wait; }
 
 }
