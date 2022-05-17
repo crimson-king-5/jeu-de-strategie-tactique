@@ -18,6 +18,7 @@ public class UnitStats
     [Range(0, 99)] public int life;
     [Range(0, 99)] public int atk;
     [Range(0, 99)] public int mv;
+    [Range(0, 99)] public int range;
 }
 public enum Faction
 {

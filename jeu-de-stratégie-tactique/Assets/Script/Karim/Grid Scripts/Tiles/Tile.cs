@@ -9,6 +9,9 @@ public class Tile : MonoBehaviour
     public TileType currentTileType = TileType.None;
 
     public BaseUnit OccupiedUnit;
+
+    public int tileXPos;
+    public int tileYPos;
     public bool Walkable => _isWalkable && OccupiedUnit == null && currentTileType != TileType.None;
 
     void Start()

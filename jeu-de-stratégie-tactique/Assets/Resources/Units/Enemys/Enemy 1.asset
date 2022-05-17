@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 240227d1eb5ce9244afb28a5866784ef, type: 3}
   m_Name: Enemy 1
   m_EditorClassIdentifier: 
-  Faction: 1
-  UnitsName: m
+  faction: 1
+  unitsName: Boss
+  renderUnit: {fileID: 21300000, guid: e1ab722ec04ff0347b88043a2db0b8fc, type: 3}
   unitStats:
     life: 29
     atk: 18
     mv: 17
+    range: 0
