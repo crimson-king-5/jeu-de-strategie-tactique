@@ -6,8 +6,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Unit", menuName = "Scriptable Unit")]
 public class ScriptableUnit : ScriptableObject
 {
-    public Faction Faction;
-    public string UnitsName;
+    public Faction faction;
+    public string unitsName;
+    public Sprite renderUnit;
     [SerializeField] public UnitStats unitStats;
 }
 

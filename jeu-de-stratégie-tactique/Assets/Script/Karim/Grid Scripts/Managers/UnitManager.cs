@@ -25,10 +25,10 @@ public class UnitManager : MonoBehaviour
         for(int i = 0; i < heroCount; i++)
         {
             BaseUnit randomPrefab = GetRandomUnitPerFaction(Faction.Hero);
-            BaseUnit spawnedHero = Instantiate(randomPrefab);
             Tile randomSpawnTile = BattleGrid.instance.SpawnUnit();
-
-            randomSpawnTile.SetUnit(spawnedHero);
+            randomSpawnTile.SetUnit(randomPrefab);
+            SpriteRenderer unitRenderer = randomPrefab.gameObject.AddComponent<SpriteRenderer>();
+            unitRenderer.sprite = randomPrefab.scriptableUnit.renderUnit;
         }
 
         GameManager.Instance.ChangeState(GameManager.GameState.EnemiesTurn);
@@ -52,11 +52,12 @@ public class UnitManager : MonoBehaviour
         List<BaseUnit> FactionUnit = new List<BaseUnit>();
         for (int i = 0; i < _units.Count; i++)
         {
-            if (_units[i].Faction == faction)
+            if (_units[i].faction == faction)
             {
-                GameObject unitObj = new GameObject("Null Unit", typeof(BaseUnit));
+                GameObject unitObj = new GameObject("", typeof(BaseUnit));
                 BaseUnit newUnit = unitObj.GetComponent<BaseUnit>();
                 newUnit.scriptableUnit = _units[i];
+                unitObj.name = newUnit.scriptableUnit.unitsName;
                 FactionUnit.Add(newUnit);
             }
         }

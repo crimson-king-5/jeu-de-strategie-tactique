@@ -30,7 +30,12 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        ChangeState(GameState.SpawnHeroes);
+        //ChangeState(GameState.SpawnHeroes);
+    }
+
+    public void ChangeState(int newState)
+    {
+        ChangeState((GameState)newState);
     }
 
     public void ChangeState(GameState newState)
@@ -39,7 +44,7 @@ public class GameManager : MonoBehaviour
         switch (newState)
         {
             case GameState.SpawnHeroes:
-                UnitManager.Instance.SpawnHeroes(5);
+                UnitManager.Instance.SpawnHeroes(1);
                 break;
             case GameState.SpawnEnemies:
                 UnitManager.Instance.SpawnEnemies();

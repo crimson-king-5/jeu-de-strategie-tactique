@@ -30,7 +30,7 @@ public class MenuManager : MonoBehaviour
 
         if (tile.OccupiedUnit)
         {
-            _tileUnitObject.GetComponentInChildren<Text>().text = tile.OccupiedUnit.scriptableUnit.UnitsName;
+            _tileUnitObject.GetComponentInChildren<Text>().text = tile.OccupiedUnit.scriptableUnit.unitsName;
             _tileUnitObject.SetActive(true);
         }
     }
@@ -43,7 +43,7 @@ public class MenuManager : MonoBehaviour
             return;
         }
 
-        _selectedHeroObject.GetComponentInChildren<Text>().text = hero.scriptableUnit.UnitsName;
+        _selectedHeroObject.GetComponentInChildren<Text>().text = hero.scriptableUnit.unitsName;
         _selectedHeroObject.SetActive(true);
     }
 }

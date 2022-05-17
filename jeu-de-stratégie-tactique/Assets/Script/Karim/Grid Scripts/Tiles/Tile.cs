@@ -6,12 +6,17 @@ public class Tile : MonoBehaviour
 {
 
     [SerializeField] private bool _isWalkable;
-    public TileType currentTileType = TileType.Walkable;
+    public TileType currentTileType = TileType.None;
 
     public BaseUnit OccupiedUnit;
     public bool Walkable => _isWalkable && OccupiedUnit == null && currentTileType != TileType.None;
 
     void Start()
+    {
+
+    }
+
+    public void CheckIfCanWalk()
     {
         switch (currentTileType)
         {
@@ -40,7 +45,7 @@ public class Tile : MonoBehaviour
         
         if(OccupiedUnit != null)
         {
-            if (OccupiedUnit.scriptableUnit.Faction == Faction.Hero) UnitManager.Instance.SetSelectedHero((BaseUnit)OccupiedUnit);
+            if (OccupiedUnit.scriptableUnit.faction == Faction.Hero) UnitManager.Instance.SetSelectedHero((BaseUnit)OccupiedUnit);
             else
             {
                 if(UnitManager.Instance.SelectedHero != null)
@@ -70,6 +75,6 @@ public class Tile : MonoBehaviour
 
     public enum TileType
     {
-        Walkable, None
+        None,Walkable
     }
 }

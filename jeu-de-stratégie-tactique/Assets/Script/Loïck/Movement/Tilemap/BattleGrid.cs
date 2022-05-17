@@ -19,7 +19,7 @@ public class BattleGrid : MonoBehaviour
     private float cellSize = 1;
     private int fontSize;
     private bool canCreateGrid = true;
-    [ShowInInspector] private GridLoader loader;
+    public GridLoader loader;
     public int width = 4;
     public int height = 4;
     public Tile.TileType tileType;
@@ -40,22 +40,16 @@ public class BattleGrid : MonoBehaviour
     [Button("Build Battle Grid", ButtonSizes.Large), GUIColor(0, 1, 0)]
     public void BuildBattleGrid()
     {
-        UpdateGridList();
         if (canCreateGrid)
         {
             SetBattleGrid();
-            tiles = AllGridChild();
             canCreateGrid = false;
-            if (loader == null)
-            {
-                GameObject GridLoader = new GameObject("Grid Loader", typeof(GridLoader));
-                GridLoader.transform.SetParent(transform);
-                loader = GridLoader.GetComponent<GridLoader>();
-                loader.debugTextArray = debugTextArray;
-                loader.gridArray = gridArray;
-                loader.width = width;
-                loader.height = height;
-            }
+            //if (loader == null)
+            //{
+            //    gridArray = new int[width, height];
+            //    debugTextArray = new TextMesh[width, height];
+            //}
+            //UpdateGridList();
         }
     }
 
@@ -89,8 +83,10 @@ public class BattleGrid : MonoBehaviour
         parentG.name = "Grid";
         parentG.transform.SetParent(saveMap.transform);
         string localPath = "Assets/Prefabs/Grid Map/" + saveMap.name + ".prefab";
-
+        GridLoader saveTilemap = new GridLoader(gridArray, debugTextArray, height, width);
         PrefabUtility.SaveAsPrefabAsset(saveMap, localPath);
+        AssetDatabase.CreateAsset(saveTilemap, "Assets/Database/Map/NewMap" + ".asset");
+        AssetDatabase.SaveAssets();
         Destroy(saveMap);
     }
     #endregion
@@ -100,7 +96,7 @@ public class BattleGrid : MonoBehaviour
     void Start()
     {
         instance = this;
-        UpdateGridList();
+        BuildBattleGrid();
         if (tiles != null)
         {
             canCreateGrid = false;
@@ -139,7 +135,7 @@ public class BattleGrid : MonoBehaviour
         for (int i = 0; i < transform.childCount; i++)
         {
             Tile currentiles = transform.GetChild(i).GetComponent(typeof(Tile)) as Tile;
-            if (currentiles.Walkable)
+            if (currentiles != null && currentiles.Walkable)
                 tiles.Add(currentiles);
         }
 
@@ -155,14 +151,13 @@ public class BattleGrid : MonoBehaviour
             height = loader.height;
             width = loader.width;
         }
-        else
+        else if (gridArray != null)
         {
-            for (int i = 0; i < transform.childCount; i++)
+            for (int x = 0; x < gridArray.GetLength(0); x++)
             {
-                GridLoader localLoader = transform.GetChild(i).GetComponent<GridLoader>();
-                if (localLoader != null)
+                for (int y = 0; y < gridArray.GetLength(1); y++)
                 {
-                    loader = localLoader;
+                    debugTextArray[x, y] = transform.GetChild(y + x).GetComponent<TextMesh>();
                 }
             }
         }
@@ -218,15 +213,34 @@ public class BattleGrid : MonoBehaviour
     {
         if (gridArray == null || debugTextArray == null)
         {
-            gridArray = loader.gridArray;
-            debugTextArray = loader.debugTextArray;
-            height = loader.height;
-            width = loader.width;
+            //gridArray = loader.gridArray;
+            //debugTextArray = loader.debugTextArray;
+            //height = loader.height;
+            //width = loader.width;
+            //gridArray = new int[width, height];
+            //debugTextArray = new TextMesh[width, height];
+            //for (int a = 0; a < gridArray.GetLength(0); a++)
+            //{
+            //    for (int b = 0; b < gridArray.GetLength(1); b++)
+            //    {
+            //        TextMesh debugTextmesh =  transform.GetChild(a + b).transform.GetComponent<TextMesh>();
+            //        if (debugTextmesh != null)
+            //        {
+            //            debugTextArray[a, b] = debugTextmesh;
+            //        }
+            //    }
+            //}
         }
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
-            gridArray[x, y] = value;
-            debugTextArray[x, y].text = gridArray[x, y].ToString();
+            Tile currentTile = debugTextArray[x, y].gameObject.GetComponent<Tile>();
+            if (currentTile.OccupiedUnit == null)
+            {
+                currentTile.currentTileType = tileType;
+                currentTile.CheckIfCanWalk();
+                gridArray[x, y] = value;
+                debugTextArray[x, y].text = gridArray[x, y].ToString();
+            }
         }
     }
 

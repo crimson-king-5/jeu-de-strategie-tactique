@@ -7,10 +7,18 @@ using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
-public class GridLoader : MonoBehaviour
+public class GridLoader : ScriptableObject
 {
     public int[,] gridArray;
     public TextMesh[,] debugTextArray;
     public int width;
     public int height;
+
+    public GridLoader(int[,] currentGridArray, TextMesh[,] currentDebugTextArray, int currentHeight,int currenWidth)
+    {
+        width = currenWidth;
+        height = currentHeight;
+        gridArray = currentGridArray;
+        debugTextArray = currentDebugTextArray;
+    }
 }
