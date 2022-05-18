@@ -28,16 +28,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        //ChangeState(GameState.SpawnHeroes);
-    }
-
-    public void ChangeState(int newState)
-    {
-        ChangeState((GameState)newState);
-    }
-
     public void ChangeState(GameState newState)
     {
         gameState = newState;

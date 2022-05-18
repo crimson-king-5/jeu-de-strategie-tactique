@@ -13,6 +13,10 @@ public class BaseUnit : MonoBehaviour
     public int range { get { return scriptableUnit.unitStats.range; } }
     public int atk { get { return scriptableUnit.unitStats.atk; } }
     public int mv { get { return scriptableUnit.unitStats.mv; } }
+
+    public UnitStateMachine unitStateMachine;
+    public Direction currentOrientation;
+
     public void Attack(Direction dir)
     {
         Tile targetTile;
@@ -76,7 +80,7 @@ public class BaseUnit : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
             yPos++;
             if (BattleGrid.instance.OntheGrid(xPos, yPos))
@@ -89,7 +93,7 @@ public class BaseUnit : MonoBehaviour
                 yPos--;
             }
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(KeyCode.DownArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
             yPos--;
             if (BattleGrid.instance.OntheGrid(xPos, yPos))
@@ -102,7 +106,7 @@ public class BaseUnit : MonoBehaviour
                 yPos++;
             }
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (Input.GetKeyDown(KeyCode.LeftArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
             xPos--;
             if (BattleGrid.instance.OntheGrid(xPos, yPos))
@@ -115,7 +119,7 @@ public class BaseUnit : MonoBehaviour
                 xPos++;
             }
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.RightArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
             xPos++;
             if (BattleGrid.instance.OntheGrid(xPos, yPos))

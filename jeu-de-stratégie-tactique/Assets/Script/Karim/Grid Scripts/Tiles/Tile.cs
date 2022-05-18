@@ -14,11 +14,6 @@ public class Tile : MonoBehaviour
     public int tileYPos;
     public bool Walkable => _isWalkable && OccupiedUnit == null && currentTileType != TileType.None;
 
-    void Start()
-    {
-
-    }
-
     public void CheckIfCanWalk()
     {
         switch (currentTileType)
