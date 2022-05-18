@@ -269,6 +269,10 @@ public class BattleGrid : MonoBehaviour
                 gridArray[x, y] = value;
                 debugTextArray[x, y].text = gridArray[x, y].ToString();
             }
+            else
+            {
+                 UnitManager.Instance.SelectedHero = currentTile.OccupiedUnit;
+            }
         }
     }
 

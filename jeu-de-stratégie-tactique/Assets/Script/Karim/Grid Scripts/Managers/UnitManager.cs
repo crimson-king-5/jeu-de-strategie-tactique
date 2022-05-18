@@ -11,18 +11,35 @@ public class UnitManager : MonoBehaviour
 
     public BaseUnit SelectedHero;
 
+    private List<ScriptableUnit> heroesUnits = new List<ScriptableUnit>();
+    private List<ScriptableUnit> enemyUnits = new List<ScriptableUnit>();
+
+    public List<BaseUnit> allDeployedHeroesUnits;
+    public List<BaseUnit> allDeployedEnemiesUnits;
+
     private void Awake()
     {
         Instance = this;
 
         _units = Resources.LoadAll<ScriptableUnit>("Units").ToList();
+        for (int i = 0; i < _units.Count; i++)
+        {
+            if (_units[i].faction == Faction.Hero)
+            {
+                heroesUnits.Add(_units[i]);
+            }
+            else
+            {
+                enemyUnits.Add(_units[i]);
+            }
+        }
     }
 
     public void SpawnHeroes(int unitCount)
     {
         int heroCount = unitCount;
 
-        for(int i = 0; i < heroCount; i++)
+        for (int i = 0; i < heroCount; i++)
         {
             BaseUnit randomPrefab = GetRandomUnitPerFaction(Faction.Hero);
             Tile randomSpawnTile = BattleGrid.instance.SpawnRandomUnit();
@@ -50,25 +67,39 @@ public class UnitManager : MonoBehaviour
     }
     private BaseUnit GetRandomUnitPerFaction(Faction faction)
     {
-        List<BaseUnit> FactionUnit = new List<BaseUnit>();
-        for (int i = 0; i < _units.Count; i++)
-        {
-            if (_units[i].faction == faction)
-            {
-                GameObject unitObj = new GameObject("", typeof(BaseUnit),typeof(SpriteRenderer));
-                BaseUnit newUnit = unitObj.GetComponent<BaseUnit>();
-                SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
-                newUnit.scriptableUnit = _units[i];
-                unitRenderer.sprite = newUnit.scriptableUnit.renderUnit;
-                unitRenderer.sortingOrder = 1;
-                unitObj.name = newUnit.scriptableUnit.unitsName;
-                FactionUnit.Add(newUnit);
-            }
-        }
+        List<ScriptableUnit> FactionUnit = GetFactionUnits(faction);
         int randomIndex = Random.Range(0, FactionUnit.Count);
-        return FactionUnit[randomIndex];
+        GameObject unitObj = new GameObject("", typeof(BaseUnit), typeof(SpriteRenderer));
+        BaseUnit newUnit = unitObj.GetComponent<BaseUnit>();
+        SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
+        newUnit.scriptableUnit = FactionUnit[randomIndex];
+        unitRenderer.sprite = newUnit.scriptableUnit.renderUnit;
+        unitRenderer.sortingOrder = 1;
+        unitObj.name = newUnit.scriptableUnit.unitsName;
+        switch (faction)
+        {
+            case Faction.Enemy:
+                allDeployedEnemiesUnits.Add(newUnit);
+                break;
+            case Faction.Hero:
+                allDeployedHeroesUnits.Add(newUnit);
+                break;
+        }
+        return newUnit;
     }
 
+    public List<ScriptableUnit> GetFactionUnits(Faction currentFaction)
+    {
+        switch (currentFaction)
+        {
+            case Faction.Hero:
+                return heroesUnits;
+            case Faction.Enemy:
+                return enemyUnits;
+        }
+
+        return null;
+    }
     public void SetSelectedHero(BaseUnit hero)
     {
         SelectedHero = hero;
