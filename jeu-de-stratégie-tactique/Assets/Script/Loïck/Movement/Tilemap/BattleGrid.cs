@@ -170,11 +170,11 @@ public class BattleGrid : MonoBehaviour
         return GetValidTiles()[index];
     }
 
-    public Tile GetTile(int x,int y)
+    public Tile GetTile(int x, int y)
     {
-        if (debugTextArray[x,y] != null)
+        if (debugTextArray[x, y] != null)
         {
-        return debugTextArray[x, y].GetComponent<Tile>();
+            return debugTextArray[x, y].GetComponent<Tile>();
 
         }
         Debug.LogError("Erreur sortie de Grille");
@@ -182,14 +182,9 @@ public class BattleGrid : MonoBehaviour
     }
 
 
-    public bool OntheGrid(int x , int y)
+    public bool OntheGrid(int x, int y)
     {
-        bool onGrid = false;
-
-        if (x >= 0 && y >= 0 && x <= width - 1 && y <= height - 1)
-        {
-            onGrid = true;
-        }
+        bool onGrid = x >= 0 && y >= 0 && x <= width - 1 && y <= height - 1;
 
         return onGrid;
     }
@@ -271,7 +266,7 @@ public class BattleGrid : MonoBehaviour
             }
             else
             {
-                 UnitManager.Instance.SelectedHero = currentTile.OccupiedUnit;
+                UnitManager.Instance.SelectedHero = currentTile.OccupiedUnit;
             }
         }
     }

@@ -48,26 +48,26 @@ public class UnitManager : MonoBehaviour
             randomSpawnTile.SetUnit(randomPrefab);
 
         }
-
-        GameManager.Instance.ChangeState(GameManager.GameState.EnemiesTurn);
+        GameManager.Instance.ChangeState(GameManager.GameState.SpawnEnemies);
     }
     public void SpawnEnemies()
     {
+
         int enemyCount = 1;
 
         for (int i = 0; i < enemyCount; i++)
         {
             BaseUnit randomPrefab = GetRandomUnitPerFaction(Faction.Enemy);
-            BaseUnit spawnedEnemy = Instantiate(randomPrefab);
             Tile randomSpawnTile = BattleGrid.instance.SpawnRandomUnit();
-
-            randomSpawnTile.SetUnit(spawnedEnemy);
+            randomPrefab.xPos = randomSpawnTile.tileXPos;
+            randomPrefab.yPos = randomSpawnTile.tileYPos;
+            randomSpawnTile.SetUnit(randomPrefab);
         }
-        GameManager.Instance.ChangeState(GameManager.GameState.HerosTurn);
+        GameManager.Instance.ChangeState(GameManager.GameState.LaunchGameLoop);
     }
     private BaseUnit GetRandomUnitPerFaction(Faction faction)
     {
-        List<ScriptableUnit> FactionUnit = GetFactionUnits(faction);
+        List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(faction);
         int randomIndex = Random.Range(0, FactionUnit.Count);
         GameObject unitObj = new GameObject("", typeof(BaseUnit), typeof(SpriteRenderer));
         BaseUnit newUnit = unitObj.GetComponent<BaseUnit>();
@@ -88,7 +88,7 @@ public class UnitManager : MonoBehaviour
         return newUnit;
     }
 
-    public List<ScriptableUnit> GetFactionUnits(Faction currentFaction)
+    public List<ScriptableUnit> GetFactionScriptableUnits(Faction currentFaction)
     {
         switch (currentFaction)
         {
@@ -100,9 +100,109 @@ public class UnitManager : MonoBehaviour
 
         return null;
     }
-    public void SetSelectedHero(BaseUnit hero)
+
+
+    public void ResetUnitsTurns(List<BaseUnit> units)
     {
-        SelectedHero = hero;
-        MenuManager.Instance.ShowSelectedHero(hero);
+        for (int i = 0; i < units.Count; i++)
+        {
+            if (units[i].unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
+            {
+                units[i].unitStateMachine.currentState = UnitStateMachine.UnitState.None;
+            }
+        }
     }
+
+    public IEnumerator GameLoop()
+    {
+        Debug.Log("Debut de Game");
+        bool gameOver = false;
+        while (!gameOver)
+        {
+            ResetUnitsTurns(allDeployedHeroesUnits);
+            GameManager.Instance.gameState = GameManager.GameState.HerosTurn;
+            for (int i = 0; i < allDeployedHeroesUnits.Count; i++)
+            {
+                SelectedHero = allDeployedHeroesUnits[i];
+                Debug.Log(SelectedHero.scriptableUnit.unitsName);
+                if (SelectedHero.scriptableUnit.unitStats.life <= 0 && SelectedHero.unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
+                {
+                    SelectedHero.OccupiedTile.OccupiedUnit = null;
+                    SelectedHero.OccupiedTile = null;
+                    SelectedHero.xPos = 999;
+                    SelectedHero.yPos = 999;
+                    SelectedHero.unitStateMachine.currentState = UnitStateMachine.UnitState.Dead;
+                    SelectedHero.gameObject.SetActive(false);
+                }
+                else
+                {
+                    yield return new WaitUntil(() => SelectedHero.unitStateMachine.currentState == UnitStateMachine.UnitState.EndTurn);
+                }
+            }
+            gameOver = CheckifTeamisDead(Faction.Hero);
+            GameManager.Instance.gameState = GameManager.GameState.EnemiesTurn;
+            for (int i = 0; i < allDeployedEnemiesUnits.Count; i++)
+            {
+                SelectedHero = allDeployedEnemiesUnits[i];
+                Debug.Log(SelectedHero.scriptableUnit.unitsName);
+                if (SelectedHero.scriptableUnit.unitStats.life <= 0 && SelectedHero.unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
+                {
+                    SelectedHero.OccupiedTile.OccupiedUnit = null;
+                    SelectedHero.OccupiedTile = null;
+                    SelectedHero.xPos = 999;
+                    SelectedHero.yPos = 999;
+                    SelectedHero.unitStateMachine.currentState = UnitStateMachine.UnitState.Dead;
+                    SelectedHero.gameObject.SetActive(false);
+                }
+                else
+                {
+                    yield return new WaitUntil(() => SelectedHero.unitStateMachine.currentState == UnitStateMachine.UnitState.EndTurn);
+                }
+            }
+
+            gameOver = CheckifTeamisDead(Faction.Enemy);
+            ResetUnitsTurns(allDeployedEnemiesUnits);
+        }
+    }
+
+    private bool CheckifTeamisDead(Faction currentFaction)
+    {
+        bool isDead = true;
+        List<BaseUnit> factionUnits = GetFactionUnits(currentFaction);
+        for (int i = 0; i < factionUnits.Count; i++)
+        {
+            if (factionUnits[i].unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
+            {
+                isDead = false;
+                break;
+            }
+        }
+
+        return isDead;
+    }
+
+    private List<BaseUnit> GetFactionUnits(Faction CurrentFaction)
+    {
+        List<BaseUnit> factionUnits = new List<BaseUnit>();
+        switch (CurrentFaction)
+        {
+            case Faction.Hero:
+                factionUnits = allDeployedHeroesUnits;
+                break;
+            case Faction.Enemy:
+                factionUnits = allDeployedEnemiesUnits;
+                break;
+        }
+
+        return factionUnits;
+    }
+
+    //public void SetSelectedHero(BaseUnit hero)
+    //{
+    //    if (hero.unitStateMachine.currentState == UnitStateMachine.UnitState.EndTurn)
+    //    {
+    //        SelectedHero = hero;
+    //        MenuManager.Instance.ShowSelectedHero(hero);
+    //    }
+    //}
 }

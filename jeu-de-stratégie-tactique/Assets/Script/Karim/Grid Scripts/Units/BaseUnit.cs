@@ -14,131 +14,118 @@ public class BaseUnit : MonoBehaviour
     public int atk { get { return scriptableUnit.unitStats.atk; } }
     public int mv { get { return scriptableUnit.unitStats.mv; } }
 
-    public UnitStateMachine unitStateMachine;
-    public Direction currentOrientation;
+    public UnitStateMachine unitStateMachine = new UnitStateMachine();
 
-    public void Attack(Direction dir)
+    public void Attack(int xPos, int yPos)
     {
+        unitStateMachine.currentState = UnitStateMachine.UnitState.Attack;
         Tile targetTile;
         int targetLife;
-        switch (dir)
-        {
-            case Direction.Up:
-                targetTile = BattleGrid.instance.GetTile(xPos, yPos + range);
-                if (targetTile.OccupiedUnit)
-                {
-                    return;
-                }
-                targetLife = targetTile.OccupiedUnit.scriptableUnit.unitStats.life;
-                targetLife -= atk;
-                break;
-            case Direction.Down:
-                targetTile = BattleGrid.instance.GetTile(xPos, yPos - range);
-                if (targetTile.OccupiedUnit)
-                {
-                    return;
-                }
-                targetLife = targetTile.OccupiedUnit.scriptableUnit.unitStats.life;
-                targetLife -= atk;
-                break;
-            case Direction.Left:
-                targetTile = BattleGrid.instance.GetTile(xPos - range, yPos);
-                if (targetTile.OccupiedUnit)
-                {
-                    return;
-                }
-                targetLife = targetTile.OccupiedUnit.scriptableUnit.unitStats.life;
-                targetLife -= atk;
-                break;
-            case Direction.Right:
-                targetTile = BattleGrid.instance.GetTile(xPos + range, yPos);
-                if (targetTile.OccupiedUnit)
-                {
-                    return;
-                }
-                targetLife = targetTile.OccupiedUnit.scriptableUnit.unitStats.life;
-                targetLife -= atk;
-                break;
-            default:
-                break;
-        }
+        targetTile = BattleGrid.instance.GetTile(xPos, yPos);
+        targetLife = targetTile.OccupiedUnit.scriptableUnit.unitStats.life;
+        Debug.Log("Unit " + targetTile.OccupiedUnit.scriptableUnit.unitsName + " take " + atk + " damage");
+        targetLife -= atk;
+        Debug.Log("Unit :" + targetTile.OccupiedUnit.scriptableUnit.unitsName + " have " + targetLife + " Life now !" );
+        unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
     }
-    public void MoveTo(int x, int y)
+
+    public bool MoveTo(int x, int y)
     {
+        bool canMove;
+        unitStateMachine.currentState = UnitStateMachine.UnitState.MoveTo;
         Tile tile = BattleGrid.instance.GetTile(x, y);
-        if (tile != null && tile.OccupiedUnit == null && tile.Walkable)
+        if (tile != null && tile.Walkable)
         {
             transform.position = tile.transform.position;
+            OccupiedTile.OccupiedUnit = null;
+            OccupiedTile = tile;
+            OccupiedTile.OccupiedUnit = this;
+            canMove = true;
         }
+        else
+        {
+            canMove = false;
+        }
+        unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
+        return canMove;
     }
     public void Defend(BaseUnit unit) { }
     public void Wait(BaseUnit unit) { }
-    public enum Direction
-    {
-        Up, Down, Left, Right
-    }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.UpArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
             yPos++;
-            if (BattleGrid.instance.OntheGrid(xPos, yPos))
+            if (BattleGrid.instance.OntheGrid(xPos, yPos) && MoveTo(xPos, yPos))
             {
                 MoveTo(xPos, yPos);
-                UpdatePosition();
+                UpdateWalkable();
             }
             else
             {
+                if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                {
+                    Attack(xPos, yPos);
+                }                if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                {
+                    Attack(xPos, yPos);
+                }
                 yPos--;
             }
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
             yPos--;
-            if (BattleGrid.instance.OntheGrid(xPos, yPos))
+            if (BattleGrid.instance.OntheGrid(xPos, yPos) && MoveTo(xPos, yPos))
             {
-                MoveTo(xPos, yPos);
-                UpdatePosition();
+                UpdateWalkable();
             }
             else
             {
+                if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                {
+                    Attack(xPos, yPos);
+                }
                 yPos++;
             }
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
             xPos--;
-            if (BattleGrid.instance.OntheGrid(xPos, yPos))
+            if (BattleGrid.instance.OntheGrid(xPos, yPos) && MoveTo(xPos, yPos))
             {
-                MoveTo(xPos, yPos);
-                UpdatePosition();
+                UpdateWalkable();
             }
             else
             {
+                if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                {
+                    Attack(xPos, yPos);
+                }
                 xPos++;
             }
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
             xPos++;
-            if (BattleGrid.instance.OntheGrid(xPos, yPos))
+            if (BattleGrid.instance.OntheGrid(xPos, yPos) && MoveTo(xPos, yPos))
             {
-                MoveTo(xPos, yPos);
-                UpdatePosition();
+                UpdateWalkable();
             }
             else
             {
+                if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                {
+                    Attack(xPos, yPos);
+                }
                 xPos--;
             }
         }
 
     }
-    private void UpdatePosition()
+    private void UpdateWalkable()
     {
-        OccupiedTile.OccupiedUnit = null;
         OccupiedTile.CheckIfCanWalk();
-        OccupiedTile = null;
-        OccupiedTile = BattleGrid.instance.GetTile(xPos, yPos);
     }
 }

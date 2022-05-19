@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Hero 2
   m_EditorClassIdentifier: 
   faction: 0
-  unitsName: 
-  renderUnit: {fileID: 0}
+  unitsName: Lorrence
+  renderUnit: {fileID: 21300000, guid: e1ab722ec04ff0347b88043a2db0b8fc, type: 3}
   unitStats:
-    life: 0
-    atk: 0
-    mv: 0
-    range: 0
+    life: 17
+    atk: 21
+    mv: 18
+    range: 27
