@@ -37,32 +37,32 @@ public class Tile : MonoBehaviour
         MenuManager.Instance.ShowTileInfo(null);
     }
 
-    private void OnMouseDown()
-    {
-        if (GameManager.Instance.gameState != GameManager.GameState.HerosTurn) return;
+    //private void OnMouseDown()
+    //{
+    //    if (GameManager.Instance.gameState != GameManager.GameState.HerosTurn) return;
         
-        if(OccupiedUnit != null)
-        {
-            if (OccupiedUnit.scriptableUnit.faction == Faction.Hero) UnitManager.Instance.SetSelectedHero((BaseUnit)OccupiedUnit);
-            else
-            {
-                if(UnitManager.Instance.SelectedHero != null)
-                {
-                    var enemy = (BaseEnemy)OccupiedUnit;
-                    Destroy(enemy.gameObject);
-                    UnitManager.Instance.SetSelectedHero(null);
-                }
-            }
-        }else
-        {
-            if(UnitManager.Instance.SelectedHero != null)
-            {
-                SetUnit(UnitManager.Instance.SelectedHero);
-                UnitManager.Instance.SetSelectedHero(null);
-            }
-        }
+    //    if(OccupiedUnit != null)
+    //    {
+    //        if (OccupiedUnit.scriptableUnit.faction == Faction.Hero) UnitManager.Instance.SetSelectedHero((BaseUnit)OccupiedUnit);
+    //        else
+    //        {
+    //            if(UnitManager.Instance.SelectedHero != null)
+    //            {
+    //                var enemy = (BaseEnemy)OccupiedUnit;
+    //                Destroy(enemy.gameObject);
+    //                UnitManager.Instance.SetSelectedHero(null);
+    //            }
+    //        }
+    //    }else
+    //    {
+    //        if(UnitManager.Instance.SelectedHero != null)
+    //        {
+    //            SetUnit(UnitManager.Instance.SelectedHero);
+    //            UnitManager.Instance.SetSelectedHero(null);
+    //        }
+    //    }
     
-    }
+    //}
     public void SetUnit(BaseUnit unit)
     {
         if (unit.OccupiedTile != null) unit.OccupiedTile.OccupiedUnit = null;

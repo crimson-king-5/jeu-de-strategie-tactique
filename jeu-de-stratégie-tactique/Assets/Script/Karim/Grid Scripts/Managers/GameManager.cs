@@ -42,6 +42,30 @@ public class GameManager : MonoBehaviour
             case GameState.HerosTurn:
                 break;
             case GameState.EnemiesTurn:
+                break;            
+            case GameState.LaunchGameLoop:
+             StartCoroutine(UnitManager.Instance.GameLoop());
+             break;
+        }
+    }
+
+    public void ChangeState(int newState)
+    {
+        gameState = (GameState)newState;
+        switch ((GameState)newState)
+        {
+            case GameState.SpawnHeroes:
+                UnitManager.Instance.SpawnHeroes(1);
+                break;
+            case GameState.SpawnEnemies:
+                UnitManager.Instance.SpawnEnemies();
+                break;
+            case GameState.HerosTurn:
+                break;
+            case GameState.EnemiesTurn:
+                break;
+            case GameState.LaunchGameLoop:
+             StartCoroutine( UnitManager.Instance.GameLoop());
                 break;
         }
     }
@@ -53,5 +77,6 @@ public class GameManager : MonoBehaviour
         SpawnEnemies = 1,
         HerosTurn = 2,
         EnemiesTurn = 3,
+        LaunchGameLoop = 4,
     }
 }
