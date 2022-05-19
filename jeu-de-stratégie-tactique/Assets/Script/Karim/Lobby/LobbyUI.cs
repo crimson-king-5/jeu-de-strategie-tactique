@@ -3,15 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.UI;
-using Unity.Networking.Collections;
+using System;
 
-public class LobbyUI : MonoBehaviour
+namespace TEAM2
 {
-    
-    [Header("References")]
-    [SerializeField] private LobbyPlayerCard[] lobbyPlayerCards;
-    [SerializeField] private Button startGameButton;
+    public class LobbyUI : NetworkBehaviour
+    {
 
-    private NetworkList<LobbyPlayerState> lobbyPlayers = new NetworkList<LobbyPlayerState>();
+        [Header("References")]
+        [SerializeField] private LobbyPlayerCard[] lobbyPlayerCards;
+        [SerializeField] private Button startGameButton;
 
+        private NetworkList<LobbyPlayerState> lobbyPlayers = new NetworkList<LobbyPlayerState>();
+        public override void OnNetworkSpawn()
+        {
+            if (NetworkManager.Singleton.IsClient)
+            {
+                lobbyPlayers.OnListChanged += HandheldLobbyPlayersStateChanged;
+            }
+            if (NetworkManager.Singleton.IsServer)
+            {
+
+            }
+        }
+
+        private void HandheldLobbyPlayersStateChanged(NetworkListEvent<LobbyPlayerState> changeEvent)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
