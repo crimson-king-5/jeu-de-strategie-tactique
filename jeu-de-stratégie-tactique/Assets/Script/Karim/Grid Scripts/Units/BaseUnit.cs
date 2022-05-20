@@ -6,7 +6,7 @@ using UnityEngine;
 public class BaseUnit : MonoBehaviour
 {
     public Tile OccupiedTile;
-    [HideInInspector] public ScriptableUnit scriptableUnit;
+    public ScriptableUnit scriptableUnit;
     public int xPos;
     public int yPos;
     public int life { get { return scriptableUnit.unitStats.life; } }
