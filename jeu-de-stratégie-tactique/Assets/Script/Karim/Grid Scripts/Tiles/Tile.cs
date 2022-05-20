@@ -27,16 +27,6 @@ public class Tile : MonoBehaviour
         }
     }
 
-    private void OnMouseEnter()
-    {
-        MenuManager.Instance.ShowTileInfo(this);
-    }
-
-    private void OnMouseExit()
-    {
-        MenuManager.Instance.ShowTileInfo(null);
-    }
-
     //private void OnMouseDown()
     //{
     //    if (GameManager.Instance.gameState != GameManager.GameState.HerosTurn) return;

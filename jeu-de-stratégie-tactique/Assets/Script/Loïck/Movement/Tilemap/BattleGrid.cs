@@ -97,33 +97,41 @@ public class BattleGrid : MonoBehaviour
     {
         instance = this;
         BuildBattleGrid();
+        List<GameObject> battleGrid = AllGridChild();
+        for (int i = 0; i < battleGrid.Count; i++)
+        {
+            SetValue(battleGrid[i].transform.position, 1);
+            SetObjectToGrid(battleGrid[i].transform.position, currentTilesRef);
+            battleGrid[i].GetComponent<Tile>().currentTileType = Tile.TileType.Walkable;
+        }
         if (tiles != null)
         {
             canCreateGrid = false;
         }
+        GameManager.Instance.ChangeState(0);
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (tileType < Enum.GetValues(typeof(Tile.TileType)).Cast<Tile.TileType>().Last())
-            {
-                tileType++;
-            }
-            SetValue(GetMouseWorldPosition(), (int)tileType);
-            SetObjectToGrid(GetMouseWorldPosition(), currentTilesRef);
-        }
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    if (tileType < Enum.GetValues(typeof(Tile.TileType)).Cast<Tile.TileType>().Last())
+        //    {
+        //        tileType++;
+        //    }
+        //    SetValue(GetMouseWorldPosition(), (int)tileType);
+        //    SetObjectToGrid(GetMouseWorldPosition(), currentTilesRef);
+        //}
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            if (tileType > 0)
-            {
-                tileType--;
-            }
-            SetValue(GetMouseWorldPosition(), (int)tileType);
-            DeleteObjectToGrid(GetMouseWorldPosition());
-        }
+        //if (Input.GetMouseButtonDown(1))
+        //{
+        //    if (tileType > 0)
+        //    {
+        //        tileType--;
+        //    }
+        //    SetValue(GetMouseWorldPosition(), (int)tileType);
+        //    DeleteObjectToGrid(GetMouseWorldPosition());
+        //}
     }
     #endregion
 
@@ -135,8 +143,14 @@ public class BattleGrid : MonoBehaviour
         for (int i = 0; i < transform.childCount; i++)
         {
             Tile currentiles = transform.GetChild(i).GetComponent(typeof(Tile)) as Tile;
-            if (currentiles != null && currentiles.Walkable)
-                tiles.Add(currentiles);
+            if (currentiles != null)
+            {
+                currentiles.CheckIfCanWalk();
+                if (currentiles.Walkable)
+                {
+                    tiles.Add(currentiles);
+                }
+            }
         }
 
         return tiles;
@@ -358,6 +372,7 @@ public class BattleGrid : MonoBehaviour
     public static TextMesh CreateText(Transform parent, string text, Vector2 localPosition, int fontSize)
     {
         GameObject textObj = new GameObject("World_Text", typeof(TextMesh), typeof(Tile));
+        textObj.layer = 6;
         Transform localTransform = textObj.transform;
         localTransform.SetParent(parent, false);
         localTransform.localPosition = localPosition;
