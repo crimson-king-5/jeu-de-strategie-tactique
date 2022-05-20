@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Grid Editor
   - Grid
+  - Grid Render
   layers:
   - Default
   - TransparentFX
