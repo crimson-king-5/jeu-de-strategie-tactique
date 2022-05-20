@@ -172,10 +172,13 @@ public class BattleGrid : MonoBehaviour
 
     public Tile GetTile(int x, int y)
     {
-        if (debugTextArray[x, y] != null)
+        if (OntheGrid(x, y))
         {
-            return debugTextArray[x, y].GetComponent<Tile>();
+            if (debugTextArray[x, y] != null)
+            {
+                return debugTextArray[x, y].GetComponent<Tile>();
 
+            }
         }
         Debug.LogError("Erreur sortie de Grille");
         return null;
