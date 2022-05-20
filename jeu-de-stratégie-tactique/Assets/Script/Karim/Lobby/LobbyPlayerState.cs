@@ -21,10 +21,10 @@ namespace TEAM2
             IsReady = isReady;
         }
 
-        public LobbyPlayerState(ulong clientId, string playerName) : this()
+        public LobbyPlayerState(ulong clientId, ForceNetworkSerializeByMemcpy<FixedString32Bytes> playerName) : this()
         {
             ClientId = clientId;
-            this.playerName = playerName;
+            PlayerName = playerName;
            
         }
 

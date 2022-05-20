@@ -158,7 +158,7 @@ namespace DapperDino.UMT.Lobby.Networking
             string clientGuid = Guid.NewGuid().ToString();
             string playerName = PlayerPrefs.GetString("PlayerName", "Missing Name");
 
-            clientData.Add(clientGuid, new PlayerData(playerName, NetworkManager.Singleton.LocalClientId));
+            //clientData.Add(clientGuid, new PlayerData(playerName, NetworkManager.Singleton.LocalClientId));
             clientIdToGuid.Add(NetworkManager.Singleton.LocalClientId, clientGuid);
         }
 
@@ -212,7 +212,7 @@ namespace DapperDino.UMT.Lobby.Networking
             {
                 clientSceneMap[clientId] = connectionPayload.clientScene;
                 clientIdToGuid[clientId] = connectionPayload.clientGUID;
-                clientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
+                //clientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
             }
 
             callback(false, 0, true, null, null);

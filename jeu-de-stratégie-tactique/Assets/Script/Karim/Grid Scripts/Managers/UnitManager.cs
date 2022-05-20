@@ -147,6 +147,7 @@ public class UnitManager : MonoBehaviour
                 Debug.Log(SelectedHero.scriptableUnit.unitsName);
                 if (SelectedHero.scriptableUnit.unitStats.life <= 0 && SelectedHero.unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
                 {
+                    Debug.Log(SelectedHero.scriptableUnit.unitsName + " est mort !");
                     SelectedHero.OccupiedTile.OccupiedUnit = null;
                     SelectedHero.OccupiedTile = null;
                     SelectedHero.xPos = 999;
@@ -171,13 +172,17 @@ public class UnitManager : MonoBehaviour
         List<BaseUnit> factionUnits = GetFactionUnits(currentFaction);
         for (int i = 0; i < factionUnits.Count; i++)
         {
-            if (factionUnits[i].unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
+            if (factionUnits[i].gameObject.activeSelf)
             {
                 isDead = false;
                 break;
             }
         }
 
+        if (isDead)
+        {
+            Debug.Log("Partie terminé ! Faction " + currentFaction.ToString() + " battue !");
+        }
         return isDead;
     }
 

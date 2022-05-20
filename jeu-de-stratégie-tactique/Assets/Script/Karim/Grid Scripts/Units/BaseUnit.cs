@@ -54,7 +54,7 @@ public class BaseUnit : MonoBehaviour
     public void Defend(BaseUnit unit) { }
     public void Wait(BaseUnit unit) { }
 
-    void Awake()
+    void Start()
     {
         scriptableUnit = scriptableUnit.GetCloneUnit();
     }

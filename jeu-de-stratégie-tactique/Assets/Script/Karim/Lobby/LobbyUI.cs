@@ -77,10 +77,7 @@ namespace TEAM2
 
             if (!playerData.HasValue) { return; }
 
-            lobbyPlayers.Add(new LobbyPlayerState(clientId, 
-                playerData.Value.PlayerName,
-                false
-                ));
+            lobbyPlayers.Add(new LobbyPlayerState(clientId, playerData.Value.PlayerName, false));
         }
 
         private void HandlecClientDisconnect(ulong clientId)
