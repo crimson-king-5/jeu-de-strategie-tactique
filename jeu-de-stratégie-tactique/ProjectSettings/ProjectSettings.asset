@@ -639,7 +639,14 @@ PlayerSettings:
   XboxOneOverrideIdentityName: 
   XboxOneOverrideIdentityPublisher: 
   vrEditorSettings: {}
-  cloudServicesEnabled: {}
+  cloudServicesEnabled:
+    Build: 0
+    Collab: 0
+    Game Performance: 0
+    Legacy Analytics: 0
+    Purchasing: 0
+    UDP: 0
+    Unity Ads: 0
   luminIcon:
     m_Name: 
     m_ModelFolderPath: 
@@ -653,11 +660,11 @@ PlayerSettings:
     m_VersionName: 
   apiCompatibilityLevel: 6
   activeInputHandler: 0
-  cloudProjectId: 59933b50-7982-46c7-a469-cf168e810dc5
+  cloudProjectId: 3b417fa3-bd2e-48f2-90e6-3fa937bd5068
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: TestLobby
-  organizationId: agence2022
+  projectName: Agence Project
+  organizationId: agance-2022-team2
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   playerDataPath: 

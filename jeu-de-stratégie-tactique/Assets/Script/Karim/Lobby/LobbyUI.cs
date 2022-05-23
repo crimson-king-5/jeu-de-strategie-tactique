@@ -8,7 +8,7 @@ using DapperDino.UMT.Lobby.Networking;
 
 namespace TEAM2
 {
-    public class LobbyUI : NetworkBehaviour
+   /* public class LobbyUI : NetworkBehaviour
     {
 
         [Header("References")]
@@ -94,5 +94,5 @@ namespace TEAM2
         {
             throw new NotImplementedException();
         }
-    }
+    }*/
 }
