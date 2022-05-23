@@ -43,6 +43,7 @@ public class BaseUnit : MonoBehaviour
         Tile targetTile;
         int targetLife;
         targetTile = BattleGrid.instance.GetTile(xPos, yPos);
+        GameManager.Instance.InstantiateEffect(targetTile.transform.position,0);
         targetLife = targetTile.OccupiedUnit.scriptableUnit.unitStats.life;
         Debug.Log("Unit " + targetTile.OccupiedUnit.scriptableUnit.unitsName + " take " + atk + " damage");
         targetLife -= atk;
@@ -55,10 +56,19 @@ public class BaseUnit : MonoBehaviour
     public void MoveToClientRpc(int x, int y)
     {
         Tile tile = BattleGrid.instance.GetTile(x, y);
-        transform.position = tile.transform.position;
+        StartCoroutine(MoveUnit(tile));
         OccupiedTile.OccupiedUnit = null;
         OccupiedTile = tile;
         OccupiedTile.OccupiedUnit = this;
+    }
+
+    private IEnumerator MoveUnit(Tile tile)
+    {
+        while (transform.position != tile.transform.position)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, tile.transform.position, 5f * Time.deltaTime);
+            yield return new WaitForSeconds(0.001f);
+        }
     }
 
     public bool CanMoveTo(int x, int y)
@@ -114,8 +124,7 @@ public class BaseUnit : MonoBehaviour
                     yPos--;
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.UpArrow) && UnitManager.Instance.SelectedHero == this &&
-                     unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
+            else if (Input.GetKeyDown(KeyCode.UpArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
             {
                 yPos--;
                 if (BattleGrid.instance.OntheGrid(xPos, yPos))
@@ -139,8 +148,7 @@ public class BaseUnit : MonoBehaviour
                     yPos++;
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow) && UnitManager.Instance.SelectedHero == this &&
-                     unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
             {
                 xPos--;
                 if (BattleGrid.instance.OntheGrid(xPos, yPos))
@@ -164,8 +172,7 @@ public class BaseUnit : MonoBehaviour
                     xPos++;
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.RightArrow) && UnitManager.Instance.SelectedHero == this &&
-                     unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
+            else if (Input.GetKeyDown(KeyCode.RightArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
             {
                 xPos++;
                 if (BattleGrid.instance.OntheGrid(xPos, yPos))
