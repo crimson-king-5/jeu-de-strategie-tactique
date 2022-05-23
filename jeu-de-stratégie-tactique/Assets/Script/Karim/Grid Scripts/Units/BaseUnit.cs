@@ -1,12 +1,32 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Codice.CM.Common;
 using Sirenix.OdinInspector;
+using Unity.Netcode;
 using UnityEngine;
 
 public class BaseUnit : MonoBehaviour
 {
     public Tile OccupiedTile; 
     public ScriptableUnit scriptableUnit;
+
+    public enum Team
+    {
+        TEAM1 = 0,TEAM2 = 1
+    }
+
+    //public Team currentTeam
+    //{
+    //    get
+    //    {
+    //        if (NetworkManager.IsClient)
+    //        {
+    //            return Team.TEAM2;
+    //        }
+    //        return Team.TEAM1;
+    //    }
+    //}
 
     public int xPos;
     public int yPos;
@@ -31,17 +51,24 @@ public class BaseUnit : MonoBehaviour
         unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
     }
 
-    public bool MoveTo(int x, int y)
+    [ClientRpc]
+    public void MoveToClientRpc(int x, int y)
+    {
+        Tile tile = BattleGrid.instance.GetTile(x, y);
+        transform.position = tile.transform.position;
+        OccupiedTile.OccupiedUnit = null;
+        OccupiedTile = tile;
+        OccupiedTile.OccupiedUnit = this;
+    }
+
+    public bool CanMoveTo(int x, int y)
     {
         bool canMove;
         unitStateMachine.currentState = UnitStateMachine.UnitState.MoveTo;
         Tile tile = BattleGrid.instance.GetTile(x, y);
         if (tile != null && tile.Walkable)
         {
-            transform.position = tile.transform.position;
-            OccupiedTile.OccupiedUnit = null;
-            OccupiedTile = tile;
-            OccupiedTile.OccupiedUnit = this;
+            MoveToClientRpc(x, y);
             canMove = true;
         }
         else
@@ -61,99 +88,108 @@ public class BaseUnit : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-        {
-            yPos++;
-            if (BattleGrid.instance.OntheGrid(xPos, yPos))
+        //if (IsLocalPlayer)
+        //{
+            if (Input.GetKeyDown(KeyCode.DownArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
             {
-                if (MoveTo(xPos, yPos))
+                yPos++;
+                if (BattleGrid.instance.OntheGrid(xPos, yPos))
                 {
-                    UpdateWalkable();
+                    if (CanMoveTo(xPos, yPos))
+                    {
+                        UpdateWalkable();
+                    }
+                    else
+                    {
+                        if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                        {
+                            Attack(xPos, yPos);
+                        }
+
+                        yPos--;
+                    }
                 }
                 else
                 {
-                    if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
-                    {
-                        Attack(xPos, yPos);
-                    }
                     yPos--;
                 }
             }
-            else
+            else if (Input.GetKeyDown(KeyCode.UpArrow) && UnitManager.Instance.SelectedHero == this &&
+                     unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
             {
                 yPos--;
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-        {
-            yPos--;
-            if (BattleGrid.instance.OntheGrid(xPos, yPos))
-            {
-                if (MoveTo(xPos, yPos))
+                if (BattleGrid.instance.OntheGrid(xPos, yPos))
                 {
-                    UpdateWalkable();
+                    if (CanMoveTo(xPos, yPos))
+                    {
+                        UpdateWalkable();
+                    }
+                    else
+                    {
+                        if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                        {
+                            Attack(xPos, yPos);
+                        }
+
+                        yPos++;
+                    }
                 }
                 else
                 {
-                    if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
-                    {
-                        Attack(xPos, yPos);
-                    }
                     yPos++;
                 }
             }
-            else
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) && UnitManager.Instance.SelectedHero == this &&
+                     unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
             {
-                yPos++;
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-        {
-            xPos--;
-            if (BattleGrid.instance.OntheGrid(xPos, yPos))
-            {
-                if (MoveTo(xPos, yPos))
+                xPos--;
+                if (BattleGrid.instance.OntheGrid(xPos, yPos))
                 {
-                    UpdateWalkable();
+                    if (CanMoveTo(xPos, yPos))
+                    {
+                        UpdateWalkable();
+                    }
+                    else
+                    {
+                        if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                        {
+                            Attack(xPos, yPos);
+                        }
+
+                        xPos++;
+                    }
                 }
                 else
                 {
-                    if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
-                    {
-                        Attack(xPos, yPos);
-                    }
                     xPos++;
                 }
             }
-            else
+            else if (Input.GetKeyDown(KeyCode.RightArrow) && UnitManager.Instance.SelectedHero == this &&
+                     unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
             {
                 xPos++;
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-        {
-            xPos++;
-            if (BattleGrid.instance.OntheGrid(xPos, yPos))
-            {
-                if (MoveTo(xPos, yPos))
+                if (BattleGrid.instance.OntheGrid(xPos, yPos))
                 {
-                    UpdateWalkable();
+                    if (CanMoveTo(xPos, yPos))
+                    {
+                        UpdateWalkable();
+                    }
+                    else
+                    {
+                        if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                        {
+                            Attack(xPos, yPos);
+                        }
+
+                        xPos--;
+                    }
                 }
                 else
                 {
-                    if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
-                    {
-                        Attack(xPos, yPos);
-                    }
                     xPos--;
                 }
             }
-            else
-            {
-                xPos--;
-            }
-        }
-
+        //}
     }
     private void UpdateWalkable()
     {

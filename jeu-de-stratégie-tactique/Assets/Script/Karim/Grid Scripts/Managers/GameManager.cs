@@ -7,6 +7,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    public int index;
+
     public GameState gameState;
 
     [MenuItem("GameObject/GameManager")]

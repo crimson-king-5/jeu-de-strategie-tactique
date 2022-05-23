@@ -213,8 +213,8 @@ namespace DapperDino.UMT.Lobby.Networking
                 clientSceneMap[clientId] = connectionPayload.clientScene;
                 clientIdToGuid[clientId] = connectionPayload.clientGUID;
                 //clientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
-            }
 
+            }
             callback(false, 0, true, null, null);
 
             gameNetPortal.ServerToClientConnectResult(clientId, gameReturnStatus);

@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEditor.Animations;
+using UnityEditor.Graphs;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -30,7 +31,7 @@ public class BattleGrid : MonoBehaviour
     #region Grid Init
     #region Editor Function
     [MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
-    static void InstanceGridEditor()
+    public static void InstanceGridEditor()
     {
         GameObject instanceGridEditor = new GameObject("Grid Editor", typeof(BattleGrid));
         instanceGridEditor.tag = "Grid";
@@ -100,8 +101,39 @@ public class BattleGrid : MonoBehaviour
         List<GameObject> battleGrid = AllGridChild();
         for (int i = 0; i < battleGrid.Count; i++)
         {
-            SetValue(battleGrid[i].transform.position, 1);
-            SetObjectToGrid(battleGrid[i].transform.position, currentTilesRef);
+            Tile currentTile = battleGrid[i].gameObject.GetComponent<Tile>();
+            if (currentTile.OccupiedUnit == null)
+            {
+                currentTile.currentTileType = tileType;
+                currentTile.CheckIfCanWalk();
+                battleGrid[i].GetComponent<TextMesh>().text = 1.ToString();
+            }
+            else
+            {
+                UnitManager.Instance.SelectedHero = currentTile.OccupiedUnit;
+            }
+            bool isdoublon = false;
+            if (tilesRender != null)
+            {
+                for (int o = 0; o < tilesRender.Count; o++)
+                {
+                    if (tilesRender[o].transform.position == battleGrid[i].transform.position)
+                    {
+                        isdoublon = true;
+                    }
+                }
+            }
+            else
+            {
+                tilesRender = new List<GameObject>();
+            }
+            if (!isdoublon)
+            {
+                GameObject instanceObj = Instantiate(currentTilesRef);
+                instanceObj.transform.position = battleGrid[i].transform.position;
+                instanceObj.transform.SetParent(transform);
+                tilesRender.Add(instanceObj);
+            }
             battleGrid[i].GetComponent<Tile>().currentTileType = Tile.TileType.Walkable;
         }
         if (tiles != null)
@@ -227,17 +259,15 @@ public class BattleGrid : MonoBehaviour
         {
             for (int y = 0; y < gridArray.GetLength(1); y++)
             {
-                debugTextArray[x, y] = CreateText(null, gridArray[x, y].ToString(), GetWorldPosition(x, y) + new Vector2(cellSize, cellSize) * .5f, fontSize);
+                float posx = (x * cellSize + y * cellSize) / 2f;
+                float posy = (x * cellSize - y * cellSize) / 4f;
+                debugTextArray[x, y] = CreateText(null, gridArray[x, y].ToString(), GetWorldPosition(posx, posy) + new Vector2(posx, posy), fontSize);
                 Tile debugTiles = debugTextArray[x, y].GetComponent<Tile>();
                 debugTiles.tileXPos = x;
                 debugTiles.tileYPos = y;
                 debugTextArray[x, y].transform.SetParent(transform);
-                Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 1f);
-                Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 1f);
             }
         }
-        Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 1f);
-        Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 1f);
     }
 
     public int GetValue(int x, int y)
@@ -364,7 +394,7 @@ public class BattleGrid : MonoBehaviour
         y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
     }
 
-    private Vector2 GetWorldPosition(int x, int y)
+    private Vector2 GetWorldPosition(float x, float y)
     {
         return new Vector2(x, y) * cellSize + originPosition;
     }
