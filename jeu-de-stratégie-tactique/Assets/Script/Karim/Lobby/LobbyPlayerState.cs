@@ -12,20 +12,12 @@ namespace TEAM2
         public ulong ClientId;
         public ForceNetworkSerializeByMemcpy<FixedString32Bytes> PlayerName;
         public bool IsReady;
-        
-        
+
         public LobbyPlayerState(ulong clientId, ForceNetworkSerializeByMemcpy<FixedString32Bytes> playerName, bool isReady)
         {
             ClientId = clientId;
             PlayerName = playerName;
             IsReady = isReady;
-        }
-
-        public LobbyPlayerState(ulong clientId, string playerName) : this()
-        {
-            ClientId = clientId;
-            this.playerName = playerName;
-           
         }
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter

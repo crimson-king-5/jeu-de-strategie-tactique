@@ -71,7 +71,7 @@ namespace TEAM2
             }
             return true;
         }
-        private void HandlecClientConnected(ulong clientId)
+        private void  HandlecClientConnected (ulong clientId)
         {
             var playerData= ServerGameNetPortal.Instance.GetPlayerData(clientId);
 
