@@ -22,7 +22,7 @@ public class U_NET_API : MonoBehaviour
     static void StartLogin()
     {
         if (GUILayout.Button("Host"))NetworkManager.Singleton.StartHost();
-        if (GUILayout.Button("Client"))NetworkManager.Singleton.StartClient();
+        if (GUILayout.Button("Client") && NetworkManager.Singleton.ConnectedClientsList.Count < 1) NetworkManager.Singleton.StartClient();
         if (GUILayout.Button("Server"))NetworkManager.Singleton.StartServer();
     }
 

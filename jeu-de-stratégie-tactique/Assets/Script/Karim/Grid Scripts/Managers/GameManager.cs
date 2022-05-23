@@ -1,22 +1,33 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    public int index;
+
     public GameState gameState;
 
-
-     void Awake()
+    [MenuItem("GameObject/GameManager")]
+    static void InstanceGameManager()
     {
-        Instance = this;
+        GameObject gameManager = new GameObject("GameManager", typeof(GameManager),typeof(UnitManager));
     }
 
-     void Start()
+    void Awake()
     {
-        ChangeState(GameState.GenerateGrid);
+        if (Instance != null)
+        {
+            Destroy(Instance);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(Instance);
+        }
     }
 
     public void ChangeState(GameState newState)
@@ -24,12 +35,29 @@ public class GameManager : MonoBehaviour
         gameState = newState;
         switch (newState)
         {
-            case GameState.GenerateGrid:
-                GridManager.Instance.GenerateGrid();
+            case GameState.SpawnHeroes:
+                UnitManager.Instance.SpawnHeroes(1);
                 break;
+            case GameState.SpawnEnemies:
+                UnitManager.Instance.SpawnEnemies();
+                break;
+            case GameState.HerosTurn:
+                break;
+            case GameState.EnemiesTurn:
+                break;            
+            case GameState.LaunchGameLoop:
+             StartCoroutine(UnitManager.Instance.GameLoop());
+             break;
+        }
+    }
 
-            case GameState.SpawnHeroses:
-                UnitManager.Instance.SpawnHeroes();
+    public void ChangeState(int newState)
+    {
+        gameState = (GameState)newState;
+        switch ((GameState)newState)
+        {
+            case GameState.SpawnHeroes:
+                UnitManager.Instance.SpawnHeroes(1);
                 break;
             case GameState.SpawnEnemies:
                 UnitManager.Instance.SpawnEnemies();
@@ -38,16 +66,19 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.EnemiesTurn:
                 break;
+            case GameState.LaunchGameLoop:
+             StartCoroutine( UnitManager.Instance.GameLoop());
+                break;
         }
     }
 
 
     public enum GameState
     {
-        GenerateGrid = 0,
-        SpawnHeroses = 1,
-        SpawnEnemies = 2,
-        HerosTurn    = 3,
-        EnemiesTurn  = 4,
+        SpawnHeroes = 0,
+        SpawnEnemies = 1,
+        HerosTurn = 2,
+        EnemiesTurn = 3,
+        LaunchGameLoop = 4,
     }
 }

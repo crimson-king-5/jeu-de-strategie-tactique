@@ -12,5 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 240227d1eb5ce9244afb28a5866784ef, type: 3}
   m_Name: Hero 1
   m_EditorClassIdentifier: 
-  Faction: 0
-  UnitPrefab: {fileID: 6591904761266455718, guid: 676ec38b48e31f94ca1717866a24e48c, type: 3}
+  faction: 0
+  unitsName: Bebou
+  renderUnit: {fileID: 21300000, guid: 3564a7ec5490cc943b84ef4157df2150, type: 3}
+  unitStats:
+    lifeMax: 5
+    life: 5
+    atk: 1
+    mv: 4
+    range: 0
