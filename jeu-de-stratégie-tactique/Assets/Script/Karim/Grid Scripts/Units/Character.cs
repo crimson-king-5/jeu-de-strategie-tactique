@@ -30,16 +30,16 @@ public class Character : TEAM2.Unit
 
     public int xPos;
     public int yPos;
-    public int life { get { return scriptableUnit.unitStats.life; }set { scriptableUnit.unitStats.life = value; }}
+    public int life { get { return scriptableUnit.unitStats.life; } set { scriptableUnit.unitStats.life = value; }}
     public int range { get { return scriptableUnit.unitStats.range; } set { scriptableUnit.unitStats.range = value; } }
     public int atk { get { return scriptableUnit.unitStats.atk; } set { scriptableUnit.unitStats.atk = value; } }
     public int mv { get { return scriptableUnit.unitStats.mv; } set { scriptableUnit.unitStats.mv = value; } }
 
     public UnitStateMachine unitStateMachine = new UnitStateMachine();
 
-    public override void Init()
+    public override void Init(Vector2Int position)
     {
-        base.Init();
+        base.Init(position);
         scriptableUnit = scriptableUnit.GetCloneUnit();
     }
 
