@@ -285,8 +285,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loader: {fileID: 0}
-  width: 4
-  height: 4
+  width: 8
+  height: 8
   tileType: 0
   currentTilesRef: {fileID: 6868664544310108283, guid: e96067db266cbc140a5b0b377c7b103e, type: 3}
 --- !u!4 &1590950067

@@ -145,25 +145,25 @@ public class BattleGrid : MonoBehaviour
 
     void Update()
     {
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    if (tileType < Enum.GetValues(typeof(Tile.TileType)).Cast<Tile.TileType>().Last())
-        //    {
-        //        tileType++;
-        //    }
-        //    SetValue(GetMouseWorldPosition(), (int)tileType);
-        //    SetObjectToGrid(GetMouseWorldPosition(), currentTilesRef);
-        //}
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (tileType < Enum.GetValues(typeof(Tile.TileType)).Cast<Tile.TileType>().Last())
+            {
+                tileType++;
+            }
+            SetValue(GetMouseWorldPosition(), (int)tileType);
+            SetObjectToGrid(GetMouseWorldPosition(), currentTilesRef);
+        }
 
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        //    if (tileType > 0)
-        //    {
-        //        tileType--;
-        //    }
-        //    SetValue(GetMouseWorldPosition(), (int)tileType);
-        //    DeleteObjectToGrid(GetMouseWorldPosition());
-        //}
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (tileType > 0)
+            {
+                tileType--;
+            }
+            SetValue(GetMouseWorldPosition(), (int)tileType);
+            DeleteObjectToGrid(GetMouseWorldPosition());
+        }
     }
     #endregion
 
