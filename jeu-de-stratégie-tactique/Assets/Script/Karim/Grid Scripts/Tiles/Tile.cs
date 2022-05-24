@@ -8,7 +8,7 @@ public class Tile : MonoBehaviour
     [SerializeField] private bool _isWalkable;
     public TileType currentTileType = TileType.None;
 
-    public BaseUnit OccupiedUnit;
+    public Character OccupiedUnit;
 
     public int tileXPos;
     public int tileYPos;
@@ -53,7 +53,7 @@ public class Tile : MonoBehaviour
     //    }
     
     //}
-    public void SetUnit(BaseUnit unit)
+    public void SetUnit(Character unit)
     {
         if (unit.OccupiedTile != null) unit.OccupiedTile.OccupiedUnit = null;
         unit.transform.position = transform.position;

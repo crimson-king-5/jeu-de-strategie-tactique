@@ -94,9 +94,13 @@ public class BattleGrid : MonoBehaviour
 
     #region Unity Function
 
-    void Start()
+    private void Awake()
     {
         instance = this;
+    }
+
+    public void Init()
+    {
         BuildBattleGrid();
         List<GameObject> battleGrid = AllGridChild();
         for (int i = 0; i < battleGrid.Count; i++)
@@ -140,30 +144,29 @@ public class BattleGrid : MonoBehaviour
         {
             canCreateGrid = false;
         }
-        GameManager.Instance.ChangeState(0);
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (tileType < Enum.GetValues(typeof(Tile.TileType)).Cast<Tile.TileType>().Last())
-            {
-                tileType++;
-            }
-            SetValue(GetMouseWorldPosition(), (int)tileType);
-            SetObjectToGrid(GetMouseWorldPosition(), currentTilesRef);
-        }
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    if (tileType < Enum.GetValues(typeof(Tile.TileType)).Cast<Tile.TileType>().Last())
+        //    {
+        //        tileType++;
+        //    }
+        //    SetValue(GetMouseWorldPosition(), (int)tileType);
+        //    SetObjectToGrid(GetMouseWorldPosition(), currentTilesRef);
+        //}
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            if (tileType > 0)
-            {
-                tileType--;
-            }
-            SetValue(GetMouseWorldPosition(), (int)tileType);
-            DeleteObjectToGrid(GetMouseWorldPosition());
-        }
+        //if (Input.GetMouseButtonDown(1))
+        //{
+        //    if (tileType > 0)
+        //    {
+        //        tileType--;
+        //    }
+        //    SetValue(GetMouseWorldPosition(), (int)tileType);
+        //    DeleteObjectToGrid(GetMouseWorldPosition());
+        //}
     }
     #endregion
 
