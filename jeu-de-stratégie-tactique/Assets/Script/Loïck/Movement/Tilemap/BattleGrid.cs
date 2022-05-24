@@ -94,9 +94,13 @@ public class BattleGrid : MonoBehaviour
 
     #region Unity Function
 
-    void Start()
+    private void Awake()
     {
         instance = this;
+    }
+
+    public void Init()
+    {
         BuildBattleGrid();
         List<GameObject> battleGrid = AllGridChild();
         for (int i = 0; i < battleGrid.Count; i++)
@@ -140,7 +144,6 @@ public class BattleGrid : MonoBehaviour
         {
             canCreateGrid = false;
         }
-        GameManager.Instance.ChangeState(0);
     }
 
     void Update()
