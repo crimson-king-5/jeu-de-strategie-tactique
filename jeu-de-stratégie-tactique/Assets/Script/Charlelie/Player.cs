@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 namespace TEAM2
@@ -9,6 +10,14 @@ namespace TEAM2
         List<Unit> unitsList = new List<Unit>();
 
         List<Order> orderList = new List<Order>();
+
+        private Faction _playerFaction;
+
+        public Faction PlayerFaction
+        {
+            get => _playerFaction;
+        }
+
         bool hasFinishOrder = false;
 
 
@@ -25,7 +34,7 @@ namespace TEAM2
 
         public void SpawnUnit()
         {
-            Character[] list = UnitManager.Instance.SpawnCharacter(1);
+            Character[] list = UnitManager.Instance.SpawnCharacter(1,PlayerFaction);
             for (int i = unitsList.Count; i < list.Length; i++)
             {
                 unitsList.Add(list[i]);

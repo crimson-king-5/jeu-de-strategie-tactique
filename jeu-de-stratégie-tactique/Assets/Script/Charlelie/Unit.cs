@@ -15,7 +15,7 @@ namespace TEAM2
             private set;
         }
 
-        int _currLife;
+        int _currentLife;
 
         virtual public void Init(Vector2Int position)
         {

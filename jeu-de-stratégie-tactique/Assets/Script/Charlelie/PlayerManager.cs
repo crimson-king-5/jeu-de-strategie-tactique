@@ -6,26 +6,13 @@ namespace TEAM2
 {
     public class PlayerManager : MonoBehaviour
     {
-        public static PlayerManager instance;
+        private GameManager _gameManager;
 
         public List<GameObject> players = new List<GameObject>();
 
-        void Awake()
+        public void Init(GameManager gm)
         {
-            if (instance != null)
-            {
-                Destroy(instance);
-            }
-            else
-            {
-                instance = this;
-                DontDestroyOnLoad(instance);
-            }
-        }
-
-
-        public void InitPlayers()
-        {
+            _gameManager = gm;
             for (int i = 0; i < players.Count; i++)
             {
                 players[i].GetComponent<Player>().Init();

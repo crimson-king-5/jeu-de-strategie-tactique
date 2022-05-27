@@ -1,23 +1,42 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TEAM2;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private UnitManager _unitManager;
+    [SerializeField] private BattleGrid _battleGrid;
+    [SerializeField] private PlayerManager _playerManager;
+
+    public UnitManager UnitManager
+    {
+        get => _unitManager;
+    }
+    public BattleGrid BattleGrid
+    {
+        get => _battleGrid;
+    } 
+    public PlayerManager PlayerManager
+    {
+        get => _playerManager;
+    }
+
     public static GameManager Instance;
     public EffectManager effectManager;
 
     public GameState gameState;
 
-    TEAM2.Player p1;
-    TEAM2.Player p2;
+    Player p1;
+    Player p2;
 
     [MenuItem("GameObject/GameManager")]
     static void InstanceGameManager()
     {
-        GameObject gameManager = new GameObject("GameManager", typeof(GameManager), typeof(UnitManager));
+        GameObject gameManager = new GameObject("GameManager", typeof(GameManager));
     }
 
     public void InstantiateEffect(Vector3 effectPos, int index)
@@ -45,13 +64,23 @@ public class GameManager : MonoBehaviour
         OnGameStart();//TODO: Move func elsewhere
     }
 
+
+    void Reset()
+    {
+        _unitManager = _unitManager ?? GetComponent<UnitManager>() ?? gameObject.AddComponent<UnitManager>();
+        _battleGrid = _battleGrid ?? GetComponent<BattleGrid>() ?? gameObject.AddComponent<BattleGrid>();
+        _playerManager = _playerManager ?? GetComponent<PlayerManager>() ?? gameObject.AddComponent<PlayerManager>();
+        gameObject.tag = "GameManager";
+    }
+
     //When Game starting
     public void OnGameStart()
     {
+        _unitManager.Init(this);
         //First, spawn grid
-        BattleGrid.instance.Init();
+        _battleGrid.Init(this);
         //Then spawn each players characters randomly on grid
-        TEAM2.PlayerManager.instance.InitPlayers();
+        _playerManager.Init(this);
         //thirdly spawn pre-placed buildings (with some effects)
 
         //after choose randomly a player to start (Online Stuff)

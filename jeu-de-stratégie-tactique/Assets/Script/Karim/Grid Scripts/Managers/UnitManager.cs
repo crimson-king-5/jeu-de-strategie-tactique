@@ -1,24 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class UnitManager : MonoBehaviour
 {
-    public static UnitManager Instance;
+    private static UnitManager _instance;
 
-    private List<ScriptableUnit> _units;
+    [SerializeField] private GameManager _gameManager;
+
+    public static UnitManager Instance
+    {
+        get => _instance;
+    }
+
+    [SerializeField] private List<ScriptableUnit> _units;
 
     public Character SelectedHero;
 
-    private List<ScriptableUnit> heroesUnits = new List<ScriptableUnit>();
-    private List<ScriptableUnit> enemyUnits = new List<ScriptableUnit>();
+  [SerializeField] private List<ScriptableUnit> heroesUnits = new List<ScriptableUnit>();
+  [SerializeField] private List<ScriptableUnit> enemyUnits = new List<ScriptableUnit>();
+  [SerializeField] private List<ScriptableUnit> neutralUnits = new List<ScriptableUnit>();
 
-
-    private void Awake()
+    [Button("LoadUnits",ButtonSizes.Large)]
+    public void LoadUnits()
     {
-        Instance = this;
-
+        ClearUnits();
         _units = Resources.LoadAll<ScriptableUnit>("Units").ToList();
         for (int i = 0; i < _units.Count; i++)
         {
@@ -33,14 +41,37 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    public Character[] SpawnCharacter(int unitCount)
+    private void ClearUnits()
+    { 
+        _units?.Clear();
+        heroesUnits?.Clear();
+        neutralUnits?.Clear();
+        enemyUnits?.Clear();
+    }
+
+    void Reset()
+    {
+        LoadUnits();
+    }
+
+    void Awake()
+    {
+        _instance = this;
+    }
+
+    public void Init(GameManager gm)
+    {
+        _gameManager = gm;
+    }
+
+    public Character[] SpawnCharacter(int unitCount,Faction currentfaction)
     {
         Character[] chars = new Character[unitCount];
 
         for (int i = 0; i < unitCount; i++)
         {
-            Character randomPrefab = GetRandomUnitPerFaction(Faction.Hero);
-            Tile randomSpawnTile = BattleGrid.instance.SpawnRandomUnit();
+            Character randomPrefab = GetRandomUnitPerFaction(currentfaction);
+            Tile randomSpawnTile = _gameManager.BattleGrid.SpawnRandomUnit();
             randomPrefab.xPos = randomSpawnTile.tileXPos;
             randomPrefab.yPos = randomSpawnTile.tileYPos;
             randomSpawnTile.SetUnit(randomPrefab);

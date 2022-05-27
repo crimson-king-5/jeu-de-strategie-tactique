@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2aa177767817a34cad30ebe0fef77ba, type: 3}
   m_Name: NewMap
   m_EditorClassIdentifier: 
-  width: 8
-  height: 8
+  width: 4
+  height: 4

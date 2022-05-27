@@ -10,6 +10,7 @@ public class Character : TEAM2.Unit
 {
     public Tile OccupiedTile; 
     public ScriptableUnit scriptableUnit;
+    private GameManager _GameManager;
 
     public enum Team
     {
@@ -48,7 +49,7 @@ public class Character : TEAM2.Unit
         unitStateMachine.currentState = UnitStateMachine.UnitState.Attack;
         Tile targetTile;
         int targetLife;
-        targetTile = BattleGrid.instance.GetTile(xPos, yPos);
+        targetTile = _GameManager.BattleGrid.GetTile(xPos, yPos);
         GameManager.Instance.InstantiateEffect(targetTile.transform.position,0);
         targetLife = targetTile.OccupiedUnit.scriptableUnit.unitStats.life;
         Debug.Log("Unit " + targetTile.OccupiedUnit.scriptableUnit.unitsName + " take " + atk + " damage");
@@ -61,7 +62,7 @@ public class Character : TEAM2.Unit
     [ClientRpc]
     public void MoveToClientRpc(int x, int y)
     {
-        Tile tile = BattleGrid.instance.GetTile(x, y);
+        Tile tile = _GameManager.BattleGrid.GetTile(x, y);
         StartCoroutine(MoveUnit(tile));
         OccupiedTile.OccupiedUnit = null;
         OccupiedTile = tile;
@@ -81,7 +82,7 @@ public class Character : TEAM2.Unit
     {
         bool canMove;
         unitStateMachine.currentState = UnitStateMachine.UnitState.MoveTo;
-        Tile tile = BattleGrid.instance.GetTile(x, y);
+        Tile tile = _GameManager.BattleGrid.GetTile(x, y);
         if (tile != null && tile.Walkable)
         {
             MoveToClientRpc(x, y);
