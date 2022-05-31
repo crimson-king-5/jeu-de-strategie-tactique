@@ -156,13 +156,13 @@ public class Resource_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        FoodT.text = "Food : " + Player1.Food.ToString();
-        StoneT.text = " Stone : " + Player1.Stone.ToString();
-        MoonT.text = "Moon : " + Player1.Moon.ToString();
-        FermeT.text = "Ferme : " + Player1.Ferme.ToString();
-        MineT.text = "Mine : " + Player1.Mine.ToString();
-        HouseT.text = "House : " + Player1.House.ToString();
-        CastleT.text = "Castle : " + Player1.Castle.ToString();
+        if (null != FoodT) FoodT.text = "Food : " + Player1.Food.ToString();
+        if (null != StoneT) StoneT.text = " Stone : " + Player1.Stone.ToString();
+        if (null != MoonT) MoonT.text = "Moon : " + Player1.Moon.ToString();
+        if (null != FermeT) FermeT.text = "Ferme : " + Player1.Ferme.ToString();
+        if (null != MineT) MineT.text = "Mine : " + Player1.Mine.ToString();
+        if (null != HouseT) HouseT.text = "House : " + Player1.House.ToString();
+        if (null != CastleT) CastleT.text = "Castle : " + Player1.Castle.ToString();
     }
 
 }
