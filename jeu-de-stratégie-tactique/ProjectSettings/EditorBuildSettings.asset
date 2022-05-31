@@ -14,10 +14,17 @@ EditorBuildSettings:
   - enabled: 0
     path: "Assets/Scenes/Lo\xEFck/Multi test.unity"
     guid: 8d3829f8917f9e64995ee9d8f3caa808
+<<<<<<< HEAD
   - enabled: 1
     path: Assets/Scenes/CTEest.unity
     guid: 9a6363327ad25084a85c9f4330d54a1e
   - enabled: 1
+=======
+  - enabled: 0
+    path: Assets/Scenes/Karim/Menu.unity
+    guid: 3b594c6201fcaf14c8548838ba627b33
+  - enabled: 0
+>>>>>>> Loïck
     path: "Assets/Scenes/Lo\xEFck/Default.unity"
     guid: da0aba3307410fe4aa1481439570a99e
   m_configObjects: {}
