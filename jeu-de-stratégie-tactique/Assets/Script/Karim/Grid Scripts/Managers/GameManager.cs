@@ -30,8 +30,14 @@ public class GameManager : MonoBehaviour
 
     public GameState gameState;
 
-    Player p1;
-    Player p2;
+    public Player P1
+    {
+        get => PlayerManager.PlayersGameObjects[0].GetComponent<Player>();
+    }   
+    public Player P2
+    {
+        get => PlayerManager.PlayersGameObjects[1].GetComponent<Player>();
+    }
 
     [MenuItem("GameObject/GameManager")]
     static void InstanceGameManager()
@@ -79,12 +85,13 @@ public class GameManager : MonoBehaviour
         _unitManager.Init(this);
         //First, spawn grid
         _battleGrid.Init(this);
-        //Then spawn each players characters randomly on grid
+        //Then spawn each playersGameObjects characters randomly on grid
         _playerManager.Init(this);
         //thirdly spawn pre-placed buildings (with some effects)
 
         //after choose randomly a player to start (Online Stuff)
 
+        StartCoroutine(_unitManager.GameLoop());
         //Finally begin choose action part
         ChangeState(GameState.CHOOSEACTION);
     }
