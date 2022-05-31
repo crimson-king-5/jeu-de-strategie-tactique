@@ -35,7 +35,7 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    public void ShowSelectedHero(BaseUnit hero)
+    public void ShowSelectedHero(Character hero)
     {
         if (hero == null)
         {

@@ -12,7 +12,18 @@ using Random = UnityEngine.Random;
 
 public class BattleGrid : MonoBehaviour
 {
-    public static BattleGrid instance;
+    [SerializeField] private GameManager _gameManager;
+    [SerializeField]private GameObject _currentTilesRef;
+
+
+    public GameObject currentTilesRef
+    {
+        get => _currentTilesRef;
+        set => _currentTilesRef = value;
+    }
+
+    public TileList tilesSelector;
+    [LabelText("/n")]
     private Vector2 originPosition;
     private int[,] gridArray;
     private TextMesh[,] debugTextArray;
@@ -24,7 +35,6 @@ public class BattleGrid : MonoBehaviour
     public int width = 4;
     public int height = 4;
     public Tile.TileType tileType;
-    [HideInEditorMode] public GameObject currentTilesRef;
     [ReadOnly]
     private List<GameObject> tilesRender;
 
@@ -94,9 +104,10 @@ public class BattleGrid : MonoBehaviour
 
     #region Unity Function
 
-    void Start()
+
+    public void Init(GameManager gm)
     {
-        instance = this;
+        _gameManager = gm;
         BuildBattleGrid();
         List<GameObject> battleGrid = AllGridChild();
         for (int i = 0; i < battleGrid.Count; i++)
@@ -110,14 +121,14 @@ public class BattleGrid : MonoBehaviour
             }
             else
             {
-                UnitManager.Instance.SelectedHero = currentTile.OccupiedUnit;
+                _gameManager.UnitManager.SelectedHero = currentTile.OccupiedUnit;
             }
             bool isdoublon = false;
             if (tilesRender != null)
             {
-                for (int o = 0; o < tilesRender.Count; o++)
+                for (int j = 0; j < tilesRender.Count; j++)
                 {
-                    if (tilesRender[o].transform.position == battleGrid[i].transform.position)
+                    if (tilesRender[j].transform.position == battleGrid[i].transform.position)
                     {
                         isdoublon = true;
                     }
@@ -140,7 +151,6 @@ public class BattleGrid : MonoBehaviour
         {
             canCreateGrid = false;
         }
-        GameManager.Instance.ChangeState(0);
     }
 
     void Update()
@@ -313,7 +323,7 @@ public class BattleGrid : MonoBehaviour
             }
             else
             {
-                UnitManager.Instance.SelectedHero = currentTile.OccupiedUnit;
+                _gameManager.UnitManager.SelectedHero = currentTile.OccupiedUnit;
             }
         }
     }
