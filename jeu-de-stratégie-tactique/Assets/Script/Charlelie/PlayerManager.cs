@@ -8,22 +8,43 @@ namespace TEAM2
     {
         private GameManager _gameManager;
 
-        public List<GameObject> players = new List<GameObject>();
+        public GameObject[] PlayersGameObjects
+        {
+            get => _playersGameObjects;
+        }
+        private GameObject[] _playersGameObjects;
+
+        private List<Player> players = new List<Player>();
+
+        public Player CurrentPlayer
+        {
+            get => players[index];
+        }
+
+        public int index;
 
         public void Init(GameManager gm)
         {
             _gameManager = gm;
-            for (int i = 0; i < players.Count; i++)
+            index = 0;
+            _playersGameObjects = GameObject.FindGameObjectsWithTag("Player");
+            for (int i = 0; i < _playersGameObjects.Length; i++)
             {
-                players[i].GetComponent<Player>().Init();
+                players.Add(_playersGameObjects[i].GetComponent<Player>()); 
+                players[i].Init(_gameManager);
             }
+        }
+
+        public void SetUnit(Character unit,Vector2Int unitPos)
+        {
+            unit.transform.position = ;
         }
 
         public void CheckIfOrdersFinished()
         {
-            for (int i = 0; i < players.Count; i++)
+            for (int i = 0; i < PlayersGameObjects.Length; i++)
             {
-                if (!players[i].GetComponent<Player>().Ready)
+                if (!PlayersGameObjects[i].GetComponent<Player>().Ready)
                     return;
             }
             GameManager.Instance.ChangeState(GameManager.GameState.RESOLUTIONPHASE);

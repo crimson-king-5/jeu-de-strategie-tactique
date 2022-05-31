@@ -9,32 +9,27 @@ using UnityEditor.Animations;
 using UnityEditor.Graphs;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using UnityEngine.Tilemaps;
 
 public class BattleGrid : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
-    [SerializeField]private GameObject _currentTilesRef;
+    [SerializeField] private GameObject _currentTilesRef;
+    [SerializeField] private Grid _grid;
+    [SerializeField] private Tilemap _tilemap;
 
-
-    public GameObject currentTilesRef
-    {
-        get => _currentTilesRef;
-        set => _currentTilesRef = value;
-    }
-
-    public TileList tilesSelector;
     [LabelText("/n")]
     private Vector2 originPosition;
     private int[,] gridArray;
     private TextMesh[,] debugTextArray;
-    private List<GameObject> tiles;
+    private List<TileBase> tiles;
     private float cellSize = 1;
     private int fontSize;
     private bool canCreateGrid = true;
     public GridLoader loader;
     public int width = 4;
     public int height = 4;
-    public Tile.TileType tileType;
+    public BattleGridTile.TileType tileType;
     [ReadOnly]
     private List<GameObject> tilesRender;
 
@@ -64,28 +59,6 @@ public class BattleGrid : MonoBehaviour
         }
     }
 
-
-    [HorizontalGroup("Split/Right")]
-    [Button("Delete Battle Grid", ButtonSizes.Large), GUIColor(1, 0, 0, 1)]
-    public void DeleteBattleGrid()
-    {
-        UpdateGridList();
-        if (tiles != null)
-        {
-            for (int i = 0; i < tiles.Count; i++)
-            {
-                DestroyImmediate(tiles[i]);
-            }
-            tiles.Clear();
-            canCreateGrid = true;
-        }
-
-        if (tilesRender != null)
-        {
-            tilesRender.Clear();
-        }
-    }
-
     [Button("Save Map", ButtonSizes.Large), GUIColor(1, 0, 1)]
     public void SaveTilemap()
     {
@@ -105,136 +78,54 @@ public class BattleGrid : MonoBehaviour
     #region Unity Function
 
 
-    public void Init(GameManager gm)
-    {
-        _gameManager = gm;
-        BuildBattleGrid();
-        List<GameObject> battleGrid = AllGridChild();
-        for (int i = 0; i < battleGrid.Count; i++)
-        {
-            Tile currentTile = battleGrid[i].gameObject.GetComponent<Tile>();
-            if (currentTile.OccupiedUnit == null)
-            {
-                currentTile.currentTileType = tileType;
-                currentTile.CheckIfCanWalk();
-                battleGrid[i].GetComponent<TextMesh>().text = 1.ToString();
-            }
-            else
-            {
-                _gameManager.UnitManager.SelectedHero = currentTile.OccupiedUnit;
-            }
-            bool isdoublon = false;
-            if (tilesRender != null)
-            {
-                for (int j = 0; j < tilesRender.Count; j++)
-                {
-                    if (tilesRender[j].transform.position == battleGrid[i].transform.position)
-                    {
-                        isdoublon = true;
-                    }
-                }
-            }
-            else
-            {
-                tilesRender = new List<GameObject>();
-            }
-            if (!isdoublon)
-            {
-                GameObject instanceObj = Instantiate(currentTilesRef);
-                instanceObj.transform.position = battleGrid[i].transform.position;
-                instanceObj.transform.SetParent(transform);
-                tilesRender.Add(instanceObj);
-            }
-            battleGrid[i].GetComponent<Tile>().currentTileType = Tile.TileType.Walkable;
-        }
-        if (tiles != null)
-        {
-            canCreateGrid = false;
-        }
-    }
 
     void Update()
     {
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    if (tileType < Enum.GetValues(typeof(Tile.TileType)).Cast<Tile.TileType>().Last())
-        //    {
-        //        tileType++;
-        //    }
-        //    SetValue(GetMouseWorldPosition(), (int)tileType);
-        //    SetObjectToGrid(GetMouseWorldPosition(), currentTilesRef);
-        //}
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (tileType < Enum.GetValues(typeof(BattleGridTile.TileType)).Cast<BattleGridTile.TileType>().Last())
+            {
+                tileType++;
+            }
+            SetValue(GetMouseWorldPosition(), (int)tileType);
+        }
 
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        //    if (tileType > 0)
-        //    {
-        //        tileType--;
-        //    }
-        //    SetValue(GetMouseWorldPosition(), (int)tileType);
-        //    DeleteObjectToGrid(GetMouseWorldPosition());
-        //}
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (tileType > 0)
+            {
+                tileType--;
+            }
+        }
     }
     #endregion
 
 
     #region Runtime Function
-    public List<Tile> GetValidTiles()
+    public void Init(GameManager gm)
     {
-        List<Tile> tiles = new List<Tile>();
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            Tile currentiles = transform.GetChild(i).GetComponent(typeof(Tile)) as Tile;
-            if (currentiles != null)
-            {
-                currentiles.CheckIfCanWalk();
-                if (currentiles.Walkable)
-                {
-                    tiles.Add(currentiles);
-                }
-            }
-        }
-
-        return tiles;
+        _gameManager = gm;
+        BuildBattleGrid();
+        tiles = _tilemap.GetTilesBlock(_tilemap.cellBounds).ToList();
     }
+
 
     private void UpdateGridList()
     {
-        tiles = AllGridChild();
-        if (loader != null)
-        {
-            gridArray = loader.gridArray;
-            debugTextArray = loader.debugTextArray;
-            height = loader.height;
-            width = loader.width;
-        }
-        else if (gridArray != null)
-        {
-            for (int x = 0; x < gridArray.GetLength(0); x++)
-            {
-                for (int y = 0; y < gridArray.GetLength(1); y++)
-                {
-                    debugTextArray[x, y] = transform.GetChild(y + x).GetComponent<TextMesh>();
-                }
-            }
-        }
+
     }
 
-    public Tile SpawnRandomUnit()
+    public Vector2Int SpawnRandomUnit()
     {
-        int index = Random.Range(0, GetValidTiles().Count);
-        return GetValidTiles()[index];
+        int index = Random.Range(0, tiles.Count);
+        return _tilemap.GetTile((BattleGridTile)tiles[index].);
     }
 
-    public Tile GetTile(int x, int y)
+    public BattleGridTile GetTile(int x, int y)
     {
-        if (OntheGrid(x, y))
+        if (OntheGrid(x,y))
         {
-            if (debugTextArray[x, y] != null)
-            {
-                return debugTextArray[x, y].GetComponent<Tile>();
-
-            }
+            return GetTile(x, y);
         }
         Debug.LogError("Erreur sortie de Grille");
         return null;
@@ -243,7 +134,7 @@ public class BattleGrid : MonoBehaviour
 
     public bool OntheGrid(int x, int y)
     {
-        bool onGrid = x >= 0 && y >= 0 && x <= width - 1 && y <= height - 1;
+        bool onGrid = _tilemap.GetTile(new Vector3Int(x,y)) != null;
 
         return onGrid;
     }
@@ -269,12 +160,7 @@ public class BattleGrid : MonoBehaviour
         {
             for (int y = 0; y < gridArray.GetLength(1); y++)
             {
-                float posx = (x * cellSize + y * cellSize) / 2f;
-                float posy = (x * cellSize - y * cellSize) / 4f;
-                debugTextArray[x, y] = CreateText(null, gridArray[x, y].ToString(), GetWorldPosition(posx, posy) + new Vector2(posx, posy), fontSize);
-                Tile debugTiles = debugTextArray[x, y].GetComponent<Tile>();
-                debugTiles.tileXPos = x;
-                debugTiles.tileYPos = y;
+                debugTextArray[x, y] = CreateText(null, gridArray[x, y].ToString(), _grid.CellToWorld( new Vector3Int(x, y)), fontSize);
                 debugTextArray[x, y].transform.SetParent(transform);
             }
         }
@@ -313,17 +199,18 @@ public class BattleGrid : MonoBehaviour
         }
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
-            Tile currentTile = debugTextArray[x, y].gameObject.GetComponent<Tile>();
-            if (currentTile.OccupiedUnit == null)
+            BattleGridTile currentBattleGridTile = debugTextArray[x, y].gameObject.GetComponent<BattleGridTile>();
+            Character OccupiedUnit = _gameManager.PlayerManager.CurrentPlayer.GetCharacter(x, y);
+            if (OccupiedUnit == null)
             {
-                currentTile.currentTileType = tileType;
-                currentTile.CheckIfCanWalk();
+                currentBattleGridTile.currentTileType = tileType;
+                currentBattleGridTile.CheckIfCanWalk();
                 gridArray[x, y] = value;
                 debugTextArray[x, y].text = gridArray[x, y].ToString();
             }
             else
             {
-                _gameManager.UnitManager.SelectedHero = currentTile.OccupiedUnit;
+                _gameManager.UnitManager.SelectedHero = OccupiedUnit;
             }
         }
     }
@@ -335,73 +222,16 @@ public class BattleGrid : MonoBehaviour
         SetValue(x, y, value);
     }
 
-    public void SetObjectToGrid(Vector2 worldPosition, GameObject obj)
-    {
-        int x, y;
-        GetXY(worldPosition, out x, out y);
-        if (x >= 0 && y >= 0 && x < width && y < height)
-        {
-            bool isdoublon = false;
-            if (tilesRender != null)
-            {
-                for (int i = 0; i < tilesRender.Count; i++)
-                {
-                    if (tilesRender[i].transform.position == debugTextArray[x, y].transform.position)
-                    {
-                        isdoublon = true;
-                    }
-                }
-            }
-            else
-            {
-                tilesRender = new List<GameObject>();
-            }
-            if (!isdoublon)
-            {
-                GameObject instanceObj = Instantiate(obj);
-                instanceObj.transform.position = debugTextArray[x, y].transform.position;
-                instanceObj.transform.SetParent(transform);
-                tilesRender.Add(instanceObj);
-            }
-        }
-    }
-
-    public void DeleteObjectToGrid(Vector2 worldPosition)
-    {
-        int x, y;
-        GetXY(worldPosition, out x, out y);
-        if (x >= 0 && y >= 0 && x < width && y < height)
-        {
-            if (this.tilesRender != null)
-            {
-                for (int i = 0; i < tilesRender.Count; i++)
-                {
-                    if (tilesRender[i].transform.position == debugTextArray[x, y].transform.position)
-                    {
-                        Destroy(tilesRender[i]);
-                        tilesRender.Remove(tilesRender[i]);
-                    }
-                }
-            }
-        }
-    }
-
-    public List<GameObject> AllGridChild()
-    {
-        List<GameObject> allChild = new List<GameObject>();
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            allChild.Add(transform.GetChild(i).gameObject);
-        }
-
-        return allChild;
-    }
-
-
     private void GetXY(Vector2 worldPosition, out int x, out int y)
     {
         x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
         y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
+    }
+
+    private void GetXY(Vector2 worldPosition, out float x, out float y)
+    {
+        x = Mathf.Round((worldPosition - originPosition).x / cellSize);
+        y = Mathf.Round((worldPosition - originPosition).y / cellSize);
     }
 
     private Vector2 GetWorldPosition(float x, float y)
@@ -411,7 +241,7 @@ public class BattleGrid : MonoBehaviour
 
     public static TextMesh CreateText(Transform parent, string text, Vector2 localPosition, int fontSize)
     {
-        GameObject textObj = new GameObject("World_Text", typeof(TextMesh), typeof(Tile));
+        GameObject textObj = new GameObject("World_Text", typeof(TextMesh), typeof(BattleGridTile));
         textObj.layer = 6;
         Transform localTransform = textObj.transform;
         localTransform.SetParent(parent, false);
