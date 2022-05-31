@@ -35,10 +35,10 @@ namespace TEAM2
             }
         }
 
-        public void SetUnit(Character unit,Vector2Int unitPos)
+        /*public void SetUnit(Character unit,Vector2Int unitPos)
         {
             unit.transform.position = ;
-        }
+        }*/
 
         public void CheckIfOrdersFinished()
         {

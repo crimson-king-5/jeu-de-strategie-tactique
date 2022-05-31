@@ -115,7 +115,7 @@ public class BattleGrid : MonoBehaviour
 
     }
 
-    public Vector2Int SpawnRandomUnit()
+  public Vector2Int SpawnRandomUnit()
     {
         int index = Random.Range(0, tiles.Count);
         return _tilemap.GetTile((BattleGridTile)tiles[index].);

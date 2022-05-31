@@ -65,7 +65,7 @@ public class UnitManager : MonoBehaviour
             Vector2Int randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
             randomPrefab.xPos = randomSpawnBattleGridTile.x;
             randomPrefab.yPos = randomSpawnBattleGridTile.y;
-            _gameManager.PlayerManager.SetUnit(randomPrefab,randomPrefab.xPos, randomSpawnBattleGridTile);
+          //  _gameManager.PlayerManager.SetUnit(randomPrefab,randomPrefab.xPos, randomSpawnBattleGridTile);
             chars[i] = randomPrefab;
         }
         return chars;
