@@ -38,6 +38,7 @@ public class Resource_Manager : MonoBehaviour
         public int House { get; private set; }
         public int Castle { get; private set; }
 
+
         public int LockingTrade()
         {
             if (!LockTrade)
@@ -84,6 +85,7 @@ public class Resource_Manager : MonoBehaviour
             }
             return -1;
         }
+
         public int FermeAdd()
         {
             if (!LockTrade)
@@ -148,7 +150,6 @@ public class Resource_Manager : MonoBehaviour
             }
             return -1;
         }
-
 
     }
 

@@ -6,12 +6,24 @@ using System.Runtime.CompilerServices;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEditor.Animations;
+using UnityEditor.Graphs;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class BattleGrid : MonoBehaviour
 {
-    public static BattleGrid instance;
+    [SerializeField] private GameManager _gameManager;
+    [SerializeField]private GameObject _currentTilesRef;
+
+
+    public GameObject currentTilesRef
+    {
+        get => _currentTilesRef;
+        set => _currentTilesRef = value;
+    }
+
+    public TileList tilesSelector;
+    [LabelText("/n")]
     private Vector2 originPosition;
     private int[,] gridArray;
     private TextMesh[,] debugTextArray;
@@ -23,14 +35,13 @@ public class BattleGrid : MonoBehaviour
     public int width = 4;
     public int height = 4;
     public Tile.TileType tileType;
-    [HideInEditorMode] public GameObject currentTilesRef;
     [ReadOnly]
     private List<GameObject> tilesRender;
 
     #region Grid Init
     #region Editor Function
     [MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
-    static void InstanceGridEditor()
+    public static void InstanceGridEditor()
     {
         GameObject instanceGridEditor = new GameObject("Grid Editor", typeof(BattleGrid));
         instanceGridEditor.tag = "Grid";
@@ -93,10 +104,49 @@ public class BattleGrid : MonoBehaviour
 
     #region Unity Function
 
-    void Start()
+
+    public void Init(GameManager gm)
     {
-        instance = this;
+        _gameManager = gm;
         BuildBattleGrid();
+        List<GameObject> battleGrid = AllGridChild();
+        for (int i = 0; i < battleGrid.Count; i++)
+        {
+            Tile currentTile = battleGrid[i].gameObject.GetComponent<Tile>();
+            if (currentTile.OccupiedUnit == null)
+            {
+                currentTile.currentTileType = tileType;
+                currentTile.CheckIfCanWalk();
+                battleGrid[i].GetComponent<TextMesh>().text = 1.ToString();
+            }
+            else
+            {
+                _gameManager.UnitManager.SelectedHero = currentTile.OccupiedUnit;
+            }
+            bool isdoublon = false;
+            if (tilesRender != null)
+            {
+                for (int j = 0; j < tilesRender.Count; j++)
+                {
+                    if (tilesRender[j].transform.position == battleGrid[i].transform.position)
+                    {
+                        isdoublon = true;
+                    }
+                }
+            }
+            else
+            {
+                tilesRender = new List<GameObject>();
+            }
+            if (!isdoublon)
+            {
+                GameObject instanceObj = Instantiate(currentTilesRef);
+                instanceObj.transform.position = battleGrid[i].transform.position;
+                instanceObj.transform.SetParent(transform);
+                tilesRender.Add(instanceObj);
+            }
+            battleGrid[i].GetComponent<Tile>().currentTileType = Tile.TileType.Walkable;
+        }
         if (tiles != null)
         {
             canCreateGrid = false;
@@ -105,25 +155,25 @@ public class BattleGrid : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (tileType < Enum.GetValues(typeof(Tile.TileType)).Cast<Tile.TileType>().Last())
-            {
-                tileType++;
-            }
-            SetValue(GetMouseWorldPosition(), (int)tileType);
-            SetObjectToGrid(GetMouseWorldPosition(), currentTilesRef);
-        }
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    if (tileType < Enum.GetValues(typeof(Tile.TileType)).Cast<Tile.TileType>().Last())
+        //    {
+        //        tileType++;
+        //    }
+        //    SetValue(GetMouseWorldPosition(), (int)tileType);
+        //    SetObjectToGrid(GetMouseWorldPosition(), currentTilesRef);
+        //}
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            if (tileType > 0)
-            {
-                tileType--;
-            }
-            SetValue(GetMouseWorldPosition(), (int)tileType);
-            DeleteObjectToGrid(GetMouseWorldPosition());
-        }
+        //if (Input.GetMouseButtonDown(1))
+        //{
+        //    if (tileType > 0)
+        //    {
+        //        tileType--;
+        //    }
+        //    SetValue(GetMouseWorldPosition(), (int)tileType);
+        //    DeleteObjectToGrid(GetMouseWorldPosition());
+        //}
     }
     #endregion
 
@@ -135,8 +185,14 @@ public class BattleGrid : MonoBehaviour
         for (int i = 0; i < transform.childCount; i++)
         {
             Tile currentiles = transform.GetChild(i).GetComponent(typeof(Tile)) as Tile;
-            if (currentiles != null && currentiles.Walkable)
-                tiles.Add(currentiles);
+            if (currentiles != null)
+            {
+                currentiles.CheckIfCanWalk();
+                if (currentiles.Walkable)
+                {
+                    tiles.Add(currentiles);
+                }
+            }
         }
 
         return tiles;
@@ -172,10 +228,13 @@ public class BattleGrid : MonoBehaviour
 
     public Tile GetTile(int x, int y)
     {
-        if (debugTextArray[x, y] != null)
+        if (OntheGrid(x, y))
         {
-            return debugTextArray[x, y].GetComponent<Tile>();
+            if (debugTextArray[x, y] != null)
+            {
+                return debugTextArray[x, y].GetComponent<Tile>();
 
+            }
         }
         Debug.LogError("Erreur sortie de Grille");
         return null;
@@ -210,17 +269,15 @@ public class BattleGrid : MonoBehaviour
         {
             for (int y = 0; y < gridArray.GetLength(1); y++)
             {
-                debugTextArray[x, y] = CreateText(null, gridArray[x, y].ToString(), GetWorldPosition(x, y) + new Vector2(cellSize, cellSize) * .5f, fontSize);
+                float posx = (x * cellSize + y * cellSize) / 2f;
+                float posy = (x * cellSize - y * cellSize) / 4f;
+                debugTextArray[x, y] = CreateText(null, gridArray[x, y].ToString(), GetWorldPosition(posx, posy) + new Vector2(posx, posy), fontSize);
                 Tile debugTiles = debugTextArray[x, y].GetComponent<Tile>();
                 debugTiles.tileXPos = x;
                 debugTiles.tileYPos = y;
                 debugTextArray[x, y].transform.SetParent(transform);
-                Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 1f);
-                Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 1f);
             }
         }
-        Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 1f);
-        Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 1f);
     }
 
     public int GetValue(int x, int y)
@@ -266,7 +323,7 @@ public class BattleGrid : MonoBehaviour
             }
             else
             {
-                UnitManager.Instance.SelectedHero = currentTile.OccupiedUnit;
+                _gameManager.UnitManager.SelectedHero = currentTile.OccupiedUnit;
             }
         }
     }
@@ -347,7 +404,7 @@ public class BattleGrid : MonoBehaviour
         y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
     }
 
-    private Vector2 GetWorldPosition(int x, int y)
+    private Vector2 GetWorldPosition(float x, float y)
     {
         return new Vector2(x, y) * cellSize + originPosition;
     }
@@ -355,6 +412,7 @@ public class BattleGrid : MonoBehaviour
     public static TextMesh CreateText(Transform parent, string text, Vector2 localPosition, int fontSize)
     {
         GameObject textObj = new GameObject("World_Text", typeof(TextMesh), typeof(Tile));
+        textObj.layer = 6;
         Transform localTransform = textObj.transform;
         localTransform.SetParent(parent, false);
         localTransform.localPosition = localPosition;

@@ -10,12 +10,17 @@ public class ScriptableUnit : ScriptableObject
     public string unitsName;
     public Sprite renderUnit;
     [SerializeField] public UnitStats unitStats;
+    public ScriptableUnit GetCloneUnit()
+    {
+       return Instantiate(this);
+    }
 }
 
 [System.Serializable]
 public class UnitStats
 {
-    [Range(0, 99)] public int life;
+    [Range(0, 99)] public int lifeMax;
+    public int life;
     [Range(0, 99)] public int atk;
     [Range(0, 99)] public int mv;
     [Range(0, 99)] public int range;

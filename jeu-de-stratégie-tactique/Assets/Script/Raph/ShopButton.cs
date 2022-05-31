@@ -6,9 +6,11 @@ public class ShopButton : MonoBehaviour
 {
     private Resource_Manager R;
 
+    //Modifier le type de boutton permet de modifier le type de batiment acheter
     public enum Upgrade { Ferme, Mine, House, Castle }
     public Upgrade type;
 
+    //Coût des batiments
     public struct Ferme
     {
         public static int Food { get => 0; }
@@ -34,9 +36,9 @@ public class ShopButton : MonoBehaviour
         public static int Moon { get => 0; }
     }
 
+    //La fonction d'échange
     public void Trading()
     {
-
         switch (type)
         {
             case Upgrade.Ferme:
@@ -164,6 +166,8 @@ public class ShopButton : MonoBehaviour
                 break;
         }
     }
+
+    //Les fonctions d'ajout de ressource par bouton (Debug Only)
     public void FoodAdd()
     {
         R.Player1.UnlockingTrade();
@@ -183,25 +187,10 @@ public class ShopButton : MonoBehaviour
         R.Player1.LockingTrade();
     }
 
-    private Resource_Manager.Resources1 GetResources1()
-    {
-        /*
-         * if (PlayerID == 1)
-         * return R.Player1
-         * 
-         * else return R.Player2 
-         */
-        return R.Player1;
-    }
     // Start is called before the first frame update
     void Start()
     {
+        //recupere le resource manager
         R = GameObject.FindGameObjectWithTag("Resource").GetComponent<Resource_Manager>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

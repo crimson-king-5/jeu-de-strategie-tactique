@@ -16,7 +16,8 @@ MonoBehaviour:
   unitsName: Bebou
   renderUnit: {fileID: 21300000, guid: 3564a7ec5490cc943b84ef4157df2150, type: 3}
   unitStats:
-    life: 99
+    lifeMax: 5
+    life: 5
     atk: 1
-    mv: 5
+    mv: 4
     range: 0
