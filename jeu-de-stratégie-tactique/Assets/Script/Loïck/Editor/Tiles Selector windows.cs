@@ -6,16 +6,6 @@ using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
 
-public class TilesSelector : OdinEditorWindow
-{
-    [MenuItem("Cassoulet Tool/Tiles Selector")]
-    private static void OpenWindow()
-    {
-        GetWindow<TilesSelector>().Show();
-    }
-    public TileList Editor;
-}
-
 [System.Serializable]
 public class TileList
 {
@@ -26,10 +16,7 @@ public class TileList
     [Button("Selection Tile", ButtonSizes.Medium), GUIColor(0, 1, 0, 1)]
     public void PickupThePrefab()
     {
-        if (GameObject.FindGameObjectWithTag("Grid Editor").GetComponent<GridInit>() != null)
-        {
-            GridInit gridInit = GameObject.FindGameObjectWithTag("Grid Editor").GetComponent<GridInit>();
-            gridInit.currentTilesRef = SomePrefab;
-        }
+        BattleGrid gridInit = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().BattleGrid;
+        gridInit.currentTilesRef = SomePrefab;
     }
 }

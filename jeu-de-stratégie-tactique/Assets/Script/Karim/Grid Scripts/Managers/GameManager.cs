@@ -1,53 +1,129 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TEAM2;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
-    public GameState gameState;
+    [SerializeField] private UnitManager _unitManager;
+    [SerializeField] private BattleGrid _battleGrid;
+    [SerializeField] private PlayerManager _playerManager;
 
-
-     void Awake()
+    public UnitManager UnitManager
     {
-        Instance = this;
+        get => _unitManager;
+    }
+    public BattleGrid BattleGrid
+    {
+        get => _battleGrid;
+    } 
+    public PlayerManager PlayerManager
+    {
+        get => _playerManager;
     }
 
-     void Start()
+    public static GameManager Instance;
+    public EffectManager effectManager;
+
+    public GameState gameState;
+
+    Player p1;
+    Player p2;
+
+    [MenuItem("GameObject/GameManager")]
+    static void InstanceGameManager()
     {
-        ChangeState(GameState.GenerateGrid);
+        GameObject gameManager = new GameObject("GameManager", typeof(GameManager));
+    }
+
+    public void InstantiateEffect(Vector3 effectPos, int index)
+    {
+        effectManager.index = index;
+        GameObject effect = Instantiate(effectManager.currentEffect.gameObjectEffect);
+        effect.transform.position = effectPos;
+    }
+
+    void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(Instance);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(Instance);
+        }
+    }
+
+    private void Start()
+    {
+        OnGameStart();//TODO: Move func elsewhere
+    }
+
+
+    void Reset()
+    {
+        _unitManager = _unitManager ?? GetComponent<UnitManager>() ?? gameObject.AddComponent<UnitManager>();
+        _battleGrid = _battleGrid ?? GetComponent<BattleGrid>() ?? gameObject.AddComponent<BattleGrid>();
+        _playerManager = _playerManager ?? GetComponent<PlayerManager>() ?? gameObject.AddComponent<PlayerManager>();
+        gameObject.tag = "GameManager";
+    }
+
+    //When Game starting
+    public void OnGameStart()
+    {
+        _unitManager.Init(this);
+        //First, spawn grid
+        _battleGrid.Init(this);
+        //Then spawn each players characters randomly on grid
+        _playerManager.Init(this);
+        //thirdly spawn pre-placed buildings (with some effects)
+
+        //after choose randomly a player to start (Online Stuff)
+
+        //Finally begin choose action part
+        ChangeState(GameState.CHOOSEACTION);
     }
 
     public void ChangeState(GameState newState)
     {
         gameState = newState;
-        switch (newState)
-        {
-            case GameState.GenerateGrid:
-                GridManager.Instance.GenerateGrid();
-                break;
+    }
 
-            case GameState.SpawnHeroses:
-                UnitManager.Instance.SpawnHeroes();
-                break;
-            case GameState.SpawnEnemies:
-                UnitManager.Instance.SpawnEnemies();
-                break;
-            case GameState.HerosTurn:
-                break;
-            case GameState.EnemiesTurn:
-                break;
-        }
+    public void ChangeState(int newState)
+    {
+        gameState = (GameState)newState;
     }
 
 
     public enum GameState
     {
-        GenerateGrid = 0,
-        SpawnHeroses = 1,
-        SpawnEnemies = 2,
-        HerosTurn    = 3,
-        EnemiesTurn  = 4,
+        CHOOSEACTION = 0,
+        RESOLUTIONPHASE = 1
     }
+}
+
+[System.Serializable]
+public class EffectManager
+{
+    public List<Effect> effects;
+    public int index = 0;
+
+    public Effect currentEffect
+    {
+        get
+        {
+            return effects[index];
+        }
+    }
+}
+
+[System.Serializable]
+public class Effect
+{
+    public GameObject gameObjectEffect;
 }

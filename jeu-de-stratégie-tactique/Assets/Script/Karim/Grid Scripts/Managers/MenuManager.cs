@@ -12,6 +12,7 @@ public class MenuManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        DontDestroyOnLoad(Instance);
     }
 
     public void ShowTileInfo(Tile tile)
@@ -24,17 +25,17 @@ public class MenuManager : MonoBehaviour
             return;
         }
 
-        _tileObject.GetComponentInChildren<Text>().text = tile.TileName;
+        _tileObject.GetComponentInChildren<Text>().text = tile.gameObject.name;
         _tileObject.SetActive(true);
 
         if (tile.OccupiedUnit)
         {
-            _tileUnitObject.GetComponentInChildren<Text>().text = tile.OccupiedUnit.UnitsName;
+            _tileUnitObject.GetComponentInChildren<Text>().text = tile.OccupiedUnit.scriptableUnit.unitsName;
             _tileUnitObject.SetActive(true);
         }
     }
 
-    public void ShowSelectedHero(BaseHero hero)
+    public void ShowSelectedHero(Character hero)
     {
         if (hero == null)
         {
@@ -42,7 +43,7 @@ public class MenuManager : MonoBehaviour
             return;
         }
 
-        _selectedHeroObject.GetComponentInChildren<Text>().text = hero.UnitsName;
+        _selectedHeroObject.GetComponentInChildren<Text>().text = hero.scriptableUnit.unitsName;
         _selectedHeroObject.SetActive(true);
     }
 }
