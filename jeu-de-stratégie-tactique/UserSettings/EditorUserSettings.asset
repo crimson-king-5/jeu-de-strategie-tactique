@@ -20,11 +20,9 @@ EditorUserSettings:
       value: 5554060004500a58580a55744877074445154a797e29226729784b66b7b4643c
       flags: 0
     RecentlyUsedSceneGuid-4:
-      value: 00540d00515450085e080f7514745b44404e497b2d2a27352c2f1865b2e6326d
-      flags: 0
-    RecentlyUsedSceneGuid-5:
       value: 530150005050580358085c23117b0944401519797f7e72357c2a1861e6e66660
       flags: 0
+<<<<<<< HEAD
     RecentlyUsedSceneGuid-6:
       value: 5457010301065e035b0b0f2443215e44414e192b747d70652e2d4e32b4b36539
 =======
@@ -64,6 +62,8 @@ EditorUserSettings:
 >>>>>>> Loïck
 >>>>>>> dev-karim
       flags: 0
+=======
+>>>>>>> parent of ee7f869 (Ressource Manager + Shop + UI)
     RecentlyUsedScenePath-0:
       value: 22424703114646680e0b0227036c6c111b07142f1f2b233e2867083debf42d
       flags: 0
