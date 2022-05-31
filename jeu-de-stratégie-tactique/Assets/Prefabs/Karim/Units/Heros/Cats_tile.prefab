@@ -97,6 +97,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90899b4c8b78dc142a584c46cd4785bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UnitsName: Cat
   OccupiedTile: {fileID: 0}
-  Faction: 0
+  refScriptableUnit: {fileID: 11400000, guid: 5045868d353ce634ba6e79a8699cc91b, type: 2}
+  scriptableUnit: {fileID: 0}
