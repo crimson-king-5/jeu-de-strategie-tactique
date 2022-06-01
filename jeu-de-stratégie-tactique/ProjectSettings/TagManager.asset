@@ -8,13 +8,10 @@ TagManager:
   - Grid
   - Grid Render
 <<<<<<< HEAD
-<<<<<<< HEAD
   - Resource
 =======
   - GameManager
 >>>>>>> dev-karim
-=======
->>>>>>> parent of ee7f869 (Ressource Manager + Shop + UI)
   layers:
   - Default
   - TransparentFX
