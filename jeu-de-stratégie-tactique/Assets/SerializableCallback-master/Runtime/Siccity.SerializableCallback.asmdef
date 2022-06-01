@@ -1,0 +1,16 @@
+{
+    "name": "Siccity.SerializableCallback",
+    "rootNamespace": "",
+    "references": [
+        "GUID:58dd74d1f8cc7b348a3844f3dd64da70"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
