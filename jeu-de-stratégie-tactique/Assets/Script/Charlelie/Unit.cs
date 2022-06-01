@@ -6,15 +6,8 @@ namespace TEAM2
 {
     public class Unit : MonoBehaviour
     {
+        protected Vector2Int _position;
         protected BattleGrid grid;
-        protected GameManager _gameManager;
-        protected ScriptableUnit _scrUnit;
-
-        public ScriptableUnit ScrUnit
-        {
-            get => _scrUnit;
-            set => _scrUnit = value;
-        }
 
         public int MaxLife
         {
@@ -23,11 +16,10 @@ namespace TEAM2
         }
 
         int _currentLife;
-        
-        public void Init(GameManager gm)
+
+        virtual public void Init(Vector2Int position)
         {
-            _gameManager = gm;
-            _scrUnit.GetCloneUnit();
+            _position = position;
         }
 
         virtual public void DoAction()
@@ -44,10 +36,5 @@ namespace TEAM2
 
         }
 
-    }
-
-    public enum UnitType
-    {
-        Building,Character
     }
 }

@@ -8,11 +8,13 @@ using UnityEngine;
 
 public class Character : TEAM2.Unit
 {
-    public Vector3Int OccupiedTile;
+    public Tile OccupiedTile; 
+    public ScriptableUnit scriptableUnit;
+    private GameManager _GameManager;
 
     public enum Team
     {
-        TEAM1 = 0, TEAM2 = 1
+        TEAM1 = 0,TEAM2 = 1
     }
 
     //public Team currentTeam
@@ -29,49 +31,49 @@ public class Character : TEAM2.Unit
 
     public int xPos;
     public int yPos;
-    public int life { get { return ScrUnit.unitStats.life; } set { ScrUnit.unitStats.life = value; } }
-    public int range { get { return ScrUnit.unitStats.range; } set { ScrUnit.unitStats.range = value; } }
-    public int atk { get { return ScrUnit.unitStats.atk; } set { ScrUnit.unitStats.atk = value; } }
-    public int mv { get { return ScrUnit.unitStats.mv; } set { ScrUnit.unitStats.mv = value; } }
+    public int life { get { return scriptableUnit.unitStats.life; } set { scriptableUnit.unitStats.life = value; }}
+    public int range { get { return scriptableUnit.unitStats.range; } set { scriptableUnit.unitStats.range = value; } }
+    public int atk { get { return scriptableUnit.unitStats.atk; } set { scriptableUnit.unitStats.atk = value; } }
+    public int mv { get { return scriptableUnit.unitStats.mv; } set { scriptableUnit.unitStats.mv = value; } }
 
     public UnitStateMachine unitStateMachine = new UnitStateMachine();
 
-    public  void Init()
+    public override void Init(Vector2Int position)
     {
-        ScrUnit = ScrUnit.GetCloneUnit();
+        base.Init(position);
+        scriptableUnit = scriptableUnit.GetCloneUnit();
     }
 
     public void Attack(int xPos, int yPos)
     {
         unitStateMachine.currentState = UnitStateMachine.UnitState.Attack;
-        Character OccupiedUnit = _gameManager.PlayerManager.CurrentPlayer.GetCharacter(xPos,yPos);
-        BattleGridTile targetBattleGridTile;
+        Tile targetTile;
         int targetLife;
-        targetBattleGridTile = _gameManager.BattleGrid.GetTile(xPos, yPos);
-        Vector3 effectPos = targetBattleGridTile.transform.GetPosition();
-        GameManager.Instance.InstantiateEffect(effectPos, 0);
-        targetLife = OccupiedUnit.life;
-        Debug.Log("Unit " + OccupiedUnit.ScrUnit.unitsName + " take " + atk + " damage");
+        targetTile = _GameManager.BattleGrid.GetTile(xPos, yPos);
+        GameManager.Instance.InstantiateEffect(targetTile.transform.position,0);
+        targetLife = targetTile.OccupiedUnit.scriptableUnit.unitStats.life;
+        Debug.Log("Unit " + targetTile.OccupiedUnit.scriptableUnit.unitsName + " take " + atk + " damage");
         targetLife -= atk;
-        Debug.Log("Unit :" + OccupiedUnit.ScrUnit.unitsName + " have " + targetLife + " Life now !");
-        OccupiedUnit.life = targetLife;
+        Debug.Log("Unit :" + targetTile.OccupiedUnit.scriptableUnit.unitsName + " have " + targetLife + " Life now !");
+        targetTile.OccupiedUnit.life = targetLife;
         unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
     }
 
     [ClientRpc]
     public void MoveToClientRpc(int x, int y)
     {
-        
-        BattleGridTile battleGridTile = _gameManager.BattleGrid.GetTile(x, y);
-        StartCoroutine(MoveUnit(battleGridTile));
-        OccupiedTile = new Vector3Int((int)battleGridTile.transform.GetPosition().x, (int)battleGridTile.transform.GetPosition().y);
+        Tile tile = _GameManager.BattleGrid.GetTile(x, y);
+        StartCoroutine(MoveUnit(tile));
+        OccupiedTile.OccupiedUnit = null;
+        OccupiedTile = tile;
+        OccupiedTile.OccupiedUnit = this;
     }
 
-    private IEnumerator MoveUnit(BattleGridTile battleGridTile)
+    private IEnumerator MoveUnit(Tile tile)
     {
-        while (transform.position != battleGridTile.transform.GetPosition())
+        while (transform.position != tile.transform.position)
         {
-            transform.position = Vector2.MoveTowards(transform.position, battleGridTile.transform.GetPosition(), 5f * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, tile.transform.position, 5f * Time.deltaTime);
             yield return new WaitForSeconds(0.001f);
         }
     }
@@ -80,8 +82,8 @@ public class Character : TEAM2.Unit
     {
         bool canMove;
         unitStateMachine.currentState = UnitStateMachine.UnitState.MoveTo;
-        BattleGridTile battleGridTile = _gameManager.BattleGrid.GetTile(x, y);
-        if (battleGridTile != null && battleGridTile.Walkable)
+        Tile tile = _GameManager.BattleGrid.GetTile(x, y);
+        if (tile != null && tile.Walkable)
         {
             MoveToClientRpc(x, y);
             canMove = true;
@@ -110,107 +112,111 @@ public class Character : TEAM2.Unit
     private void Update()
     {
         #region TMP
-        if (Input.GetKeyDown(KeyCode.UpArrow) && _gameManager.UnitManager.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-        {
-            yPos++;
-            if (_gameManager.BattleGrid.OntheGrid(xPos, yPos))
+        /*
+        //if (IsLocalPlayer)
+        //{
+            if (Input.GetKeyDown(KeyCode.DownArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
             {
-                if (CanMoveTo(xPos, yPos))
+                yPos++;
+                if (BattleGrid.instance.OntheGrid(xPos, yPos))
                 {
-                    UpdateWalkable();
+                    if (CanMoveTo(xPos, yPos))
+                    {
+                        UpdateWalkable();
+                    }
+                    else
+                    {
+                        if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                        {
+                            Attack(xPos, yPos);
+                        }
+
+                        yPos--;
+                    }
                 }
                 else
                 {
-                    if (_gameManager.BattleGrid.GetTile(xPos, yPos) != null)
-                    {
-                        Attack(xPos, yPos);
-                    }
-
                     yPos--;
                 }
             }
-            else
+            else if (Input.GetKeyDown(KeyCode.UpArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
             {
                 yPos--;
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow) && _gameManager.UnitManager.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-        {
-            yPos--;
-            if (_gameManager.BattleGrid.OntheGrid(xPos, yPos))
-            {
-                if (CanMoveTo(xPos, yPos))
+                if (BattleGrid.instance.OntheGrid(xPos, yPos))
                 {
-                    UpdateWalkable();
+                    if (CanMoveTo(xPos, yPos))
+                    {
+                        UpdateWalkable();
+                    }
+                    else
+                    {
+                        if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                        {
+                            Attack(xPos, yPos);
+                        }
+
+                        yPos++;
+                    }
                 }
                 else
                 {
-                    if (_gameManager.BattleGrid.GetTile(xPos, yPos) != null)
-                    {
-                        Attack(xPos, yPos);
-                    }
-
                     yPos++;
                 }
             }
-            else
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
             {
-                yPos++;
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow) && _gameManager.UnitManager.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-        {
-            xPos--;
-            if (_gameManager.BattleGrid.OntheGrid(xPos, yPos))
-            {
-                if (CanMoveTo(xPos, yPos))
+                xPos--;
+                if (BattleGrid.instance.OntheGrid(xPos, yPos))
                 {
-                    UpdateWalkable();
+                    if (CanMoveTo(xPos, yPos))
+                    {
+                        UpdateWalkable();
+                    }
+                    else
+                    {
+                        if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                        {
+                            Attack(xPos, yPos);
+                        }
+
+                        xPos++;
+                    }
                 }
                 else
                 {
-                    if (_gameManager.BattleGrid.GetTile(xPos, yPos) != null)
-                    {
-                        Attack(xPos, yPos);
-                    }
-
                     xPos++;
                 }
             }
-            else
+            else if (Input.GetKeyDown(KeyCode.RightArrow) && UnitManager.Instance.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
             {
                 xPos++;
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow) && _gameManager.UnitManager.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-        {
-            xPos++;
-            if (_gameManager.BattleGrid.OntheGrid(xPos, yPos))
-            {
-                if (CanMoveTo(xPos, yPos))
+                if (BattleGrid.instance.OntheGrid(xPos, yPos))
                 {
-                    UpdateWalkable();
+                    if (CanMoveTo(xPos, yPos))
+                    {
+                        UpdateWalkable();
+                    }
+                    else
+                    {
+                        if (BattleGrid.instance.GetTile(xPos, yPos).OccupiedUnit != null)
+                        {
+                            Attack(xPos, yPos);
+                        }
+
+                        xPos--;
+                    }
                 }
                 else
                 {
-                    if (_gameManager.BattleGrid.GetTile(xPos, yPos) != null)
-                    {
-                        Attack(xPos, yPos);
-                    }
-
                     xPos--;
                 }
             }
-            else
-            {
-                xPos--;
-            }
-        }
-
-
+        //}
+        */
         #endregion
     }
     private void UpdateWalkable()
     {
+        OccupiedTile.CheckIfCanWalk();
     }
 }
