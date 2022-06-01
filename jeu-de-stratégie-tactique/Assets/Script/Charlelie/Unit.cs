@@ -9,7 +9,8 @@ namespace TEAM2
         protected BattleGrid grid;
         protected GameManager _gameManager;
         protected ScriptableUnit _scrUnit;
-
+        public int xPos;
+        public int yPos;
         public ScriptableUnit ScrUnit
         {
             get => _scrUnit;
