@@ -27,8 +27,6 @@ public class Character : TEAM2.Unit
     //    }
     //}
 
-    public int xPos;
-    public int yPos;
     public int life { get { return ScrUnit.unitStats.life; } set { ScrUnit.unitStats.life = value; } }
     public int range { get { return ScrUnit.unitStats.range; } set { ScrUnit.unitStats.range = value; } }
     public int atk { get { return ScrUnit.unitStats.atk; } set { ScrUnit.unitStats.atk = value; } }

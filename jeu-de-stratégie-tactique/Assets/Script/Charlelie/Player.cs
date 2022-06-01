@@ -9,13 +9,13 @@ namespace TEAM2
 {
     public class Player : MonoBehaviour
     {
-        List<Unit> _unitsList = new List<Unit>();
+        [SerializeField] private List<Unit> _unitsList = new List<Unit>();
         public List<Unit> Units
         {
             get => _unitsList;
         }
 
-        private List<Character>_characters;
+       [SerializeField] private List<Character> _characters = new List<Character>();
         public List<Character> Characters
         {
             get => Characters;
@@ -56,6 +56,7 @@ namespace TEAM2
             Character[] list = _gameManager.UnitManager.SpawnCharacter(1, PlayerFaction);
             for (int i = _unitsList.Count; i < list.Length; i++)
             {
+                _unitsList.Add(list[i]);
                 _characters.Add(list[i]);
             }
         }

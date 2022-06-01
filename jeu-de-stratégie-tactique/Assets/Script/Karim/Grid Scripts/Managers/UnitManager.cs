@@ -62,10 +62,10 @@ public class UnitManager : MonoBehaviour
         for (int i = 0; i < unitCount; i++)
         {
             Character randomPrefab = GetRandomUnitPerFaction(currentfaction);
-            Vector2Int randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
+            Vector3Int randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
             randomPrefab.xPos = randomSpawnBattleGridTile.x;
             randomPrefab.yPos = randomSpawnBattleGridTile.y;
-          //  _gameManager.PlayerManager.SetUnit(randomPrefab,randomPrefab.xPos, randomSpawnBattleGridTile);
+            _gameManager.PlayerManager.SetUnit(randomPrefab, randomSpawnBattleGridTile);
             chars[i] = randomPrefab;
         }
         return chars;
@@ -120,8 +120,8 @@ public class UnitManager : MonoBehaviour
         bool gameOver = false;
         while (!gameOver)
         {
+            _gameManager.PlayerManager.index = 0;
             UpdateUnitsTurns(allDeployedHeroesUnits);
-
             for (int i = 0; i < allDeployedHeroesUnits.Count; i++)
             {
                 SelectedHero = allDeployedHeroesUnits[i];
@@ -137,7 +137,7 @@ public class UnitManager : MonoBehaviour
                 }
             }
             gameOver = CheckifTeamisDead(Faction.Hero);
-
+            _gameManager.PlayerManager.index++;
             for (int i = 0; i < allDeployedEnemiesUnits.Count; i++)
             {
                 SelectedHero = allDeployedEnemiesUnits[i];
