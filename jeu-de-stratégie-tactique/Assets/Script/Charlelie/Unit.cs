@@ -6,11 +6,16 @@ namespace TEAM2
 {
     public class Unit : MonoBehaviour
     {
-        protected BattleGrid grid;
         protected GameManager _gameManager;
         protected ScriptableUnit _scrUnit;
         public int xPos;
         public int yPos;
+
+        public BattleGrid BattleGrid
+        {
+            get => _gameManager.BattleGrid;
+        }
+
         public ScriptableUnit ScrUnit
         {
             get => _scrUnit;

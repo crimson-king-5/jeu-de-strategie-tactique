@@ -19,5 +19,5 @@ MonoBehaviour:
     lifeMax: 0
     life: 5
     atk: 1
-    mv: 0
-    range: 0
+    mv: 1
+    range: 1
