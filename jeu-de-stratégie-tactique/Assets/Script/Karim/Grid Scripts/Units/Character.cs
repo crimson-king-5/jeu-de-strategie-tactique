@@ -64,7 +64,10 @@ public class Character : TEAM2.Unit
     public void Defend() { }
     public void Wait() { }
 
-
+    public void Updgrade(Vector3 buildingPos)
+    {
+       
+    }
     public override void DoAction()
     {
         base.DoAction();
@@ -227,6 +230,10 @@ public class Character : TEAM2.Unit
                 break;
             case UnitStateMachine.UnitState.MoveTo:
                 MouseClickMoveTo(mouseWorldPosition);
+        unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn; 
+                break;        
+            case UnitStateMachine.UnitState.Build:
+               ;
         unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn; 
                 break;
         }

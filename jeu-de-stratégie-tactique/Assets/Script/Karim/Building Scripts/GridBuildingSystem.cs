@@ -7,9 +7,11 @@ using UnityEngine.Tilemaps;
 
 public class GridBuildingSystem : MonoBehaviour
 {
-    public static GridBuildingSystem current;
-
-    public GridLayout gridLayout;
+    private GameManager _gameManager;
+    public GridLayout GridLayout
+    {
+        get => _gameManager.BattleGrid.Tilemap;
+    }
     public Tilemap MainTilemap;
     public Tilemap TempTilemap;
 
@@ -24,23 +26,8 @@ public class GridBuildingSystem : MonoBehaviour
     public TileBase white;
 
     #region Unity Methods
-    private void Awake()
-    {
-        current = this;
-    }
     private void Start()
     {
-
-        string tilePath = @"Tiles\";
-        //BattleGridTile green = Resources.Load<BattleGridTile>(path: tilePath + "green");
-        tileBases.Add(TileType.Empty, null);
-        tileBases.Add(TileType.White, white);
-        tileBases.Add(TileType.Green, green);
-        tileBases.Add(TileType.Red, red);
-        for (int i = 0; i < tileBases.Count; i++)
-        {
-            Debug.Log(tileBases[TileType.Green]);
-        }
 
 
     }
@@ -61,11 +48,11 @@ public class GridBuildingSystem : MonoBehaviour
             if (!temp.Placed)
             {
                 Vector2 touchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector3Int cellPos = gridLayout.LocalToCell(touchPos);
+                Vector3Int cellPos = GridLayout.LocalToCell(touchPos);
 
                 if (prevPos != cellPos)
                 {
-                    temp.transform.localPosition = gridLayout.CellToLocalInterpolated(cellPos + new Vector3(0.5f, .5f, 0f));
+                    temp.transform.localPosition = GridLayout.CellToLocalInterpolated(cellPos + new Vector3(0.5f, .5f, 0f));
                     prevPos = cellPos;
                     FollowBuilding();
                 }
@@ -84,8 +71,24 @@ public class GridBuildingSystem : MonoBehaviour
             Destroy(temp.gameObject);
         }
     }
+
+    public void Init(GameManager gm)
+    {
+        _gameManager = gm;
+        string tilePath = @"Tiles\";
+        //BattleGridTile green = Resources.Load<BattleGridTile>(path: tilePath + "green");
+        tileBases.Add(TileType.Empty, null);
+        tileBases.Add(TileType.White, white);
+        tileBases.Add(TileType.Green, green);
+        tileBases.Add(TileType.Red, red);
+        for (int i = 0; i < tileBases.Count; i++)
+        {
+            Debug.Log(tileBases[TileType.Green]);
+        }
+    }
     #endregion
     #region Tilemap Management
+
 
     private static void FillTiles(TileBase[] arr, TileType type)
     {
@@ -140,7 +143,7 @@ public class GridBuildingSystem : MonoBehaviour
     {
         ClearArea();
 
-        temp.area.position = gridLayout.WorldToCell(temp.gameObject.transform.position);
+        temp.area.position = GridLayout.WorldToCell(temp.gameObject.transform.position);
 
         BoundsInt buildingArea = temp.area;
 

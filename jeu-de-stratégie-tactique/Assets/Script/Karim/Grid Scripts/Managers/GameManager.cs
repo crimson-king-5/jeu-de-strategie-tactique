@@ -12,6 +12,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UnitManager _unitManager;
     [SerializeField] private BattleGrid _battleGrid;
     [SerializeField] private PlayerManager _playerManager;
+    [SerializeField] private GridBuildingSystem _gridBuildingSystem;
+    [SerializeField] private BuildingManager _buildingManager;
+    public GridBuildingSystem GridBuildingSystem
+    {
+        get => _gridBuildingSystem;
+        set => _gridBuildingSystem = value;
+    } 
+
+    public BuildingManager BuildingManager
+    {
+        get => _buildingManager;
+        set => _buildingManager = value;
+    }
 
     public UnitManager UnitManager
     {
@@ -85,6 +98,7 @@ public class GameManager : MonoBehaviour
         _unitManager = _unitManager ?? GetComponent<UnitManager>() ?? gameObject.AddComponent<UnitManager>();
         _battleGrid = _battleGrid ?? GetComponent<BattleGrid>() ?? gameObject.AddComponent<BattleGrid>();
         _playerManager = _playerManager ?? GetComponent<PlayerManager>() ?? gameObject.AddComponent<PlayerManager>();
+        _gridBuildingSystem = _gridBuildingSystem ?? GetComponent<GridBuildingSystem>() ?? gameObject.AddComponent<GridBuildingSystem>();
         gameObject.tag = "GameManager";
     }
 
@@ -98,6 +112,7 @@ public class GameManager : MonoBehaviour
         _playerManager.Init(this);
         //thirdly spawn pre-placed buildings (with some effects)
 
+        GridBuildingSystem.Init(this);
         //after choose randomly a player to start (Online Stuff)
 
         StartCoroutine(_unitManager.GameLoop());

@@ -28,6 +28,11 @@ namespace TEAM2
             get => _gameManager.PlayerManager;
         }
 
+        public GridBuildingSystem GridBuildingSystem
+        {
+            get => _gameManager.GridBuildingSystem;
+        }
+
         public ScriptableUnit ScrUnit
         {
             get => _scrUnit;

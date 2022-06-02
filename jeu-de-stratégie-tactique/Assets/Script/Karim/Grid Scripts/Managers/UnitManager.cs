@@ -69,6 +69,20 @@ public class UnitManager : MonoBehaviour
         return chars;
     }
 
+    public Building[] SpawnBuildings(int buildingCount)
+    {
+        Building[] buildings = new Building[buildingCount];
+
+        for (int i = 0; i < buildingCount; i++)
+        {
+            Building randomPrefab = (Building)GetSpecificUnit(0,Faction.Neutral);
+            Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
+            _gameManager.PlayerManager.SetBuilding(randomPrefab, randomSpawnBattleGridTile);
+            buildings[i] = randomPrefab;
+        }
+        return buildings;
+    }
+
     private Character GetRandomUnitPerFaction(Faction faction)
     {
         List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(faction);
@@ -77,6 +91,19 @@ public class UnitManager : MonoBehaviour
         Character newUnit = unitObj.GetComponent<Character>();
         SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
         newUnit.ScrUnit = FactionUnit[randomIndex];
+        unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
+        unitRenderer.sortingOrder = 1;
+        unitObj.name = newUnit.ScrUnit.unitsName;
+        return newUnit;
+    }
+
+    private Unit GetSpecificUnit(int index,Faction UnitFaction)
+    {
+        List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
+        GameObject unitObj = new GameObject("", typeof(Building), typeof(SpriteRenderer));
+        Building newUnit = unitObj.GetComponent<Building>();
+        SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
+        newUnit.ScrUnit = FactionUnit[index];
         unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
         unitRenderer.sortingOrder = 1;
         unitObj.name = newUnit.ScrUnit.unitsName;

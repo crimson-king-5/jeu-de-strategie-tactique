@@ -15,6 +15,7 @@ public class UnitStateMachine
         Attack,
         Defend,
         MoveTo,
+        Build,
         EndTurn,
         Dead,None
     }

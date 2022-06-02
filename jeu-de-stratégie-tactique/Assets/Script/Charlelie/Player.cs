@@ -40,6 +40,7 @@ namespace TEAM2
         {
             _gameManager = gm;
             SpawnCharacter();
+            SpawnBuildings();
             for (int i = 0; i < _unitsList.Count; i++)
             {
                 _unitsList[i].Init(gm);
@@ -54,6 +55,13 @@ namespace TEAM2
                 _unitsList.Add(list[i]);
                 _characters.Add(list[i]);
             }
+        }
+
+        public void SpawnBuildings()
+        {
+            int numBuildins = 0;
+
+            Building[] list = _gameManager.UnitManager.SpawnBuildings(numBuildins);
         }
 
         void SendOrdersToClientRPC()

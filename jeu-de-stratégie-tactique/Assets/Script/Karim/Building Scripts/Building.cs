@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TEAM2;
 using UnityEngine;
 
-public class Building : MonoBehaviour
+public class Building : Unit
 {
     public bool Placed { get; private set; }
     public BoundsInt area;
@@ -15,15 +16,15 @@ public class Building : MonoBehaviour
         
     }
 
-    #region Buil Metods
+    #region Build Metods
 
     public bool CanBePlaced()
     {
-        Vector3Int positionInt = GridBuildingSystem.current.gridLayout.LocalToCell(transform.position);
+        Vector3Int positionInt = GridBuildingSystem.GridLayout.LocalToCell(transform.position);
         BoundsInt areaTemp = area;
         areaTemp.position = positionInt;
 
-        if (GridBuildingSystem.current.CanTakeArea(areaTemp))
+        if (GridBuildingSystem.CanTakeArea(areaTemp))
         {
             return true;
         }
@@ -32,11 +33,11 @@ public class Building : MonoBehaviour
      
     public void Place()
     {
-        Vector3Int positionInt = GridBuildingSystem.current.gridLayout.LocalToCell(transform.position);
+        Vector3Int positionInt = GridBuildingSystem.GridLayout.LocalToCell(transform.position);
         BoundsInt areaTemp = area;
         areaTemp.position = positionInt;
         Placed = true;
-        GridBuildingSystem.current.TakeArea(areaTemp);
+        GridBuildingSystem.TakeArea(areaTemp);
     }
 
 
