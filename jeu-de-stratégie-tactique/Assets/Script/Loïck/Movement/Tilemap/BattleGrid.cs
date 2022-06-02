@@ -17,7 +17,7 @@ public class BattleGrid : MonoBehaviour
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private GameObject _currentTilesRef;
     [SerializeField] private Tilemap _tilemap;
-    [SerializeField] private List<Vector3Int> _availablePlaces = new List<Vector3Int>();
+    [SerializeField] private List<Vector3> _availablePlaces = new List<Vector3>();
 
     //public List<Vector3Int> AvailablePlaces
     //{
@@ -44,6 +44,7 @@ public class BattleGrid : MonoBehaviour
     }
     #endregion
 
+
     #region Runtime Function
     public void Init(GameManager gm)
     {
@@ -53,7 +54,7 @@ public class BattleGrid : MonoBehaviour
             for (int p = _tilemap.cellBounds.yMin; p < _tilemap.cellBounds.yMax; p++)
             {
                 Vector3Int localPlace = (new Vector3Int(n, p, (int)_tilemap.transform.position.y));
-                Vector3Int place = new Vector3Int((int)_tilemap.GetCellCenterWorld(localPlace).x, (int)_tilemap.GetCellCenterWorld(localPlace).y);
+                Vector3 place = _tilemap.GetCellCenterWorld(localPlace);
                 if (_tilemap.HasTile(localPlace))
                 {
                     //Tile at "place"
@@ -67,12 +68,12 @@ public class BattleGrid : MonoBehaviour
         }
     }
 
-    public Vector3Int SpawnRandomUnit()
+    public Vector3 SpawnRandomUnit()
     {
         int randomIndex = Random.Range(0, _availablePlaces.Count);
-        Vector3Int unitPos = _availablePlaces[randomIndex];
+        Vector3 unitPos = _availablePlaces[randomIndex];
         Player player = _gameManager.PlayerManager.CurrentPlayer;
-        if (CheckIfUnitIsHere(player, unitPos.x, unitPos.y))
+        if (CheckIfUnitIsHere(player, (int)unitPos.x, (int)unitPos.y))
         {
             if (randomIndex == _availablePlaces.Count)
             {
@@ -126,7 +127,7 @@ public class BattleGrid : MonoBehaviour
         return character;
     }
 
-    public Vector3Int GetTilePosition(int x, int y)
+    public Vector3 GetTilePosition(int x, int y)
     {
         for (int i = 0; i < _availablePlaces.Count; i++)
         {
@@ -187,4 +188,11 @@ public class BattleGrid : MonoBehaviour
         return worldPosition;
     }
 
+    void OnGUI()
+    {
+        Vector3 mousPos = GetMouseWorldPosition();
+        Vector3Int intMousPos = new Vector3Int((int) mousPos.x, (int) mousPos.y);
+        Vector3 centerMousePos = _tilemap.GetCellCenterWorld(intMousPos);
+        GUI.Label(new Rect(10f, 10, 1000, 1000),"Mouse position : "+ mousPos.x + " " + mousPos.y + " \n Center Mouse Position :"+ centerMousePos.x + " " + centerMousePos.y );
+    }
 }

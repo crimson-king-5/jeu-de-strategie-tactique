@@ -16,8 +16,8 @@ MonoBehaviour:
   unitsName: Lorrence
   renderUnit: {fileID: 21300000, guid: e1ab722ec04ff0347b88043a2db0b8fc, type: 3}
   unitStats:
-    lifeMax: 0
-    life: 5
+    lifeMax: 1
+    life: 1
     atk: 1
-    mv: 1
+    mv: 3
     range: 1

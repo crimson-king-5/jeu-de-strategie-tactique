@@ -236,6 +236,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _unitsList: []
   _characters: []
+  PlayerFaction: 0
 --- !u!1 &1186157802
 GameObject:
   m_ObjectHideFlags: 0
@@ -1269,7 +1270,7 @@ Tilemap:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: -10, y: -13, z: 0}
   m_Size: {x: 21, y: 20, z: 1}
-  m_TileAnchor: {x: 0, y: 0, z: 0}
+  m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
     e00: 1
@@ -1389,7 +1390,8 @@ MonoBehaviour:
   _battleGrid: {fileID: 1197974411}
   _playerManager: {fileID: 1197974410}
   effectManager:
-    effects: []
+    effects:
+    - gameObjectEffect: {fileID: 8164707858946696989, guid: 8d10e30a47181434aad5a1d5dc8f1ec5, type: 3}
     index: 0
   gameState: 0
 --- !u!4 &1197974409
@@ -1521,6 +1523,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _unitsList: []
   _characters: []
+  PlayerFaction: 1
 --- !u!1 &1785061579
 GameObject:
   m_ObjectHideFlags: 0
@@ -1598,7 +1601,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1785061579}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: 0, z: -10}
+  m_LocalPosition: {x: 3, y: 1.97, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
