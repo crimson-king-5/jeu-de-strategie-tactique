@@ -5,6 +5,7 @@ using TEAM2;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -54,7 +55,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance != null)
+        if (Instance != this)
         {
             Destroy(Instance);
         }
@@ -68,6 +69,14 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         OnGameStart();//TODO: Move func elsewhere
+    }
+
+    void Update()
+    {
+        if (Input.GetKey(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
 

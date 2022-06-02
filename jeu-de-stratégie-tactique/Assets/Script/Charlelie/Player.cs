@@ -23,12 +23,7 @@ namespace TEAM2
 
         List<Order> orderList = new List<Order>();
 
-        private Faction _playerFaction;
-
-        public Faction PlayerFaction
-        {
-            get => _playerFaction;
-        }
+        public Faction PlayerFaction;
 
         private GameManager _gameManager;
 
@@ -102,18 +97,6 @@ namespace TEAM2
             {
                 return UnitType.Building;
             }
-        }
-        public Character GetCharacter(int x, int y)
-        {
-            for (int i = 0; i < _characters.Count; i++)
-            {
-                if (_characters[i].xPos == x && _characters[i].yPos == y)
-                {
-                    return _characters[i];
-                }
-            }
-            Debug.LogError("aucune Unit à cet position");
-            return null;
         }
     }
 }

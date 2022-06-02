@@ -17,13 +17,24 @@ public class BattleGrid : MonoBehaviour
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private GameObject _currentTilesRef;
     [SerializeField] private Tilemap _tilemap;
-    List<Vector3Int> availablePlaces = new List<Vector3Int>();
+    [SerializeField] private List<Vector3> _availablePlaces = new List<Vector3>();
+
+    //public List<Vector3Int> AvailablePlaces
+    //{
+    //    get => AvailablePlaces;
+    //}
+
+    public Tilemap Tilemap
+    {
+        get => _tilemap;
+    }
+
 
     [LabelText("/n")]
     public GridLoader loader;
     public BattleGridTile.TileType tileType;
 
-    #region Grid Init
+
     #region Editor Function
     [MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
     public static void InstanceGridEditor()
@@ -31,25 +42,6 @@ public class BattleGrid : MonoBehaviour
         GameObject instanceGridEditor = new GameObject("Grid Editor", typeof(BattleGrid));
         instanceGridEditor.tag = "Grid";
     }
-
-    //[Button("Save Map", ButtonSizes.Large), GUIColor(1, 0, 1)]
-    //public void SaveTilemap()
-    //{
-    //    GameObject saveMap = new GameObject("New Map");
-    //    GameObject parentG = Instantiate(gameObject, saveMap.transform);
-    //    parentG.name = "Grid";
-    //    parentG.transform.SetParent(saveMap.transform);
-    //    string localPath = "Assets/Prefabs/Grid Map/" + saveMap.name + ".prefab";
-    //    GridLoader saveTilemap = new GridLoader(gridArray, debugTextArray, height, width);
-    //    PrefabUtility.SaveAsPrefabAsset(saveMap, localPath);
-    //    AssetDatabase.CreateAsset(saveTilemap, "Assets/Database/Map/NewMap" + ".asset");
-    //    AssetDatabase.SaveAssets();
-    //    Destroy(saveMap);
-    //}
-    #endregion
-
-    #region Unity Function
-
     #endregion
 
 
@@ -62,11 +54,11 @@ public class BattleGrid : MonoBehaviour
             for (int p = _tilemap.cellBounds.yMin; p < _tilemap.cellBounds.yMax; p++)
             {
                 Vector3Int localPlace = (new Vector3Int(n, p, (int)_tilemap.transform.position.y));
-                Vector3Int place = new Vector3Int((int)_tilemap.CellToWorld(localPlace).x, (int)_tilemap.CellToWorld(localPlace).y);
+                Vector3 place = _tilemap.GetCellCenterWorld(localPlace);
                 if (_tilemap.HasTile(localPlace))
                 {
                     //Tile at "place"
-                    availablePlaces.Add(place);
+                    _availablePlaces.Add(place);
                 }
                 else
                 {
@@ -76,30 +68,30 @@ public class BattleGrid : MonoBehaviour
         }
     }
 
-    public Vector3Int SpawnRandomUnit()
+    public Vector3 SpawnRandomUnit()
     {
-        int randomIndex = Random.Range(0, availablePlaces.Count);
-        Vector3Int unitPos = availablePlaces[randomIndex];
+        int randomIndex = Random.Range(0, _availablePlaces.Count);
+        Vector3 unitPos = _availablePlaces[randomIndex];
         Player player = _gameManager.PlayerManager.CurrentPlayer;
-        if (CheckIfUnitIsHere(player, unitPos.x, unitPos.y))
+        if (CheckIfUnitIsHere(player, (int)unitPos.x, (int)unitPos.y))
         {
-            if (randomIndex == availablePlaces.Count)
+            if (randomIndex == _availablePlaces.Count)
             {
-                unitPos = availablePlaces[Random.Range(0, randomIndex--)];
+                unitPos = _availablePlaces[Random.Range(0, randomIndex--)];
             }
             else
             {
-                unitPos = availablePlaces[Random.Range(randomIndex++, availablePlaces.Count)];
+                unitPos = _availablePlaces[Random.Range(randomIndex++, _availablePlaces.Count)];
             }
         }
         return unitPos;
     }
 
-    public BattleGridTile GetTile(int x, int y)
+    public BattleGridTile GetTileType(int x, int y)
     {
         if (OntheGrid(x, y))
         {
-            return GetTile(x, y);
+            return GetTileType(x, y);
         }
         Debug.LogError("Erreur sortie de Grille");
         return null;
@@ -135,11 +127,53 @@ public class BattleGrid : MonoBehaviour
         return character;
     }
 
+    public Vector3 GetTilePosition(int x, int y)
+    {
+        for (int i = 0; i < _availablePlaces.Count; i++)
+        {
+
+            if (_availablePlaces[i].x == x && _availablePlaces[i].y == y)
+            {
+                return _availablePlaces[i];
+            }
+
+        }
+        Debug.LogError("Emplacement introuvable");
+        return Vector3Int.zero;
+    }
+
     public bool OntheGrid(int x, int y)
     {
-        Vector3Int gridPos = new Vector3Int(x, y);
-        bool onGrid = _tilemap.HasTile(gridPos);
-        return onGrid;
+        for (int i = 0; i < _availablePlaces.Count; i++)
+        {
+
+            if (_availablePlaces[i].x == x && _availablePlaces[i].y == y)
+            {
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    public int GetTileRange(Vector3Int unitPos,Vector3Int gridPos)
+    {
+        bool inRange = false;
+        int numTiles = 0;
+        for (int i = 0; i < _availablePlaces.Count; i++)
+        {
+            if (_availablePlaces[i] == unitPos || inRange)
+            {
+                inRange = true;
+                numTiles++;
+            }
+            else if (_availablePlaces[i] == gridPos)
+            {
+                break;
+            }
+        }
+
+        return numTiles;
     }
 
     #endregion
@@ -153,5 +187,12 @@ public class BattleGrid : MonoBehaviour
         Vector2 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition);
         return worldPosition;
     }
-    #endregion
+
+    void OnGUI()
+    {
+        Vector3 mousPos = GetMouseWorldPosition();
+        Vector3Int intMousPos = new Vector3Int((int) mousPos.x, (int) mousPos.y);
+        Vector3 centerMousePos = _tilemap.GetCellCenterWorld(intMousPos);
+        GUI.Label(new Rect(10f, 10, 1000, 1000),"Mouse position : "+ mousPos.x + " " + mousPos.y + " \n Center Mouse Position :"+ centerMousePos.x + " " + centerMousePos.y );
+    }
 }

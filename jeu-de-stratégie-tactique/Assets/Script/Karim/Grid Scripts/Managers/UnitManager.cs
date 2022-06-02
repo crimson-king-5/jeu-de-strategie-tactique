@@ -62,9 +62,7 @@ public class UnitManager : MonoBehaviour
         for (int i = 0; i < unitCount; i++)
         {
             Character randomPrefab = GetRandomUnitPerFaction(currentfaction);
-            Vector3Int randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
-            randomPrefab.xPos = randomSpawnBattleGridTile.x;
-            randomPrefab.yPos = randomSpawnBattleGridTile.y;
+            Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
             _gameManager.PlayerManager.SetUnit(randomPrefab, randomSpawnBattleGridTile);
             chars[i] = randomPrefab;
         }
@@ -141,7 +139,7 @@ public class UnitManager : MonoBehaviour
             for (int i = 0; i < allDeployedEnemiesUnits.Count; i++)
             {
                 SelectedHero = allDeployedEnemiesUnits[i];
-                Debug.Log(SelectedHero.ScrUnit.unitsName);
+                Debug.Log("Tour de : " + SelectedHero.ScrUnit.unitsName);
                 if (SelectedHero.ScrUnit.unitStats.life <= 0 && SelectedHero.unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
                 {
                     Debug.Log(SelectedHero.ScrUnit.unitsName + " est mort !");
@@ -207,13 +205,4 @@ public class UnitManager : MonoBehaviour
         }
         return characters;
     }
-
-    //public void SetSelectedHero(BaseUnit hero)
-    //{
-    //    if (hero.unitStateMachine.currentState == UnitStateMachine.UnitState.EndTurn)
-    //    {
-    //        SelectedHero = hero;
-    //        MenuManager.Instance.ShowSelectedHero(hero);
-    //    }
-    //}
 }

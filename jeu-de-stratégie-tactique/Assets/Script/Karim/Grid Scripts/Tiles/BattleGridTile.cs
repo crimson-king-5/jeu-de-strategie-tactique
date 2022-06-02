@@ -27,10 +27,10 @@ public class BattleGridTile : Tile
 
     public void SetUnit(Character unit)
     {
-        //if (unit.OccupiedTile != null) unit.OccupiedTile.OccupiedUnit = null;
+        //if (unit.OccupiedTileGridPosition != null) unit.OccupiedTileGridPosition.OccupiedUnit = null;
         //unit.transform.position = transform.position;
         //OccupiedUnit = unit;
-        //unit.OccupiedTile = this;
+        //unit.OccupiedTileGridPosition = this;
     }
 
     public enum TileType
