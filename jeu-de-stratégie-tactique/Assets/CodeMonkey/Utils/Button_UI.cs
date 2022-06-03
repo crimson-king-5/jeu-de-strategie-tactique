@@ -191,7 +191,7 @@ namespace CodeMonkey.Utils {
 
 
         /*
-         * Class for temporarily intercepting a button action
+         * UnitClass for temporarily intercepting a button action
          * Useful for Tutorial disabling specific buttons
          * */
         public class InterceptActionHandler {

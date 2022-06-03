@@ -22,7 +22,7 @@ namespace CodeMonkey.Utils {
     public class FunctionPeriodic {
 
         /*
-         * Class to hook Actions into MonoBehaviour
+         * UnitClass to hook Actions into MonoBehaviour
          * */
         private class MonoBehaviourHook : MonoBehaviour {
 

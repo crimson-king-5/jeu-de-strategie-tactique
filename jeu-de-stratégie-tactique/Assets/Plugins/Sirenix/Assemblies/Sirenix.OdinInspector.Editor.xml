@@ -3310,7 +3310,7 @@
                          { "Odin Settings/Color Palettes",   ColorPaletteManager.Instance,   EditorIcons.EyeDropper  },
                          { "Odin Settings/AOT Generation",   AOTGenerationConfig.Instance,   EditorIcons.SmartPhone  },
                          { "Camera current",                 Camera.current                                          },
-                         { "Some Class",                     this.someData                                           }
+                         { "Some UnitClass",                     this.someData                                           }
                      };
             
                      tree.AddAllAssetsAtPath("More Odin Settings", SirenixAssetPaths.OdinEditorConfigsPath, typeof(ScriptableObject), true)
@@ -3820,7 +3820,7 @@
                 { "Odin Settings/Color Palettes",   ColorPaletteManager.Instance,   EditorIcons.EyeDropper  },
                 { "Odin Settings/AOT Generation",   AOTGenerationConfig.Instance,   EditorIcons.SmartPhone  },
                 { "Camera current",                 Camera.current                                          },
-                { "Some Class",                     this.someData                                           }
+                { "Some UnitClass",                     this.someData                                           }
             };
             
             tree.AddAllAssetsAtPath("Some Menu Item", "Some Asset Path", typeof(ScriptableObject), true)
@@ -4067,7 +4067,7 @@
         </member>
         <member name="T:Sirenix.OdinInspector.Editor.OdinMenuTreeExtensions">
             <summary>
-            Class with utility methods for <see cref="T:Sirenix.OdinInspector.Editor.OdinMenuTree" />s and <see cref="T:Sirenix.OdinInspector.Editor.OdinMenuItem" />s.
+            UnitClass with utility methods for <see cref="T:Sirenix.OdinInspector.Editor.OdinMenuTree" />s and <see cref="T:Sirenix.OdinInspector.Editor.OdinMenuItem" />s.
             </summary>
             <example>
             <code>

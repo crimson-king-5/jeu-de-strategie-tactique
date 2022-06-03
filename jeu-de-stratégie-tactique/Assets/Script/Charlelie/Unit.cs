@@ -12,6 +12,8 @@ namespace TEAM2
         public int xPos;
         public int yPos;
 
+        public UnitStateMachine unitStateMachine = new UnitStateMachine();
+
         public Vector3Int OccupiedTileGridPosition
         {
             get => _occupiedTileGridPosition;
@@ -33,14 +35,6 @@ namespace TEAM2
             get => _scrUnit;
             set => _scrUnit = value;
         }
-
-        public int MaxLife
-        {
-            get;
-            private set;
-        }
-
-        int _currentLife;
 
         public void Init(GameManager gm)
         {
@@ -65,8 +59,9 @@ namespace TEAM2
 
         public int GetTileRange(Vector3 newPos)
         {
-            Vector3Int moveRange = GetCurrentUnitGridlPosition() - GetUnitDestinationGridPosition(newPos);
-            return Mathf.Abs(moveRange.x) + Mathf.Abs(moveRange.y);
+            Vector3Int GridposDestination = GetUnitDestinationGridPosition(newPos);
+            Vector3Int moveRange = GetCurrentUnitGridlPosition() - GridposDestination;
+            return Mathf.Abs(moveRange.x) + Mathf.Abs(moveRange.y) /*+ BattleGrid.GetTileType(GridposDestination.x,GridposDestination.y).mvRequire*/;
         }
 
         public Vector3Int GetSpecificGridPosition(Vector3 newPos)

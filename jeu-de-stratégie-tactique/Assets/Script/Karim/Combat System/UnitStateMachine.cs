@@ -11,9 +11,7 @@ public class UnitStateMachine
     }
     public enum UnitState
     {
-        Wait,
         Attack,
-        Defend,
         MoveTo,
         EndTurn,
         Dead,None
