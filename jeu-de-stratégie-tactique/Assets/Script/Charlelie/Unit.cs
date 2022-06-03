@@ -61,7 +61,7 @@ namespace TEAM2
         {
             Vector3Int GridposDestination = GetUnitDestinationGridPosition(newPos);
             Vector3Int moveRange = GetCurrentUnitGridlPosition() - GridposDestination;
-            return Mathf.Abs(moveRange.x) + Mathf.Abs(moveRange.y) /*+ BattleGrid.GetTileType(GridposDestination.x,GridposDestination.y).mvRequire*/;
+            return Mathf.Abs(moveRange.x) + Mathf.Abs(moveRange.y) + BattleGrid.GetTileType(GridposDestination).mvRequire;
         }
 
         public Vector3Int GetSpecificGridPosition(Vector3 newPos)
