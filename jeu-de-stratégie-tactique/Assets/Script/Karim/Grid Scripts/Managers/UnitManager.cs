@@ -39,10 +39,15 @@ public class UnitManager : MonoBehaviour
             {
                 heroesUnits.Add(_units[i]);
             }
-            else
+            else if (_units[i].faction == Faction.Enemy)
             {
                 enemyUnits.Add(_units[i]);
             }
+            else
+            {
+                neutralUnits.Add(_units[i]);
+            }
+
         }
     }
 
@@ -92,7 +97,7 @@ public class UnitManager : MonoBehaviour
 
         for (int i = 0; i < buildingCount; i++)
         {
-            Building randomPrefab = (Building)GetSpecificUnit(0,Faction.Neutral);
+            Building randomPrefab = (Building)GetSpecificUnit(0, Faction.Neutral);
             Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
             _gameManager.PlayerManager.SetBuilding(randomPrefab, randomSpawnBattleGridTile);
             buildings[i] = randomPrefab;
@@ -114,7 +119,7 @@ public class UnitManager : MonoBehaviour
         return newUnit;
     }
 
-    private Unit GetSpecificUnit(int index,Faction UnitFaction)
+    public Unit GetSpecificUnit(int index, Faction UnitFaction)
     {
         List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
         GameObject unitObj = new GameObject("", typeof(Building), typeof(SpriteRenderer));
@@ -135,6 +140,8 @@ public class UnitManager : MonoBehaviour
                 return heroesUnits;
             case Faction.Enemy:
                 return enemyUnits;
+            case Faction.Neutral:
+                return neutralUnits;
         }
 
         return null;

@@ -34,6 +34,9 @@ public class BattleGridTile : Tile
 
     public enum TileType
     {
-        None, Walkable,Spawn
+        None = 0,
+        Walkable = 1,
+        Spawn = 2,
+        Ruin = 3
     }
 }

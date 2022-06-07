@@ -7161,7 +7161,8 @@ MonoBehaviour:
   _unitManager: {fileID: 557748762}
   _battleGrid: {fileID: 557748761}
   _playerManager: {fileID: 557748760}
-  _buildingSystemManager: {fileID: 0}
+  _gridBuildingSystem: {fileID: 0}
+  _buildingManager: {fileID: 0}
   effectManager:
     effects: []
     index: 0
@@ -7321,7 +7322,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 160, y: 111}
+  m_AnchoredPosition: {x: -51.5, y: 72.9}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &634436410
@@ -13467,7 +13468,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff32b54437ecb5d41b811b2038b60769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridLayout: {fileID: 1480741075}
   MainTilemap: {fileID: 650827853}
   TempTilemap: {fileID: 209611203}
   green: {fileID: 11400000, guid: e5cc305ec946c7f4f903f4765db05bee, type: 2}

@@ -47,7 +47,7 @@ public class GridBuildingSystem : MonoBehaviour
 
             if (!temp.Placed)
             {
-                Vector2 touchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 touchPos = BattleGrid.GetMouseWorldPosition();
                 Vector3Int cellPos = GridLayout.LocalToCell(touchPos);
 
                 if (prevPos != cellPos)
@@ -126,9 +126,10 @@ public class GridBuildingSystem : MonoBehaviour
 
     #endregion
     #region Building Placement
-    public void IntitializeWithBuilding(GameObject building)
+    public void IntitializeWithBuilding(ScriptableUnit unit,Vector3Int gridPos)
     {
-        temp = Instantiate(building, Vector3.zero, Quaternion.identity).GetComponent<Building>();
+        temp = new GameObject(unit.unitsName,typeof(Building)).GetComponent<Building>();
+        temp.transform.position = gridPos;
         FollowBuilding();
     }
 

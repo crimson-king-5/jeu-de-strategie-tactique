@@ -7,13 +7,9 @@ public class Building : Unit
 {
     public bool Placed { get; private set; }
     public BoundsInt area;
-
-
-
-    // Start is called before the first frame update
-    void Start()
+    public GridBuildingSystem GridBuildingSystem
     {
-        
+        get => _gameManager.GridBuildingSystem;
     }
 
     #region Build Metods
