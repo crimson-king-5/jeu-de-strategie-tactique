@@ -28,12 +28,16 @@ public class Character : TEAM2.Unit
     //    }
     //}
 
-    public int Life { get { return ScrUnit.unitStats.life; } set { ScrUnit.unitStats.life = value; } }
-    public int Range { get { return ScrUnit.unitStats.range; } set { ScrUnit.unitStats.range = value; } }
-    public int Atk { get { return ScrUnit.unitStats.atk; } set { ScrUnit.unitStats.atk = value; } }
-    public int Mv { get { return ScrUnit.unitStats.mv; } set { ScrUnit.unitStats.mv = value; } }
+    public float Life { get { return ScrUnit.unitStats.life; } set { ScrUnit.unitStats.life = value; } }
+    public int Range { get { return ScrUnit.unitStats.range; } }
+    public int Atk { get { return ScrUnit.unitStats.atk; } }
+    public float ClassBonus { get => ScrUnit.classBonus; }
+    public int Mv { get => ScrUnit.unitStats.mv; set => ScrUnit.unitStats.mv = value; }
+    public UnitClass UnitClass { get => ScrUnit.unitUnitClass; }
 
-    public UnitStateMachine unitStateMachine = new UnitStateMachine();
+    private bool hasMoved = false;
+
+    public int Armor { get => ScrUnit.unitStats.armor; set => ScrUnit.unitStats.armor = value; }
 
     public void Init()
     {
@@ -42,13 +46,48 @@ public class Character : TEAM2.Unit
 
     public void Attack(Character targetCharacter)
     {
-        int targetLife;
-        _gameManager.InstantiateEffect(targetCharacter.GetUnitDestinationWorldPosition(targetCharacter.GetCurrentUnitGridlPosition()), 0);
-        targetLife = targetCharacter.Life;
-        Debug.Log("Unit " + targetCharacter.ScrUnit.unitsName + " take " + Atk + " damage");
-        targetLife -= Atk;
+        float atk = Atk;
+        switch (targetCharacter.UnitClass)
+        {
+            case UnitClass.Tank:
+                if (UnitClass == UnitClass.Mage)
+                {
+                    atk = atk * ClassBonus;
+                }
+                else if (UnitClass == UnitClass.Warrior)
+                {
+                    atk = atk / ClassBonus;
+                }
+                break;
+            case UnitClass.Mage:
+                if (UnitClass == UnitClass.Warrior)
+                {
+                    atk = atk * ClassBonus;
+                }
+                else if (UnitClass == UnitClass.Tank)
+                {
+                    atk = atk / ClassBonus;
+                }
+                break;
+            case UnitClass.Warrior:
+                if (UnitClass == UnitClass.Tank)
+                {
+                    atk = atk * ClassBonus;
+                }
+                if (UnitClass == UnitClass.Mage)
+                {
+                    atk = atk / ClassBonus;
+                }
+                break;
+        }
+
+        float targetLife = targetCharacter.Life;
+        int targetArmor = targetCharacter.Armor;
+        Debug.Log("Unit " + targetCharacter.ScrUnit.unitsName + " take " + (targetArmor - atk) + " damage");
+        targetLife -= targetArmor - atk;
         Debug.Log("Unit :" + targetCharacter.ScrUnit.unitsName + " have " + targetLife + " Life now !");
         targetCharacter.Life = targetLife;
+        _gameManager.InstantiateEffect(targetCharacter.GetUnitDestinationWorldPosition(targetCharacter.GetCurrentUnitGridlPosition()), 0);
     }
 
     private IEnumerator MoveUnit(Vector3 newUnitPos, float speed)
@@ -61,13 +100,16 @@ public class Character : TEAM2.Unit
 
     }
 
-    public void Defend() { }
+    public void Rest()
+    {
+        SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
+        unitRenderer.color = Color.gray;
+        hasMoved = false;
+        unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
+    }
     public void Wait() { }
 
-    public void Updgrade(Vector3 buildingPos)
-    {
-       
-    }
+
     public override void DoAction()
     {
         base.DoAction();
@@ -181,9 +223,17 @@ public class Character : TEAM2.Unit
 
         #endregion
 
-        if (Input.GetMouseButtonDown(0) && _gameManager.UnitManager.SelectedHero == this)
+        if (_gameManager.UnitManager.SelectedHero == this)
         {
-            CharacterMouseEvent();
+            if (Input.GetMouseButtonDown(0))
+            {
+                CharacterMouseEvent();
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                Rest();
+            }
         }
     }
 
@@ -196,49 +246,49 @@ public class Character : TEAM2.Unit
         {
             StartCoroutine(MoveUnit(charaDestinationWorldPos, 15));
             OccupiedTileGridPosition = charaDestinationGridPos;
-            unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
         }
     }
 
     void CharacterMouseEvent()
     {
-        Vector3 mouseWorldPosition = BattleGrid.GetMouseWorldPosition();
-        int tileRange = GetTileRange(mouseWorldPosition);
-        Character mouseCharacter = null;
-        if (PlayerManager.CheckifUnitWasHere(GetUnitDestinationGridPosition(mouseWorldPosition)))
+        if (unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
-            mouseCharacter = (Character)PlayerManager.GetUnit(GetUnitDestinationGridPosition(mouseWorldPosition));
-            if (mouseCharacter != null && mouseCharacter.ScrUnit.faction != ScrUnit.faction && tileRange <= Range)
+            Vector3 mouseWorldPosition = BattleGrid.GetMouseWorldPosition();
+            int tileRange = GetTileRange(mouseWorldPosition);
+            Character mouseCharacter = null;
+            if (PlayerManager.CheckifUnitWasHere(GetUnitDestinationGridPosition(mouseWorldPosition)))
             {
-                unitStateMachine.currentState = UnitStateMachine.UnitState.Attack;
+                mouseCharacter = (Character)PlayerManager.GetUnit(GetUnitDestinationGridPosition(mouseWorldPosition));
+                if (mouseCharacter != null && mouseCharacter.ScrUnit.faction != ScrUnit.faction && tileRange <= Range)
+                {
+                    unitStateMachine.currentState = UnitStateMachine.UnitState.Attack;
+                }
+            }
+            else if (tileRange <= Mv)
+            {
+                unitStateMachine.currentState = UnitStateMachine.UnitState.MoveTo;
+            }
+            switch (unitStateMachine.currentState)
+            {
+                case UnitStateMachine.UnitState.Attack:
+                    Attack(mouseCharacter);
+                    if (mouseCharacter.Range <= mouseCharacter.GetTileRange(transform.position))
+                    {
+                        Attack(this);
+                        if (hasMoved)
+                        {
+                            Rest();
+                        }
+                    }
+                    break;
+                case UnitStateMachine.UnitState.MoveTo:
+                    if (!hasMoved)
+                    {
+                        MouseClickMoveTo(mouseWorldPosition);
+                        hasMoved = true;
+                    }
+                    break;
             }
         }
-        else if(tileRange <= Mv)
-        {
-            unitStateMachine.currentState = UnitStateMachine.UnitState.MoveTo;
-        }
-
-        switch (unitStateMachine.currentState)
-        {
-            case UnitStateMachine.UnitState.Attack:
-                Attack(mouseCharacter);
-        unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn; 
-                break;
-            case UnitStateMachine.UnitState.Defend:
-                Defend();
-        unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn; 
-                break;
-            case UnitStateMachine.UnitState.MoveTo:
-                MouseClickMoveTo(mouseWorldPosition);
-        unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn; 
-                break;        
-            case UnitStateMachine.UnitState.Build:
-               ;
-        unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn; 
-                break;
-        }
-    }
-    private void UpdateWalkable()
-    {
     }
 }

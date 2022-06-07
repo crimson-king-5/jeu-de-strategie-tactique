@@ -87,14 +87,9 @@ public class BattleGrid : MonoBehaviour
         return unitPos;
     }
 
-    public BattleGridTile GetTileType(int x, int y)
+    public BattleGridTile GetTileType(Vector3Int tilePos)
     {
-        if (OntheGrid(x, y))
-        {
-            return GetTileType(x, y);
-        }
-        Debug.LogError("Erreur sortie de Grille");
-        return null;
+       return  (BattleGridTile)_tilemap.GetTile(tilePos);
     }
 
     public bool CheckIfUnitIsHere(Player player, int x, int y)
@@ -142,19 +137,7 @@ public class BattleGrid : MonoBehaviour
         return Vector3Int.zero;
     }
 
-    public bool OntheGrid(int x, int y)
-    {
-        for (int i = 0; i < _availablePlaces.Count; i++)
-        {
 
-            if (_availablePlaces[i].x == x && _availablePlaces[i].y == y)
-            {
-                return true;
-            }
-
-        }
-        return false;
-    }
 
     public int GetTileRange(Vector3Int unitPos,Vector3Int gridPos)
     {

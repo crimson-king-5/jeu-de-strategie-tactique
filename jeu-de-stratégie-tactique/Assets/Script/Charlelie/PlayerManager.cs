@@ -81,7 +81,6 @@ namespace TEAM2
                     return characters[i];
                 }
             }
-            Debug.LogError("No unit for this position");
             return null;
         }
 

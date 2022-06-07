@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Tile
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 7482667652216324306, guid: 7ac2d5b1814e54f40963e43b9d0f583e, type: 3}
-  m_Color: {r: 0.27792454, g: 1, b: 0, a: 1}
+  m_Color: {r: 0.27843142, g: 1, b: 0, a: 1}
   m_Transform:
     e00: 1
     e01: 0
@@ -35,4 +35,5 @@ MonoBehaviour:
   m_Flags: 1
   m_ColliderType: 1
   _isWalkable: 1
-  currentTileType: 0
+  currentTileType: 2
+  mvRequire: 1

@@ -49,7 +49,7 @@ namespace TEAM2
 
         public void SpawnCharacter()
         {
-            Character[] list = _gameManager.UnitManager.SpawnCharacter(1, PlayerFaction);
+            Character[] list = _gameManager.UnitManager.SpawnCharacter(2, PlayerFaction);
             for (int i = _unitsList.Count; i < list.Length; i++)
             {
                 _unitsList.Add(list[i]);
@@ -105,6 +105,19 @@ namespace TEAM2
             {
                 return UnitType.Building;
             }
+        }
+        public bool CheckifAllUnitsHasEndTurn()
+        {
+            for (int i = 0; i < _unitsList.Count; i++)
+            {
+                if (_unitsList[i].unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
+                {
+                    return false;
+                }
+                
+            }
+
+            return true;
         }
     }
 }

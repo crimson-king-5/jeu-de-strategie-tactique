@@ -11,13 +11,10 @@ public class UnitStateMachine
     }
     public enum UnitState
     {
-        Wait = 0,
-        Attack = 1,
-        Defend = 2,
-        MoveTo = 3,
-        Build = 4,
-        EndTurn = 5,
-        Dead = 6,None = 7
+        Attack,
+        MoveTo,
+        EndTurn,
+        Dead,None
     }
 
     public UnitState currentState;

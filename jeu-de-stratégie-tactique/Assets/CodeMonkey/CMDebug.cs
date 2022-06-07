@@ -17,7 +17,7 @@ using CodeMonkey.Utils;
 namespace CodeMonkey {
 
     /*
-     * Debug Class with various helper functions to quickly create buttons, text, etc
+     * Debug UnitClass with various helper functions to quickly create buttons, text, etc
      * */
     public static class CMDebug {
 
