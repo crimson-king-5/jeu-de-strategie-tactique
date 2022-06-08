@@ -15,6 +15,8 @@ public class Building : Unit
         }
 
     }
+
+
     public float GainResourcePerTurn
     {
         get => _productor.resource * UpgradeList.upgrades[currentlevelBuilding].gainBonus;
@@ -47,4 +49,9 @@ public class Building : Unit
         }
     }
 
+}
+public enum BuildType
+{
+    Base = 0,
+    Miner = 1
 }

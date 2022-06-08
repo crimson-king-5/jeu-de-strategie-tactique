@@ -9,6 +9,12 @@ using UnityEngine;
 [Serializable]
 public class Productor
 {
-    public int resource;
+    public int resource = 1;
+}
+
+public enum ResourceType
+{
+    Gold = 0,
+    Lunarite = 1
 }
 

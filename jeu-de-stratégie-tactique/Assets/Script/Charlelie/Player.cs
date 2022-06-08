@@ -29,7 +29,6 @@ namespace TEAM2
 
         bool hasFinishOrder = false;
 
-
         public bool Ready
         {
             get { return hasFinishOrder; }
