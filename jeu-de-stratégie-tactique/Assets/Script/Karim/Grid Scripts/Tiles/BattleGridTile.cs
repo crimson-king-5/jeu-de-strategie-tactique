@@ -8,8 +8,7 @@ public class BattleGridTile : Tile
 {
     [SerializeField] private bool _isWalkable;
     public TileType currentTileType = TileType.None;
-
-
+    [Range(0,99)]public int mvRequire = 0;
     public bool Walkable => _isWalkable && currentTileType != TileType.None;
 
     public void CheckIfCanWalk()
@@ -35,6 +34,9 @@ public class BattleGridTile : Tile
 
     public enum TileType
     {
-        None, Walkable,Spawn
+        None = 0,
+        Walkable = 1,
+        Spawn = 2,
+        Ruin = 3
     }
 }

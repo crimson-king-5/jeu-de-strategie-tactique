@@ -1,44 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using TEAM2;
 using UnityEngine;
 
-public class Building : MonoBehaviour
+public class Building : Unit
 {
-    public bool Placed { get; private set; }
     public BoundsInt area;
-
-
-
-    // Start is called before the first frame update
-    void Start()
+    public GridBuildingSystem GridBuildingSystem
     {
-        
+        get => _gameManager.GridBuildingSystem;
     }
 
-    #region Buil Metods
-
-    public bool CanBePlaced()
-    {
-        Vector3Int positionInt = GridBuildingSystem.current.gridLayout.LocalToCell(transform.position);
-        BoundsInt areaTemp = area;
-        areaTemp.position = positionInt;
-
-        if (GridBuildingSystem.current.CanTakeArea(areaTemp))
-        {
-            return true;
-        }
-        return false;
-    }
-     
-    public void Place()
-    {
-        Vector3Int positionInt = GridBuildingSystem.current.gridLayout.LocalToCell(transform.position);
-        BoundsInt areaTemp = area;
-        areaTemp.position = positionInt;
-        Placed = true;
-        GridBuildingSystem.current.TakeArea(areaTemp);
-    }
-
-
-    #endregion
+    //private ScriptableBuildings _updateGradeBuilding;
+    //public ScriptableBuildings UpdateGradeBuilding
+    //{
+    //    get => _updateGradeBuilding;
+    //}
 }

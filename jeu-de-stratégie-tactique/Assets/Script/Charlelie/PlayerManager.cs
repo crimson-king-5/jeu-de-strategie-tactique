@@ -46,6 +46,11 @@ namespace TEAM2
             unit.transform.position = unitPos;
         }
 
+        public void SetBuilding(Building unit, Vector3 unitPos)
+        {
+            unit.transform.position = unitPos;
+        }
+
         public void CheckIfOrdersFinished()
         {
             for (int i = 0; i < PlayersGameObjects.Length; i++)
@@ -76,7 +81,6 @@ namespace TEAM2
                     return characters[i];
                 }
             }
-            Debug.LogError("No unit for this position");
             return null;
         }
 

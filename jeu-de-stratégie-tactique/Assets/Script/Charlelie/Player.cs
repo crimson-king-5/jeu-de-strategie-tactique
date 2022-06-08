@@ -40,6 +40,7 @@ namespace TEAM2
         {
             _gameManager = gm;
             SpawnCharacter();
+            SpawnBuildings();
             for (int i = 0; i < _unitsList.Count; i++)
             {
                 _unitsList[i].Init(gm);
@@ -48,12 +49,19 @@ namespace TEAM2
 
         public void SpawnCharacter()
         {
-            Character[] list = _gameManager.UnitManager.SpawnCharacter(1, PlayerFaction);
+            Character[] list = _gameManager.UnitManager.SpawnCharacter(2, PlayerFaction);
             for (int i = _unitsList.Count; i < list.Length; i++)
             {
                 _unitsList.Add(list[i]);
                 _characters.Add(list[i]);
             }
+        }
+
+        public void SpawnBuildings()
+        {
+            int numBuildins = 0;
+
+            Building[] list = _gameManager.UnitManager.SpawnBuildings(numBuildins);
         }
 
         void SendOrdersToClientRPC()
@@ -97,6 +105,19 @@ namespace TEAM2
             {
                 return UnitType.Building;
             }
+        }
+        public bool CheckifAllUnitsHasEndTurn()
+        {
+            for (int i = 0; i < _unitsList.Count; i++)
+            {
+                if (_unitsList[i].unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
+                {
+                    return false;
+                }
+                
+            }
+
+            return true;
         }
     }
 }

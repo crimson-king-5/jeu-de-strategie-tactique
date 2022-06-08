@@ -22,7 +22,7 @@ namespace CodeMonkey.Utils {
     public class FunctionTimer {
 
         /*
-         * Class to hook Actions into MonoBehaviour
+         * UnitClass to hook Actions into MonoBehaviour
          * */
         private class MonoBehaviourHook : MonoBehaviour {
 
@@ -146,7 +146,7 @@ namespace CodeMonkey.Utils {
 
 
         /*
-         * Class to trigger Actions manually without creating a GameObject
+         * UnitClass to trigger Actions manually without creating a GameObject
          * */
         public class FunctionTimerObject {
 

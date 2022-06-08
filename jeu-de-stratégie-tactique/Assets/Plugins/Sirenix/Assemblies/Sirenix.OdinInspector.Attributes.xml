@@ -1850,7 +1850,7 @@
             [TypeInfoBox("This is my component and it is mine.")]
             public class MyComponent : MonoBehaviour
             {
-                // Class implementation.
+                // UnitClass implementation.
             }
             </code>
             </example>

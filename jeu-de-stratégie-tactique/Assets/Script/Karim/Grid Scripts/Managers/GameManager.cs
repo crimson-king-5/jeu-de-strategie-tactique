@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TEAM2;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -12,6 +13,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UnitManager _unitManager;
     [SerializeField] private BattleGrid _battleGrid;
     [SerializeField] private PlayerManager _playerManager;
+    [SerializeField] private GridBuildingSystem _gridBuildingSystem;
+    [SerializeField] private BuildingManager _buildingManager;
+    public GridBuildingSystem GridBuildingSystem
+    {
+        get => _gridBuildingSystem;
+        set => _gridBuildingSystem = value;
+    }
+
+    public BuildingManager BuildingManager
+    {
+        get => _buildingManager;
+        set => _buildingManager = value;
+    }
 
     public UnitManager UnitManager
     {
@@ -20,7 +34,7 @@ public class GameManager : MonoBehaviour
     public BattleGrid BattleGrid
     {
         get => _battleGrid;
-    } 
+    }
     public PlayerManager PlayerManager
     {
         get => _playerManager;
@@ -34,7 +48,7 @@ public class GameManager : MonoBehaviour
     public Player P1
     {
         get => PlayerManager.PlayersGameObjects[0].GetComponent<Player>();
-    }   
+    }
     public Player P2
     {
         get => PlayerManager.PlayersGameObjects[1].GetComponent<Player>();
@@ -49,7 +63,7 @@ public class GameManager : MonoBehaviour
     public void InstantiateEffect(Vector3 effectPos, int index)
     {
         effectManager.index = index;
-        GameObject effect = Instantiate(effectManager.currentEffect.gameObjectEffect);
+        GameObject effect = Instantiate(effectManager.currentEffect);
         effect.transform.position = effectPos;
     }
 
@@ -85,6 +99,9 @@ public class GameManager : MonoBehaviour
         _unitManager = _unitManager ?? GetComponent<UnitManager>() ?? gameObject.AddComponent<UnitManager>();
         _battleGrid = _battleGrid ?? GetComponent<BattleGrid>() ?? gameObject.AddComponent<BattleGrid>();
         _playerManager = _playerManager ?? GetComponent<PlayerManager>() ?? gameObject.AddComponent<PlayerManager>();
+        _gridBuildingSystem = _gridBuildingSystem ?? GetComponent<GridBuildingSystem>() ?? gameObject.AddComponent<GridBuildingSystem>();
+        _buildingManager = _buildingManager ?? GetComponent<BuildingManager>() ?? gameObject.AddComponent<BuildingManager>();
+        effectManager.effects = Resources.LoadAll<GameObject>("Effect").ToList();
         gameObject.tag = "GameManager";
     }
 
@@ -92,12 +109,13 @@ public class GameManager : MonoBehaviour
     public void OnGameStart()
     {
         _unitManager.Init(this);
+        //thirdly spawn pre-placed buildings (with some effects)
+        _buildingManager.Init(this);
+        _gridBuildingSystem.Init(this);
         //First, spawn grid
         _battleGrid.Init(this);
         //Then spawn each playersGameObjects characters randomly on grid
         _playerManager.Init(this);
-        //thirdly spawn pre-placed buildings (with some effects)
-
         //after choose randomly a player to start (Online Stuff)
 
         StartCoroutine(_unitManager.GameLoop());
@@ -126,20 +144,14 @@ public class GameManager : MonoBehaviour
 [System.Serializable]
 public class EffectManager
 {
-    public List<Effect> effects;
+    public List<GameObject> effects;
     public int index = 0;
 
-    public Effect currentEffect
+    public GameObject currentEffect
     {
         get
         {
             return effects[index];
         }
     }
-}
-
-[System.Serializable]
-public class Effect
-{
-    public GameObject gameObjectEffect;
 }

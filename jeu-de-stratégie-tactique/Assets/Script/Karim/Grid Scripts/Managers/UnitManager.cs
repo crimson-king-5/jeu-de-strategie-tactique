@@ -10,6 +10,15 @@ public class UnitManager : MonoBehaviour
 
     [SerializeField] private GameManager _gameManager;
 
+    public BattleGrid BattleGrid
+    {
+        get => _gameManager.BattleGrid;
+    }
+
+    public PlayerManager PlayerManager
+    {
+        get => _gameManager.PlayerManager;
+    }
 
     [SerializeField] private List<ScriptableUnit> _units;
 
@@ -17,7 +26,7 @@ public class UnitManager : MonoBehaviour
 
     [SerializeField] private List<ScriptableUnit> heroesUnits = new List<ScriptableUnit>();
     [SerializeField] private List<ScriptableUnit> enemyUnits = new List<ScriptableUnit>();
-    [SerializeField] private List<ScriptableUnit> neutralUnits = new List<ScriptableUnit>();
+    [SerializeField] private List<ScriptableUnit> buildingUnits = new List<ScriptableUnit>();
 
     [Button("LoadUnits", ButtonSizes.Large)]
     public void LoadUnits()
@@ -30,10 +39,15 @@ public class UnitManager : MonoBehaviour
             {
                 heroesUnits.Add(_units[i]);
             }
-            else
+            else if (_units[i].faction == Faction.Enemy)
             {
                 enemyUnits.Add(_units[i]);
             }
+            else
+            {
+                buildingUnits.Add(_units[i]);
+            }
+
         }
     }
 
@@ -41,13 +55,21 @@ public class UnitManager : MonoBehaviour
     {
         _units?.Clear();
         heroesUnits?.Clear();
-        neutralUnits?.Clear();
+        buildingUnits?.Clear();
         enemyUnits?.Clear();
     }
 
     void Reset()
     {
         LoadUnits();
+    }
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            SelectUnit();
+        }
     }
 
     public void Init(GameManager gm)
@@ -69,6 +91,20 @@ public class UnitManager : MonoBehaviour
         return chars;
     }
 
+    public Building[] SpawnBuildings(int buildingCount)
+    {
+        Building[] buildings = new Building[buildingCount];
+
+        for (int i = 0; i < buildingCount; i++)
+        {
+            Building randomPrefab = (Building)GetSpecificUnit(0, Faction.Building);
+            Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
+            _gameManager.PlayerManager.SetBuilding(randomPrefab, randomSpawnBattleGridTile);
+            buildings[i] = randomPrefab;
+        }
+        return buildings;
+    }
+
     private Character GetRandomUnitPerFaction(Faction faction)
     {
         List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(faction);
@@ -83,6 +119,19 @@ public class UnitManager : MonoBehaviour
         return newUnit;
     }
 
+    public Unit GetSpecificUnit(int index, Faction UnitFaction)
+    {
+        List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
+        GameObject unitObj = new GameObject("", typeof(Building), typeof(SpriteRenderer));
+        Building newUnit = unitObj.GetComponent<Building>();
+        SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
+        newUnit.ScrUnit = FactionUnit[index];
+        unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
+        unitRenderer.sortingOrder = 1;
+        unitObj.name = newUnit.ScrUnit.unitsName;
+        return newUnit;
+    }
+
     public List<ScriptableUnit> GetFactionScriptableUnits(Faction currentFaction)
     {
         switch (currentFaction)
@@ -91,9 +140,28 @@ public class UnitManager : MonoBehaviour
                 return heroesUnits;
             case Faction.Enemy:
                 return enemyUnits;
+            case Faction.Building:
+                return buildingUnits;
         }
 
         return null;
+    }
+
+    void SelectUnit()
+    {
+        Vector3 mousPos = BattleGrid.GetMouseWorldPosition();
+        Unit selectedCharacter = _gameManager.PlayerManager.GetUnit(BattleGrid.Tilemap.WorldToCell(mousPos));
+        if (selectedCharacter != null && selectedCharacter.ScrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction && selectedCharacter.unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
+        {
+            if (SelectedHero.GetComponent<SpriteRenderer>().color == Color.blue)
+            {
+                SelectedHero.GetComponent<SpriteRenderer>().color = Color.white;
+            }
+
+            SelectedHero = (Character)selectedCharacter;
+            SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
+            Debug.Log("Tours de: " + SelectedHero.ScrUnit.unitsName);
+        }
     }
 
 
@@ -103,6 +171,8 @@ public class UnitManager : MonoBehaviour
         {
             if (units[i].unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
             {
+                SpriteRenderer uniRenderer = units[i].GetComponent<SpriteRenderer>();
+                uniRenderer.color = Color.white;
                 units[i].unitStateMachine.currentState = UnitStateMachine.UnitState.None;
             }
         }
@@ -118,38 +188,36 @@ public class UnitManager : MonoBehaviour
         bool gameOver = false;
         while (!gameOver)
         {
-            _gameManager.PlayerManager.index = 0;
+            PlayerManager.index = 0;
             UpdateUnitsTurns(allDeployedHeroesUnits);
-            for (int i = 0; i < allDeployedHeroesUnits.Count; i++)
+            SelectedHero = allDeployedHeroesUnits[0];
+            SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
+            Debug.Log("Tours de: " + SelectedHero.ScrUnit.unitsName);
+            if (SelectedHero.ScrUnit.unitStats.life <= 0 && SelectedHero.unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
             {
-                SelectedHero = allDeployedHeroesUnits[i];
-                Debug.Log(SelectedHero.ScrUnit.unitsName);
-                if (SelectedHero.ScrUnit.unitStats.life <= 0 && SelectedHero.unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
-                {
-                    SelectedHero.unitStateMachine.currentState = UnitStateMachine.UnitState.Dead;
-                    SelectedHero.gameObject.SetActive(false);
-                }
-                else
-                {
-                    yield return new WaitUntil(() => SelectedHero.unitStateMachine.currentState == UnitStateMachine.UnitState.EndTurn);
-                }
+                SelectedHero.unitStateMachine.currentState = UnitStateMachine.UnitState.Dead;
+                SelectedHero.gameObject.SetActive(false);
             }
-            gameOver = CheckifTeamisDead(Faction.Hero);
-            _gameManager.PlayerManager.index++;
-            for (int i = 0; i < allDeployedEnemiesUnits.Count; i++)
+            else
             {
-                SelectedHero = allDeployedEnemiesUnits[i];
-                Debug.Log("Tour de : " + SelectedHero.ScrUnit.unitsName);
-                if (SelectedHero.ScrUnit.unitStats.life <= 0 && SelectedHero.unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
-                {
-                    Debug.Log(SelectedHero.ScrUnit.unitsName + " est mort !");
-                    SelectedHero.unitStateMachine.currentState = UnitStateMachine.UnitState.Dead;
-                    SelectedHero.gameObject.SetActive(false);
-                }
-                else
-                {
-                    yield return new WaitUntil(() => SelectedHero.unitStateMachine.currentState == UnitStateMachine.UnitState.EndTurn);
-                }
+                yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
+            }
+
+            gameOver = CheckifTeamisDead(Faction.Hero);
+            PlayerManager.index++;
+
+            SelectedHero = allDeployedEnemiesUnits[0];
+            SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
+            Debug.Log("Tour de : " + SelectedHero.ScrUnit.unitsName);
+            if (SelectedHero.ScrUnit.unitStats.life <= 0 && SelectedHero.unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
+            {
+                Debug.Log(SelectedHero.ScrUnit.unitsName + " est mort !");
+                SelectedHero.unitStateMachine.currentState = UnitStateMachine.UnitState.Dead;
+                SelectedHero.gameObject.SetActive(false);
+            }
+            else
+            {
+                yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
             }
 
             gameOver = CheckifTeamisDead(Faction.Enemy);
@@ -205,4 +273,5 @@ public class UnitManager : MonoBehaviour
         }
         return characters;
     }
+
 }

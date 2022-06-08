@@ -15,7 +15,6 @@ using UnityEngine.Tilemaps;
 public class BattleGrid : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
-    [SerializeField] private GameObject _currentTilesRef;
     [SerializeField] private Tilemap _tilemap;
     [SerializeField] private List<Vector3> _availablePlaces = new List<Vector3>();
 
@@ -29,11 +28,12 @@ public class BattleGrid : MonoBehaviour
         get => _tilemap;
     }
 
+    private UnitManager UnitManager
+    {
+        get => _gameManager.UnitManager;
+    }
 
-    [LabelText("/n")]
-    public GridLoader loader;
     public BattleGridTile.TileType tileType;
-
 
     #region Editor Function
     [MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
@@ -59,6 +59,11 @@ public class BattleGrid : MonoBehaviour
                 {
                     //Tile at "place"
                     _availablePlaces.Add(place);
+                    BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(localPlace);
+                    if (currentTile.currentTileType == BattleGridTile.TileType.Ruin)
+                    {
+                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(UnitManager.GetFactionScriptableUnits(Faction.Building)[0], localPlace);
+                    }
                 }
                 else
                 {
@@ -87,14 +92,9 @@ public class BattleGrid : MonoBehaviour
         return unitPos;
     }
 
-    public BattleGridTile GetTileType(int x, int y)
+    public BattleGridTile GetTileType(Vector3Int tilePos)
     {
-        if (OntheGrid(x, y))
-        {
-            return GetTileType(x, y);
-        }
-        Debug.LogError("Erreur sortie de Grille");
-        return null;
+        return (BattleGridTile)_tilemap.GetTile(tilePos);
     }
 
     public bool CheckIfUnitIsHere(Player player, int x, int y)
@@ -142,21 +142,9 @@ public class BattleGrid : MonoBehaviour
         return Vector3Int.zero;
     }
 
-    public bool OntheGrid(int x, int y)
-    {
-        for (int i = 0; i < _availablePlaces.Count; i++)
-        {
 
-            if (_availablePlaces[i].x == x && _availablePlaces[i].y == y)
-            {
-                return true;
-            }
 
-        }
-        return false;
-    }
-
-    public int GetTileRange(Vector3Int unitPos,Vector3Int gridPos)
+    public int GetTileRange(Vector3Int unitPos, Vector3Int gridPos)
     {
         bool inRange = false;
         int numTiles = 0;
@@ -191,8 +179,8 @@ public class BattleGrid : MonoBehaviour
     void OnGUI()
     {
         Vector3 mousPos = GetMouseWorldPosition();
-        Vector3Int intMousPos = new Vector3Int((int) mousPos.x, (int) mousPos.y);
+        Vector3Int intMousPos = new Vector3Int((int)mousPos.x, (int)mousPos.y);
         Vector3 centerMousePos = _tilemap.GetCellCenterWorld(intMousPos);
-        GUI.Label(new Rect(10f, 10, 1000, 1000),"Mouse position : "+ mousPos.x + " " + mousPos.y + " \n Center Mouse Position :"+ centerMousePos.x + " " + centerMousePos.y );
+        GUI.Label(new Rect(10f, 10, 1000, 1000), "Mouse position : " + mousPos.x + " " + mousPos.y + " \n Center Mouse Position :" + centerMousePos.x + " " + centerMousePos.y);
     }
 }
