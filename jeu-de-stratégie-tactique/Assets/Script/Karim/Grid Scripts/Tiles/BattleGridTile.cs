@@ -9,7 +9,7 @@ public class BattleGridTile : Tile
     [SerializeField] private bool _isWalkable;
     public TileType currentTileType = TileType.None;
     [Range(0,99)]public int mvRequire = 0;
-    public bool Walkable => _isWalkable && currentTileType != TileType.None;
+    public bool Walkable => _isWalkable && currentTileType != TileType.None && currentTileType != TileType.Ruin;
 
     public void CheckIfCanWalk()
     {

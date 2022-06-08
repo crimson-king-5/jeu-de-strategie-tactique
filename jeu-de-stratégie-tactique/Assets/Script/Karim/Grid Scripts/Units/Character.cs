@@ -244,8 +244,16 @@ public class Character : TEAM2.Unit
         Vector3Int charaDestinationGridPos = GetUnitDestinationGridPosition(charaDestinationWorldPos);
         if (BattleGrid.Tilemap.HasTile(gridPos))
         {
-            StartCoroutine(MoveUnit(charaDestinationWorldPos, 15));
-            OccupiedTileGridPosition = charaDestinationGridPos;
+            BattleGridTile gridTile = (BattleGridTile)BattleGrid.Tilemap.GetTile(gridPos);
+            if (gridTile.Walkable)
+            {
+                StartCoroutine(MoveUnit(charaDestinationWorldPos, 15));
+                OccupiedTileGridPosition = charaDestinationGridPos;
+            }
+            else
+            {
+                Debug.LogError("Non walkable Tiles !");
+            }
         }
     }
 
