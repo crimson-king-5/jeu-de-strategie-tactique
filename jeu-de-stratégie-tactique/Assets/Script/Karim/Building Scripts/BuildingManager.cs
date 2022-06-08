@@ -7,9 +7,14 @@ namespace TEAM2
 {
     public class BuildingManager : MonoBehaviour
     {
-        [SerializeField]
-        private GameObject unitBuildUI;
-        private GameManager _gameManager;
+        [SerializeField] private GameManager _gameManager;
+        [SerializeField] private GameObject unitBuildUI;
+        [SerializeField] private List<Building> _buildings;
+        public List<Building> Buildings
+        {
+            get => _buildings;
+        }
+
         public void Init(GameManager gm)
         {
             _gameManager = gm;

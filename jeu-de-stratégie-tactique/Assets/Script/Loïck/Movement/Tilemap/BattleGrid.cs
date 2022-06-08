@@ -15,7 +15,6 @@ using UnityEngine.Tilemaps;
 public class BattleGrid : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
-    [SerializeField] private GameObject _currentTilesRef;
     [SerializeField] private Tilemap _tilemap;
     [SerializeField] private List<Vector3> _availablePlaces = new List<Vector3>();
 
@@ -34,10 +33,7 @@ public class BattleGrid : MonoBehaviour
         get => _gameManager.UnitManager;
     }
 
-    [LabelText("/n")]
-    public GridLoader loader;
     public BattleGridTile.TileType tileType;
-
 
     #region Editor Function
     [MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
@@ -66,7 +62,7 @@ public class BattleGrid : MonoBehaviour
                     BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(localPlace);
                     if (currentTile.currentTileType == BattleGridTile.TileType.Ruin)
                     {
-                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(UnitManager.GetFactionScriptableUnits(Faction.Neutral)[0], localPlace);
+                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(UnitManager.GetFactionScriptableUnits(Faction.Building)[0], localPlace);
                     }
                 }
                 else

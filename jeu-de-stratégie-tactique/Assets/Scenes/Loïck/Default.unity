@@ -1432,6 +1432,7 @@ GameObject:
   - component: {fileID: 1197974410}
   - component: {fileID: 1197974413}
   - component: {fileID: 1197974414}
+  - component: {fileID: 1197974415}
   m_Layer: 0
   m_Name: ===Managers===
   m_TagString: GameManager
@@ -1454,11 +1455,11 @@ MonoBehaviour:
   _unitManager: {fileID: 1197974412}
   _battleGrid: {fileID: 1197974411}
   _playerManager: {fileID: 1197974410}
-  _gridBuildingSystem: {fileID: 0}
-  _buildingManager: {fileID: 0}
+  _gridBuildingSystem: {fileID: 1197974414}
+  _buildingManager: {fileID: 1197974415}
   effectManager:
     effects:
-    - gameObjectEffect: {fileID: 8164707858946696989, guid: 8d10e30a47181434aad5a1d5dc8f1ec5, type: 3}
+    - {fileID: 0}
     index: 0
   gameState: 0
 --- !u!4 &1197974409
@@ -1503,10 +1504,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameManager: {fileID: 0}
-  _currentTilesRef: {fileID: 6868664544310108283, guid: e96067db266cbc140a5b0b377c7b103e, type: 3}
   _tilemap: {fileID: 1186157803}
   _availablePlaces: []
-  loader: {fileID: 0}
   tileType: 0
 --- !u!114 &1197974412
 MonoBehaviour:
@@ -1522,6 +1521,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameManager: {fileID: 0}
   _units:
+  - {fileID: 11400000, guid: 0df031915e39ee1458bcf1ab57334f93, type: 2}
   - {fileID: 11400000, guid: 55aa6012ed93b124b9e98d1eca418ba9, type: 2}
   - {fileID: 11400000, guid: 5045868d353ce634ba6e79a8699cc91b, type: 2}
   - {fileID: 11400000, guid: 5351d965b9f0479408aa0990529746d1, type: 2}
@@ -1531,7 +1531,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5351d965b9f0479408aa0990529746d1, type: 2}
   enemyUnits:
   - {fileID: 11400000, guid: 55aa6012ed93b124b9e98d1eca418ba9, type: 2}
-  neutralUnits: []
+  neutralUnits:
+  - {fileID: 11400000, guid: 0df031915e39ee1458bcf1ab57334f93, type: 2}
 --- !u!156049354 &1197974413
 Grid:
   m_ObjectHideFlags: 0
@@ -1556,11 +1557,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff32b54437ecb5d41b811b2038b60769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MainTilemap: {fileID: 0}
-  TempTilemap: {fileID: 0}
-  green: {fileID: 0}
-  red: {fileID: 0}
-  white: {fileID: 0}
+--- !u!114 &1197974415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197974406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f45bcf7b2555e345a13c013a0a007ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gameManager: {fileID: 0}
+  unitBuildUI: {fileID: 6523323521680885397, guid: 8533eb8f37a970b4eb3fa316f042433d, type: 3}
+  _buildings: []
 --- !u!1 &1215691546
 GameObject:
   m_ObjectHideFlags: 0

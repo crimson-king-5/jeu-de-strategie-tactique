@@ -32,7 +32,7 @@ public enum Faction
 {
     Hero = 0,
     Enemy = 1,
-    Neutral = 3
+    Building = 3
 }
 
 public enum UnitClass

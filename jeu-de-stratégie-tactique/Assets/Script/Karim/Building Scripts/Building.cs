@@ -5,37 +5,15 @@ using UnityEngine;
 
 public class Building : Unit
 {
-    public bool Placed { get; private set; }
     public BoundsInt area;
     public GridBuildingSystem GridBuildingSystem
     {
         get => _gameManager.GridBuildingSystem;
     }
 
-    #region Build Metods
-
-    public bool CanBePlaced()
-    {
-        Vector3Int positionInt = GridBuildingSystem.GridLayout.LocalToCell(transform.position);
-        BoundsInt areaTemp = area;
-        areaTemp.position = positionInt;
-
-        if (GridBuildingSystem.CanTakeArea(areaTemp))
-        {
-            return true;
-        }
-        return false;
-    }
-     
-    public void Place()
-    {
-        Vector3Int positionInt = GridBuildingSystem.GridLayout.LocalToCell(transform.position);
-        BoundsInt areaTemp = area;
-        areaTemp.position = positionInt;
-        Placed = true;
-        GridBuildingSystem.TakeArea(areaTemp);
-    }
-
-
-    #endregion
+    //private ScriptableBuildings _updateGradeBuilding;
+    //public ScriptableBuildings UpdateGradeBuilding
+    //{
+    //    get => _updateGradeBuilding;
+    //}
 }

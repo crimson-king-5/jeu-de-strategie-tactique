@@ -26,7 +26,7 @@ public class UnitManager : MonoBehaviour
 
     [SerializeField] private List<ScriptableUnit> heroesUnits = new List<ScriptableUnit>();
     [SerializeField] private List<ScriptableUnit> enemyUnits = new List<ScriptableUnit>();
-    [SerializeField] private List<ScriptableUnit> neutralUnits = new List<ScriptableUnit>();
+    [SerializeField] private List<ScriptableUnit> buildingUnits = new List<ScriptableUnit>();
 
     [Button("LoadUnits", ButtonSizes.Large)]
     public void LoadUnits()
@@ -45,7 +45,7 @@ public class UnitManager : MonoBehaviour
             }
             else
             {
-                neutralUnits.Add(_units[i]);
+                buildingUnits.Add(_units[i]);
             }
 
         }
@@ -55,7 +55,7 @@ public class UnitManager : MonoBehaviour
     {
         _units?.Clear();
         heroesUnits?.Clear();
-        neutralUnits?.Clear();
+        buildingUnits?.Clear();
         enemyUnits?.Clear();
     }
 
@@ -97,7 +97,7 @@ public class UnitManager : MonoBehaviour
 
         for (int i = 0; i < buildingCount; i++)
         {
-            Building randomPrefab = (Building)GetSpecificUnit(0, Faction.Neutral);
+            Building randomPrefab = (Building)GetSpecificUnit(0, Faction.Building);
             Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
             _gameManager.PlayerManager.SetBuilding(randomPrefab, randomSpawnBattleGridTile);
             buildings[i] = randomPrefab;
@@ -140,8 +140,8 @@ public class UnitManager : MonoBehaviour
                 return heroesUnits;
             case Faction.Enemy:
                 return enemyUnits;
-            case Faction.Neutral:
-                return neutralUnits;
+            case Faction.Building:
+                return buildingUnits;
         }
 
         return null;
