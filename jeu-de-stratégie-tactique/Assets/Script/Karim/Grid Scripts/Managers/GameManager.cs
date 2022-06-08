@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TEAM2;
-using UnityEditor;
-using UnityEditor.SceneManagement;
-using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
@@ -54,7 +52,7 @@ public class GameManager : MonoBehaviour
         get => PlayerManager.PlayersGameObjects[1].GetComponent<Player>();
     }
 
-    [MenuItem("GameObject/GameManager")]
+  //  [MenuItem("GameObject/GameManager")]
     static void InstanceGameManager()
     {
         GameObject gameManager = new GameObject("GameManager", typeof(GameManager));

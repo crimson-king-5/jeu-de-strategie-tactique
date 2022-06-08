@@ -5,9 +5,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Sirenix.OdinInspector;
 using TEAM2;
-using UnityEditor;
-using UnityEditor.Animations;
-using UnityEditor.Graphs;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using UnityEngine.Tilemaps;
@@ -36,7 +33,7 @@ public class BattleGrid : MonoBehaviour
     public BattleGridTile.TileType tileType;
 
     #region Editor Function
-    [MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
+    //[MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
     public static void InstanceGridEditor()
     {
         GameObject instanceGridEditor = new GameObject("Grid Editor", typeof(BattleGrid));
