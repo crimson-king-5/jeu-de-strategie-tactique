@@ -14,9 +14,9 @@ public class GridLoader : ScriptableObject
     public int width;
     public int height;
 
-    public GridLoader(int[,] currentGridArray, TextMesh[,] currentDebugTextArray, int currentHeight,int currenWidth)
+    public GridLoader(int[,] currentGridArray, TextMesh[,] currentDebugTextArray, int currentHeight,int currentWidth)
     {
-        width = currenWidth;
+        width = currentWidth;
         height = currentHeight;
         gridArray = currentGridArray;
         debugTextArray = currentDebugTextArray;

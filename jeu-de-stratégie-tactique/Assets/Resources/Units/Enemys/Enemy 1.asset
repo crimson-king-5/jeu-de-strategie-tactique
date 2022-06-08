@@ -16,8 +16,8 @@ MonoBehaviour:
   unitsName: Boss
   renderUnit: {fileID: 21300000, guid: baf69c3f3f14301429986b2a8bbc85a0, type: 3}
   unitStats:
-    lifeMax: 0
-    life: 5
+    lifeMax: 9
+    life: 1
     atk: 1
-    mv: 0
-    range: 0
+    mv: 1
+    range: 1

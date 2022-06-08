@@ -30,9 +30,9 @@ public class GridBuildingSystem : MonoBehaviour
     }
     private void Start()
     {
-       
+
         string tilePath = @"Tiles\";
-        //Tile green = Resources.Load<Tile>(path: tilePath + "green");
+        //BattleGridTile green = Resources.Load<BattleGridTile>(path: tilePath + "green");
         tileBases.Add(TileType.Empty, null);
         tileBases.Add(TileType.White, white);
         tileBases.Add(TileType.Green, green);
@@ -42,7 +42,7 @@ public class GridBuildingSystem : MonoBehaviour
             Debug.Log(tileBases[TileType.Green]);
         }
 
-         
+
     }
 
     private void Update()
@@ -71,7 +71,7 @@ public class GridBuildingSystem : MonoBehaviour
                 }
             }
         }
-       if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             if (temp.CanBePlaced())
             {
@@ -86,7 +86,7 @@ public class GridBuildingSystem : MonoBehaviour
     }
     #endregion
     #region Tilemap Management
-    
+
     private static void FillTiles(TileBase[] arr, TileType type)
     {
         for (int i = 0; i < arr.Length; i++)
@@ -102,21 +102,22 @@ public class GridBuildingSystem : MonoBehaviour
         tilemap.SetTilesBlock(area, tileArray);
 
     }
-    private static TileBase [] GetTilesBlock(BoundsInt area, Tilemap tilemap)
+    private static TileBase[] GetTilesBlock(BoundsInt area, Tilemap tilemap)
     {
         TileBase[] array = new TileBase[area.size.x * area.size.y * area.size.z];
         int counter = 0;
 
-        foreach (Vector3Int v in area.allPositionsWithin){
+        foreach (Vector3Int v in area.allPositionsWithin)
+        {
             Vector3Int pos = new Vector3Int(v.x, v.y, 0);
             array[counter] = tilemap.GetTile(pos);
             counter++;
         }
         return array;
     }
-   
 
-   
+
+
 
 
 
@@ -140,7 +141,7 @@ public class GridBuildingSystem : MonoBehaviour
         ClearArea();
 
         temp.area.position = gridLayout.WorldToCell(temp.gameObject.transform.position);
-  
+
         BoundsInt buildingArea = temp.area;
 
         TileBase[] basesArray = GetTilesBlock(buildingArea, MainTilemap);
@@ -165,18 +166,18 @@ public class GridBuildingSystem : MonoBehaviour
             }
         }*/
 
-        
+
 
         TempTilemap.SetTilesBlock(buildingArea, basesArray);
         prevArea = buildingArea;
     }
-    
-    public bool CanTakeArea (BoundsInt area)
+
+    public bool CanTakeArea(BoundsInt area)
     {
         TileBase[] baseArray = GetTilesBlock(area, MainTilemap);
         foreach (var b in baseArray)
         {
-            if(b != tileBases[TileType.White])
+            if (b != tileBases[TileType.White])
             {
                 Debug.Log("peut pas mettre ici");
                 return false;

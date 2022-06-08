@@ -1,14 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using TMPro;
 using UnityEngine;
 
 namespace TEAM2
 {
     public class Player : MonoBehaviour
     {
-        List<Unit> unitsList = new List<Unit>();
+        [SerializeField] private List<Unit> _unitsList = new List<Unit>();
+        public List<Unit> Units
+        {
+            get => _unitsList;
+        }
+
+       [SerializeField] private List<Character> _characters = new List<Character>();
+        public List<Character> Characters
+        {
+            get => Characters;
+        }
 
         List<Order> orderList = new List<Order>();
+
+        public Faction PlayerFaction;
+
+        private GameManager _gameManager;
+
         bool hasFinishOrder = false;
 
 
@@ -18,17 +36,23 @@ namespace TEAM2
         }
 
 
-        public void Init()
+        public void Init(GameManager gm)
         {
-            SpawnUnit();
+            _gameManager = gm;
+            SpawnCharacter();
+            for (int i = 0; i < _unitsList.Count; i++)
+            {
+                _unitsList[i].Init(gm);
+            }
         }
 
-        public void SpawnUnit()
+        public void SpawnCharacter()
         {
-            Character[] list = UnitManager.Instance.SpawnCharacter(1);
-            for (int i = unitsList.Count; i < list.Length; i++)
+            Character[] list = _gameManager.UnitManager.SpawnCharacter(1, PlayerFaction);
+            for (int i = _unitsList.Count; i < list.Length; i++)
             {
-                unitsList.Add(list[i]);
+                _unitsList.Add(list[i]);
+                _characters.Add(list[i]);
             }
         }
 
@@ -45,6 +69,34 @@ namespace TEAM2
         public void ExecuteOrders(List<Order> orderList)
         {
             //Execute both own list and received order list from client
+        }
+
+        public List<Unit> GetUnitWithType(UnitType currentUnitType)
+        {
+            List<Unit> units = new List<Unit>();
+            for (int i = 0; i < _unitsList.Count; i++)
+            {
+                if (GetUnitClass(_unitsList[i]) == currentUnitType)
+                {
+                    units.Add(_unitsList[i]);
+                }
+            }
+
+            return units;
+        }
+
+        private UnitType GetUnitClass(Unit unit)
+        {
+            Character unitCharacter = unit as Character;
+            Building unitBuilding = unit as Building;
+            if (unitCharacter != null)
+            {
+                return UnitType.Character;
+            }
+            else
+            {
+                return UnitType.Building;
+            }
         }
     }
 }
