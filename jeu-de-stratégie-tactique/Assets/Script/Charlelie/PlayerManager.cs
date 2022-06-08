@@ -2,8 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using PlasticGui;
-using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 
 namespace TEAM2
