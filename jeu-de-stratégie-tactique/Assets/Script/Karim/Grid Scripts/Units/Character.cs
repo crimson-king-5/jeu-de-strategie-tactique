@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
+using Codice.Client.BaseCommands.TubeClient;
 using Sirenix.OdinInspector;
 using Unity.Netcode;
 using UnityEngine;
@@ -29,59 +30,61 @@ public class Character : TEAM2.Unit
 
     public float Life { get { return ScrUnit.unitStats.life; } set { ScrUnit.unitStats.life = value; } }
     public int Range { get { return ScrUnit.unitStats.range; } }
-    public int Atk { get { return ScrUnit.unitStats.atk; } }
+    public float Atk { get { return ScrUnit.unitStats.atk; } }
     public float ClassBonus { get => ScrUnit.classBonus; }
     public int Mv { get => ScrUnit.unitStats.mv; set => ScrUnit.unitStats.mv = value; }
+    public float Armor { get => ScrUnit.unitStats.armor; set => ScrUnit.unitStats.armor = value; }
     public UnitClass UnitClass { get => ScrUnit.unitUnitClass; }
 
     private bool hasMoved = false;
+    private bool hasAttack = false;
 
-    public int Armor { get => ScrUnit.unitStats.armor; set => ScrUnit.unitStats.armor = value; }
 
     public void Attack(Character targetCharacter)
     {
-        float atk = Atk;
+        float bonus = 1;
         switch (targetCharacter.UnitClass)
         {
             case UnitClass.Tank:
                 if (UnitClass == UnitClass.Mage)
                 {
-                    atk = atk * ClassBonus;
+                    bonus = Atk * ClassBonus;
                 }
                 else if (UnitClass == UnitClass.Warrior)
                 {
-                    atk = atk / ClassBonus;
+                    bonus = Atk / ClassBonus;
                 }
                 break;
             case UnitClass.Mage:
                 if (UnitClass == UnitClass.Warrior)
                 {
-                    atk = atk * ClassBonus;
+                    bonus = Atk * ClassBonus;
                 }
                 else if (UnitClass == UnitClass.Tank)
                 {
-                    atk = atk / ClassBonus;
+                    bonus = Atk / ClassBonus;
                 }
                 break;
             case UnitClass.Warrior:
                 if (UnitClass == UnitClass.Tank)
                 {
-                    atk = atk * ClassBonus;
+                    bonus = Atk * ClassBonus;
                 }
                 if (UnitClass == UnitClass.Mage)
                 {
-                    atk = atk / ClassBonus;
+                    bonus = Atk / ClassBonus;
                 }
                 break;
         }
-
+        float damage = bonus * Atk;
         float targetLife = targetCharacter.Life;
-        int targetArmor = targetCharacter.Armor;
-        Debug.Log("Unit " + targetCharacter.ScrUnit.unitsName + " take " + (targetArmor - atk) + " damage");
-        targetLife -= targetArmor - atk;
+        float targetArmor = targetCharacter.Armor;
+        Debug.Log("Unit " + targetCharacter.ScrUnit.unitsName + " take " + (damage - targetArmor) + " damage");
+        targetLife -= damage - targetArmor;
         Debug.Log("Unit :" + targetCharacter.ScrUnit.unitsName + " have " + targetLife + " Life now !");
         targetCharacter.Life = targetLife;
         _gameManager.InstantiateEffect(targetCharacter.GetUnitDestinationWorldPosition(targetCharacter.GetCurrentUnitGridlPosition()), 0);
+        targetCharacter.CheckifUnitDie();
     }
 
     private IEnumerator MoveUnit(Vector3 newUnitPos, float speed)
@@ -99,19 +102,22 @@ public class Character : TEAM2.Unit
         SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
         unitRenderer.color = Color.gray;
         hasMoved = false;
+        hasAttack = false;
         unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
     }
-    public void Wait() { }
-
 
     public override void DoAction()
     {
         base.DoAction();
     }
 
-    public override void Die()
+    public  void CheckifUnitDie()
     {
-        base.Die();
+        if (Life <= 0)
+        {
+            unitStateMachine.currentState = UnitStateMachine.UnitState.Dead;
+            gameObject.SetActive(false);
+        }
     }
 
     private void Update()
@@ -269,13 +275,17 @@ public class Character : TEAM2.Unit
                 switch (unitStateMachine.currentState)
                 {
                     case UnitStateMachine.UnitState.Attack:
-                        Attack(mouseCharacter);
-                        if (mouseCharacter.Range <= mouseCharacter.GetTileRange(transform.position))
+                        if (!hasAttack)
                         {
-                            Attack(this);
+                            Attack(mouseCharacter);
+                            hasAttack = true;
                             if (hasMoved)
                             {
                                 Rest();
+                            }
+                            if (mouseCharacter.Range <= mouseCharacter.GetTileRange(transform.position))
+                            {
+                                Attack(this);
                             }
                         }
                         break;
@@ -284,6 +294,10 @@ public class Character : TEAM2.Unit
                         {
                             MouseClickMoveTo(mouseWorldPosition);
                             hasMoved = true;
+                            if (hasAttack)
+                            {
+                                Rest();
+                            }
                         }
                         break;
                 }

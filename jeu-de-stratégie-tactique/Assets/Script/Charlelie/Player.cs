@@ -9,24 +9,24 @@ namespace TEAM2
 {
     public class Player : MonoBehaviour
     {
-        [SerializeField] private List<Unit> _unitsList = new List<Unit>();
         public List<Unit> Units
         {
             get => _unitsList;
         }
-
-        List<Order> orderList = new List<Order>();
-
-        public Faction PlayerFaction;
-
-        private GameManager _gameManager;
-
-        bool hasFinishOrder = false;
-
         public bool Ready
         {
             get { return hasFinishOrder; }
         }
+        public Faction PlayerFaction;
+
+        [SerializeField] private List<Unit> _unitsList = new List<Unit>();
+        private List<Order> orderList = new List<Order>();
+
+        private GameManager _gameManager;
+
+        [SerializeField] private float _resource = 0;
+
+        private bool hasFinishOrder = false;
 
         public void Init(GameManager gm)
         {
@@ -35,6 +35,19 @@ namespace TEAM2
             for (int i = 0; i < _unitsList.Count; i++)
             {
                 _unitsList[i].Init(gm);
+            }
+        }
+
+
+        public void AddResource()
+        {
+            List<Building> buildings = GetUnitWithType(UnitType.Building).Cast<Building>().ToList();
+            for (int i = 0; i < buildings.Count; i++)
+            {
+                if (buildings[i].faction == PlayerFaction)
+                {
+                    _resource += buildings[i].GainResourcePerTurn;
+                }
             }
         }
 
@@ -72,6 +85,19 @@ namespace TEAM2
             return units;
         }
 
+        public bool CheckifAllUnitsHasEndTurn()
+        {
+            for (int i = 0; i < _unitsList.Count; i++)
+            {
+                if (_unitsList[i].unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
+                {
+                    return false;
+                }
+
+            }
+
+            return true;
+        }
         private UnitType GetUnitClass(Unit unit)
         {
             Character unitCharacter = unit as Character;
@@ -84,19 +110,6 @@ namespace TEAM2
             {
                 return UnitType.Building;
             }
-        }
-        public bool CheckifAllUnitsHasEndTurn()
-        {
-            for (int i = 0; i < _unitsList.Count; i++)
-            {
-                if (_unitsList[i].unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-                {
-                    return false;
-                }
-                
-            }
-
-            return true;
         }
     }
 }

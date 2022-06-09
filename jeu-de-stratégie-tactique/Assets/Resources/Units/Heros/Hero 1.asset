@@ -21,6 +21,6 @@ MonoBehaviour:
     life: 5
     lifemax: 5
     armor: 0
-    atk: 1
+    atk: 2
     mv: 3
     range: 2

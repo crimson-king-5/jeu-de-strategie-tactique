@@ -6,6 +6,8 @@ using UnityEngine;
 public class Building : Unit
 {
     [SerializeField] private Productor _productor;
+    public Faction faction;
+
     public UprgadeList UpgradeList
     {
         get
