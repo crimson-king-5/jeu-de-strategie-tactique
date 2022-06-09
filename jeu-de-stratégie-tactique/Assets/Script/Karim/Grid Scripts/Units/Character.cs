@@ -39,11 +39,6 @@ public class Character : TEAM2.Unit
 
     public int Armor { get => ScrUnit.unitStats.armor; set => ScrUnit.unitStats.armor = value; }
 
-    public void Init()
-    {
-        ScrUnit = ScrUnit.GetCloneUnit();
-    }
-
     public void Attack(Character targetCharacter)
     {
         float atk = Atk;

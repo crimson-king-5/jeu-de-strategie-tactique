@@ -108,12 +108,12 @@ public class GameManager : MonoBehaviour
     //When Game starting
     public void OnGameStart()
     {
-        _unitManager.Init(this);
-        //thirdly spawn pre-placed buildings (with some effects)
+        //First, spawn grid and Building
         _buildingManager.Init(this);
         _gridBuildingSystem.Init(this);
-        //First, spawn grid
         _battleGrid.Init(this);
+        //Second, Unit manager
+        _unitManager.Init(this);
         //Then spawn each playersGameObjects characters randomly on grid
         _playerManager.Init(this);
         //after choose randomly a player to start (Online Stuff)

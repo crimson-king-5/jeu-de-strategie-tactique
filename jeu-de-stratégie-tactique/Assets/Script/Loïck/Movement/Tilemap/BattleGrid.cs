@@ -100,17 +100,22 @@ public class BattleGrid : MonoBehaviour
 
     public Vector3 SpawnUnitPerFaction(Faction faction)
     {
-        for (int i = 0; i < _availablePlaces.Count; i++)
+       List<Vector3> localAvailablePlaces = _availablePlaces;
+       List<Vector3Int> gridAvailablePlaces = _availableGridPlaces;
+        for (int i = 0; i < localAvailablePlaces.Count; i++)
         {
-            Vector3Int gridpos = _availableGridPlaces[i];
-            Vector3 unipos = _availablePlaces[i];
+            Vector3Int gridpos = gridAvailablePlaces[i];
+            Vector3 unipos = localAvailablePlaces[i];
             BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(gridpos);
+
             if (currentTile.currentTileType == BattleGridTile.TileType.Spawn)
             {
                 FactionTile factionTile = (FactionTile)currentTile;
-                if (factionTile.faction == faction && !CheckIfUnitIsHere(Player, (int)unipos.x, (int)unipos.y))
+                if (factionTile.faction == faction)
                 {
-                    return _availablePlaces[i];
+                    localAvailablePlaces.Remove(localAvailablePlaces[i]);
+                    gridAvailablePlaces.Remove(gridAvailablePlaces[i]);
+                    return unipos;
                 }
             }
 

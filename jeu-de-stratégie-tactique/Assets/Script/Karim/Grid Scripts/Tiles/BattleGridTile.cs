@@ -8,7 +8,7 @@ public class BattleGridTile : Tile
 {
     public TileType currentTileType = TileType.None;
     [Range(0,99)]public int mvRequire = 0;
-    public bool Walkable => currentTileType != TileType.None && currentTileType != TileType.Ruin;
+    public bool Walkable => currentTileType == TileType.Walkable;
 
     public void SetUnit(Character unit)
     {

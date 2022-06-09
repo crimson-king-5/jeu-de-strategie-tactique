@@ -44,11 +44,13 @@ namespace TEAM2
         public void SetUnit(Character unit, Vector3 unitPos)
         {
             unit.transform.position = unitPos;
+            unit.Init(_gameManager);
         }
 
         public void SetBuilding(Building unit, Vector3 unitPos)
         {
             unit.transform.position = unitPos;
+            unit.Init(_gameManager);
         }
 
         public void CheckIfOrdersFinished()

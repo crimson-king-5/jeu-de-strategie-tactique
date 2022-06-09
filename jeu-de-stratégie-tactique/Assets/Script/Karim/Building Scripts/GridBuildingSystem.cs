@@ -113,7 +113,7 @@ public class GridBuildingSystem : MonoBehaviour
     #region Building Placement
     public void IntitializeWithBuilding(ScriptableUnit unit,Vector3Int gridPos)
     {
-        temp = new GameObject(unit.unitsName,typeof(Building),typeof(SpriteRenderer),typeof(SwitchLevels)).GetComponent<Building>();
+        temp = new GameObject(unit.unitsName,typeof(Building),typeof(SpriteRenderer)).GetComponent<Building>();
         temp.GetComponent<SpriteRenderer>().sortingOrder = 4;
         temp.GetComponent<SpriteRenderer>().sprite = unit.renderUnit;
         temp.transform.position = gridPos;
