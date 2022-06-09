@@ -12,9 +12,14 @@ using UnityEngine.Tilemaps;
 public class BattleGrid : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
-    [SerializeField] private GameObject _currentTilesRef;
     [SerializeField] private Tilemap _tilemap;
     [SerializeField] private List<Vector3> _availablePlaces = new List<Vector3>();
+    [SerializeField] private List<Vector3Int> _availableGridPlaces = new List<Vector3Int>();
+
+    private Player Player
+    {
+        get => _gameManager.PlayerManager.CurrentPlayer;
+    }
 
     //public List<Vector3Int> AvailablePlaces
     //{
@@ -26,11 +31,12 @@ public class BattleGrid : MonoBehaviour
         get => _tilemap;
     }
 
+    private UnitManager UnitManager
+    {
+        get => _gameManager.UnitManager;
+    }
 
-    [LabelText("/n")]
-    public GridLoader loader;
     public BattleGridTile.TileType tileType;
-
 
     #region Editor Function
     //[MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
@@ -56,6 +62,12 @@ public class BattleGrid : MonoBehaviour
                 {
                     //Tile at "place"
                     _availablePlaces.Add(place);
+                    _availableGridPlaces.Add(localPlace);
+                    BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(localPlace);
+                    if (currentTile.currentTileType == BattleGridTile.TileType.Ruin)
+                    {
+                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(UnitManager.GetSpecificUnitPerName("Ruines", Faction.Building).ScrUnit, localPlace);
+                    }
                 }
                 else
                 {
@@ -69,8 +81,7 @@ public class BattleGrid : MonoBehaviour
     {
         int randomIndex = Random.Range(0, _availablePlaces.Count);
         Vector3 unitPos = _availablePlaces[randomIndex];
-        Player player = _gameManager.PlayerManager.CurrentPlayer;
-        if (CheckIfUnitIsHere(player, (int)unitPos.x, (int)unitPos.y))
+        if (CheckIfUnitIsHere(Player, (int)unitPos.x, (int)unitPos.y))
         {
             if (randomIndex == _availablePlaces.Count)
             {
@@ -84,9 +95,35 @@ public class BattleGrid : MonoBehaviour
         return unitPos;
     }
 
+    public Vector3 SpawnUnitPerFaction(Faction faction)
+    {
+       List<Vector3> localAvailablePlaces = _availablePlaces;
+       List<Vector3Int> gridAvailablePlaces = _availableGridPlaces;
+        for (int i = 0; i < localAvailablePlaces.Count; i++)
+        {
+            Vector3Int gridpos = gridAvailablePlaces[i];
+            Vector3 unipos = localAvailablePlaces[i];
+            BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(gridpos);
+
+            if (currentTile.currentTileType == BattleGridTile.TileType.Spawn)
+            {
+                FactionTile factionTile = (FactionTile)currentTile;
+                if (factionTile.faction == faction)
+                {
+                    localAvailablePlaces.Remove(localAvailablePlaces[i]);
+                    gridAvailablePlaces.Remove(gridAvailablePlaces[i]);
+                    return unipos;
+                }
+            }
+
+        }
+        Debug.LogError("Spawn Tile was not found");
+        return Vector3.zero;
+    }
+
     public BattleGridTile GetTileType(Vector3Int tilePos)
     {
-       return  (BattleGridTile)_tilemap.GetTile(tilePos);
+        return (BattleGridTile)_tilemap.GetTile(tilePos);
     }
 
     public bool CheckIfUnitIsHere(Player player, int x, int y)
@@ -136,7 +173,7 @@ public class BattleGrid : MonoBehaviour
 
 
 
-    public int GetTileRange(Vector3Int unitPos,Vector3Int gridPos)
+    public int GetTileRange(Vector3Int unitPos, Vector3Int gridPos)
     {
         bool inRange = false;
         int numTiles = 0;
@@ -171,8 +208,8 @@ public class BattleGrid : MonoBehaviour
     void OnGUI()
     {
         Vector3 mousPos = GetMouseWorldPosition();
-        Vector3Int intMousPos = new Vector3Int((int) mousPos.x, (int) mousPos.y);
+        Vector3Int intMousPos = new Vector3Int((int)mousPos.x, (int)mousPos.y);
         Vector3 centerMousePos = _tilemap.GetCellCenterWorld(intMousPos);
-        GUI.Label(new Rect(10f, 10, 1000, 1000),"Mouse position : "+ mousPos.x + " " + mousPos.y + " \n Center Mouse Position :"+ centerMousePos.x + " " + centerMousePos.y );
+        GUI.Label(new Rect(10f, 10, 1000, 1000), "Mouse position : " + mousPos.x + " " + mousPos.y + " \n Center Mouse Position :" + centerMousePos.x + " " + centerMousePos.y);
     }
 }

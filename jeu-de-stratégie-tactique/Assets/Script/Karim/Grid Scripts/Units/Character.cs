@@ -38,11 +38,6 @@ public class Character : TEAM2.Unit
 
     public int Armor { get => ScrUnit.unitStats.armor; set => ScrUnit.unitStats.armor = value; }
 
-    public void Init()
-    {
-        ScrUnit = ScrUnit.GetCloneUnit();
-    }
-
     public void Attack(Character targetCharacter)
     {
         float atk = Atk;
@@ -253,40 +248,45 @@ public class Character : TEAM2.Unit
         if (unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
             Vector3 mouseWorldPosition = BattleGrid.GetMouseWorldPosition();
-            int tileRange = GetTileRange(mouseWorldPosition);
-            Character mouseCharacter = null;
-            if (PlayerManager.CheckifUnitWasHere(GetUnitDestinationGridPosition(mouseWorldPosition)))
+            Vector3Int gridPos = GetSpecificGridPosition(mouseWorldPosition);
+            if (BattleGrid.Tilemap.HasTile(gridPos))
             {
-                mouseCharacter = (Character)PlayerManager.GetUnit(GetUnitDestinationGridPosition(mouseWorldPosition));
-                if (mouseCharacter != null && mouseCharacter.ScrUnit.faction != ScrUnit.faction && tileRange <= Range)
+                int tileRange = GetTileRange(mouseWorldPosition);
+                BattleGridTile gridTile = (BattleGridTile)BattleGrid.Tilemap.GetTile(gridPos);
+                Character mouseCharacter = null;
+                if (PlayerManager.CheckifUnitWasHere(GetUnitDestinationGridPosition(mouseWorldPosition)))
                 {
-                    unitStateMachine.currentState = UnitStateMachine.UnitState.Attack;
+                    mouseCharacter = (Character)PlayerManager.GetUnit(GetUnitDestinationGridPosition(mouseWorldPosition));
+                    if (mouseCharacter != null && mouseCharacter.ScrUnit.faction != ScrUnit.faction && tileRange <= Range)
+                    {
+                        unitStateMachine.currentState = UnitStateMachine.UnitState.Attack;
+                    }
                 }
-            }
-            else if (tileRange <= Mv)
-            {
-                unitStateMachine.currentState = UnitStateMachine.UnitState.MoveTo;
-            }
-            switch (unitStateMachine.currentState)
-            {
-                case UnitStateMachine.UnitState.Attack:
-                    Attack(mouseCharacter);
-                    if (mouseCharacter.Range <= mouseCharacter.GetTileRange(transform.position))
-                    {
-                        Attack(this);
-                        if (hasMoved)
+                else if (tileRange <= Mv && gridTile.Walkable)
+                {
+                    unitStateMachine.currentState = UnitStateMachine.UnitState.MoveTo;
+                }
+                switch (unitStateMachine.currentState)
+                {
+                    case UnitStateMachine.UnitState.Attack:
+                        Attack(mouseCharacter);
+                        if (mouseCharacter.Range <= mouseCharacter.GetTileRange(transform.position))
                         {
-                            Rest();
+                            Attack(this);
+                            if (hasMoved)
+                            {
+                                Rest();
+                            }
                         }
-                    }
-                    break;
-                case UnitStateMachine.UnitState.MoveTo:
-                    if (!hasMoved)
-                    {
-                        MouseClickMoveTo(mouseWorldPosition);
-                        hasMoved = true;
-                    }
-                    break;
+                        break;
+                    case UnitStateMachine.UnitState.MoveTo:
+                        if (!hasMoved)
+                        {
+                            MouseClickMoveTo(mouseWorldPosition);
+                            hasMoved = true;
+                        }
+                        break;
+                }
             }
         }
     }

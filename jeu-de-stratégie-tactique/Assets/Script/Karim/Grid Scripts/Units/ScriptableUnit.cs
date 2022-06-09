@@ -31,7 +31,8 @@ public class UnitStats
 public enum Faction
 {
     Hero = 0,
-    Enemy = 1
+    Enemy = 1,
+    Building = 3
 }
 
 public enum UnitClass

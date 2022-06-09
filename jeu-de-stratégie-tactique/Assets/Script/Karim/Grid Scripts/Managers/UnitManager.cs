@@ -26,7 +26,7 @@ public class UnitManager : MonoBehaviour
 
     [SerializeField] private List<ScriptableUnit> heroesUnits = new List<ScriptableUnit>();
     [SerializeField] private List<ScriptableUnit> enemyUnits = new List<ScriptableUnit>();
-    [SerializeField] private List<ScriptableUnit> neutralUnits = new List<ScriptableUnit>();
+    [SerializeField] private List<ScriptableUnit> buildingUnits = new List<ScriptableUnit>();
 
     [Button("LoadUnits", ButtonSizes.Large)]
     public void LoadUnits()
@@ -39,10 +39,15 @@ public class UnitManager : MonoBehaviour
             {
                 heroesUnits.Add(_units[i]);
             }
-            else
+            else if (_units[i].faction == Faction.Enemy)
             {
                 enemyUnits.Add(_units[i]);
             }
+            else
+            {
+                buildingUnits.Add(_units[i]);
+            }
+
         }
     }
 
@@ -50,7 +55,7 @@ public class UnitManager : MonoBehaviour
     {
         _units?.Clear();
         heroesUnits?.Clear();
-        neutralUnits?.Clear();
+        buildingUnits?.Clear();
         enemyUnits?.Clear();
     }
 
@@ -79,11 +84,25 @@ public class UnitManager : MonoBehaviour
         for (int i = 0; i < unitCount; i++)
         {
             Character randomPrefab = GetRandomUnitPerFaction(currentfaction);
-            Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
+            Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnUnitPerFaction(currentfaction);
             _gameManager.PlayerManager.SetUnit(randomPrefab, randomSpawnBattleGridTile);
             chars[i] = randomPrefab;
         }
         return chars;
+    }
+
+    public Building[] SpawnBuildings(int buildingCount)
+    {
+        Building[] buildings = new Building[buildingCount];
+
+        for (int i = 0; i < buildingCount; i++)
+        {
+            Building randomPrefab = (Building)GetSpecificUnitPerIndex(0, Faction.Building);
+            Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
+            _gameManager.PlayerManager.SetBuilding(randomPrefab, randomSpawnBattleGridTile);
+            buildings[i] = randomPrefab;
+        }
+        return buildings;
     }
 
     private Character GetRandomUnitPerFaction(Faction faction)
@@ -100,6 +119,39 @@ public class UnitManager : MonoBehaviour
         return newUnit;
     }
 
+    public Unit GetSpecificUnitPerIndex(int index, Faction UnitFaction)
+    {
+        List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
+        GameObject unitObj = new GameObject("", typeof(Building), typeof(SpriteRenderer));
+        Building newUnit = unitObj.GetComponent<Building>();
+        SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
+        newUnit.ScrUnit = FactionUnit[index];
+        unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
+        unitRenderer.sortingOrder = 1;
+        unitObj.name = newUnit.ScrUnit.unitsName;
+        return newUnit;
+    }
+    public Unit GetSpecificUnitPerName(string unitName, Faction UnitFaction)
+    {
+        List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
+        GameObject unitObj = new GameObject("", typeof(Building), typeof(SpriteRenderer));
+        Building newUnit = unitObj.GetComponent<Building>();
+        SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
+        for (int i = 0; i < FactionUnit.Count; i++)
+        {
+            if (FactionUnit[i].unitsName == unitName)
+            {
+                newUnit.ScrUnit = FactionUnit[i];
+                unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
+                unitRenderer.sortingOrder = 1;
+                unitObj.name = newUnit.ScrUnit.unitsName;
+                return newUnit;
+            }
+        }
+        Debug.LogError("Unit was not found !");
+        return null;
+    }
+
     public List<ScriptableUnit> GetFactionScriptableUnits(Faction currentFaction)
     {
         switch (currentFaction)
@@ -108,6 +160,8 @@ public class UnitManager : MonoBehaviour
                 return heroesUnits;
             case Faction.Enemy:
                 return enemyUnits;
+            case Faction.Building:
+                return buildingUnits;
         }
 
         return null;

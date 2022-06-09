@@ -1,44 +1,57 @@
 using System.Collections;
 using System.Collections.Generic;
+using TEAM2;
 using UnityEngine;
 
-public class Building : MonoBehaviour
+public class Building : Unit
 {
-    public bool Placed { get; private set; }
-    public BoundsInt area;
-
-
-
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private Productor _productor;
+    public UprgadeList UpgradeList
     {
-        
-    }
-
-    #region Buil Metods
-
-    public bool CanBePlaced()
-    {
-        Vector3Int positionInt = GridBuildingSystem.current.gridLayout.LocalToCell(transform.position);
-        BoundsInt areaTemp = area;
-        areaTemp.position = positionInt;
-
-        if (GridBuildingSystem.current.CanTakeArea(areaTemp))
+        get
         {
-            return true;
+            ScriptableBuilding building = (ScriptableBuilding)_scrUnit;
+            return building.upgrades;
         }
-        return false;
+
     }
-     
-    public void Place()
+
+
+    public float GainResourcePerTurn
     {
-        Vector3Int positionInt = GridBuildingSystem.current.gridLayout.LocalToCell(transform.position);
-        BoundsInt areaTemp = area;
-        areaTemp.position = positionInt;
-        Placed = true;
-        GridBuildingSystem.current.TakeArea(areaTemp);
+        get => _productor.resource * UpgradeList.upgrades[currentlevelBuilding].gainBonus;
     }
 
+    public GridBuildingSystem GridBuildingSystem
+    {
+        get => _gameManager.GridBuildingSystem;
+    }
 
-    #endregion
+    public int currentlevelBuilding = 0;
+
+    public void Upgrade()
+    {
+        if (currentlevelBuilding < UpgradeList.upgrades.Count)
+        {
+            currentlevelBuilding++;
+            SwitchObject(currentlevelBuilding);
+        }
+    }
+
+    void SwitchObject(int lvl)
+    {
+        for (int i = 0; i < UpgradeList.upgrades.Count; i++)
+        {
+            if (i == lvl)
+            {
+                GetComponent<SpriteRenderer>().sprite = UpgradeList.upgrades[i].upgradeRender;
+            }
+        }
+    }
+
+}
+public enum BuildType
+{
+    Base = 0,
+    Miner = 1
 }

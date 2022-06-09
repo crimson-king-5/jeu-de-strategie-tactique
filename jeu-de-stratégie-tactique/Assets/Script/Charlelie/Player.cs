@@ -15,12 +15,6 @@ namespace TEAM2
             get => _unitsList;
         }
 
-       [SerializeField] private List<Character> _characters = new List<Character>();
-        public List<Character> Characters
-        {
-            get => Characters;
-        }
-
         List<Order> orderList = new List<Order>();
 
         public Faction PlayerFaction;
@@ -29,12 +23,10 @@ namespace TEAM2
 
         bool hasFinishOrder = false;
 
-
         public bool Ready
         {
             get { return hasFinishOrder; }
         }
-
 
         public void Init(GameManager gm)
         {
@@ -52,14 +44,9 @@ namespace TEAM2
             for (int i = _unitsList.Count; i < list.Length; i++)
             {
                 _unitsList.Add(list[i]);
-                _characters.Add(list[i]);
             }
         }
 
-        void SendOrdersToClientRPC()
-        {
-            //Send order list to client, so he can play resolution phase without latency or desync
-        }
 
         public void AddOrderToList(OrderType orderType)
         {

@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f764359c572c7e34eba81189f08f2126, type: 3}
-  m_Name: Tile
+  m_Script: {fileID: 11500000, guid: 24d6b59350033aa47a0d60560ab6d755, type: 3}
+  m_Name: SpawnTileHero
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 7482667652216324306, guid: 7ac2d5b1814e54f40963e43b9d0f583e, type: 3}
-  m_Color: {r: 0.27843142, g: 1, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.8461648, b: 0, a: 1}
   m_Transform:
     e00: 1
     e01: 0
@@ -34,6 +34,6 @@ MonoBehaviour:
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 1
   m_ColliderType: 1
-  _isWalkable: 1
   currentTileType: 2
-  mvRequire: 1
+  mvRequire: 0
+  faction: 0
