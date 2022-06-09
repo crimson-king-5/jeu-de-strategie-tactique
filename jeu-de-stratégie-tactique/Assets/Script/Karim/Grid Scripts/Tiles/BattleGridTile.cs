@@ -6,23 +6,9 @@ using UnityEngine.Tilemaps;
 [CreateAssetMenu(fileName = "Tile", menuName = "Tile/BattleGrid")]
 public class BattleGridTile : Tile
 {
-    [SerializeField] private bool _isWalkable;
     public TileType currentTileType = TileType.None;
     [Range(0,99)]public int mvRequire = 0;
-    public bool Walkable => _isWalkable && currentTileType != TileType.None;
-
-    public void CheckIfCanWalk()
-    {
-        switch (currentTileType)
-        {
-            case TileType.Walkable:
-                _isWalkable = true;
-                break;
-            case TileType.None:
-                _isWalkable = false;
-                break;
-        }
-    }
+    public bool Walkable => currentTileType != TileType.None && currentTileType != TileType.Ruin;
 
     public void SetUnit(Character unit)
     {
@@ -37,6 +23,7 @@ public class BattleGridTile : Tile
         None = 0,
         Walkable = 1,
         Spawn = 2,
-        Ruin = 3
+        Ruin = 3,
+        MotherBase = 4
     }
 }

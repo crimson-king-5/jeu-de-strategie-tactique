@@ -14,14 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   faction: 3
   unitUnitClass: 3
-  unitsName: 
-  renderUnit: {fileID: 0}
+  unitsName: Ruines
+  renderUnit: {fileID: 21300000, guid: 6a633aff9d90e8c4aa81c1fc15be727d, type: 3}
   classBonus: 0
   unitStats:
-    life: 0
+    life: 10
     lifemax: 0
     armor: 0
     atk: 0
     mv: 0
     range: 0
-  allBuildingUpgrade: []
+  upgrades:
+    upgrades: []
+  currentBuildType: 0

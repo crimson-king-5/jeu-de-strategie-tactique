@@ -84,7 +84,7 @@ public class UnitManager : MonoBehaviour
         for (int i = 0; i < unitCount; i++)
         {
             Character randomPrefab = GetRandomUnitPerFaction(currentfaction);
-            Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
+            Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnUnitPerFaction(currentfaction);
             _gameManager.PlayerManager.SetUnit(randomPrefab, randomSpawnBattleGridTile);
             chars[i] = randomPrefab;
         }
@@ -97,7 +97,7 @@ public class UnitManager : MonoBehaviour
 
         for (int i = 0; i < buildingCount; i++)
         {
-            Building randomPrefab = (Building)GetSpecificUnit(0, Faction.Building);
+            Building randomPrefab = (Building)GetSpecificUnitPerIndex(0, Faction.Building);
             Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
             _gameManager.PlayerManager.SetBuilding(randomPrefab, randomSpawnBattleGridTile);
             buildings[i] = randomPrefab;
@@ -119,7 +119,7 @@ public class UnitManager : MonoBehaviour
         return newUnit;
     }
 
-    public Unit GetSpecificUnit(int index, Faction UnitFaction)
+    public Unit GetSpecificUnitPerIndex(int index, Faction UnitFaction)
     {
         List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
         GameObject unitObj = new GameObject("", typeof(Building), typeof(SpriteRenderer));
@@ -130,6 +130,26 @@ public class UnitManager : MonoBehaviour
         unitRenderer.sortingOrder = 1;
         unitObj.name = newUnit.ScrUnit.unitsName;
         return newUnit;
+    }
+    public Unit GetSpecificUnitPerName(string unitName, Faction UnitFaction)
+    {
+        List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
+        GameObject unitObj = new GameObject("", typeof(Building), typeof(SpriteRenderer));
+        Building newUnit = unitObj.GetComponent<Building>();
+        SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
+        for (int i = 0; i < FactionUnit.Count; i++)
+        {
+            if (FactionUnit[i].unitsName == unitName)
+            {
+                newUnit.ScrUnit = FactionUnit[i];
+                unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
+                unitRenderer.sortingOrder = 1;
+                unitObj.name = newUnit.ScrUnit.unitsName;
+                return newUnit;
+            }
+        }
+        Debug.LogError("Unit was not found !");
+        return null;
     }
 
     public List<ScriptableUnit> GetFactionScriptableUnits(Faction currentFaction)

@@ -14,6 +14,12 @@ public class BattleGrid : MonoBehaviour
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private Tilemap _tilemap;
     [SerializeField] private List<Vector3> _availablePlaces = new List<Vector3>();
+    [SerializeField] private List<Vector3Int> _availableGridPlaces = new List<Vector3Int>();
+
+    private Player Player
+    {
+        get => _gameManager.PlayerManager.CurrentPlayer;
+    }
 
     //public List<Vector3Int> AvailablePlaces
     //{
@@ -56,10 +62,11 @@ public class BattleGrid : MonoBehaviour
                 {
                     //Tile at "place"
                     _availablePlaces.Add(place);
+                    _availableGridPlaces.Add(localPlace);
                     BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(localPlace);
                     if (currentTile.currentTileType == BattleGridTile.TileType.Ruin)
                     {
-                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(UnitManager.GetFactionScriptableUnits(Faction.Building)[0], localPlace);
+                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(UnitManager.GetSpecificUnitPerName("Ruines", Faction.Building).ScrUnit, localPlace);
                     }
                 }
                 else
@@ -74,8 +81,7 @@ public class BattleGrid : MonoBehaviour
     {
         int randomIndex = Random.Range(0, _availablePlaces.Count);
         Vector3 unitPos = _availablePlaces[randomIndex];
-        Player player = _gameManager.PlayerManager.CurrentPlayer;
-        if (CheckIfUnitIsHere(player, (int)unitPos.x, (int)unitPos.y))
+        if (CheckIfUnitIsHere(Player, (int)unitPos.x, (int)unitPos.y))
         {
             if (randomIndex == _availablePlaces.Count)
             {
@@ -87,6 +93,27 @@ public class BattleGrid : MonoBehaviour
             }
         }
         return unitPos;
+    }
+
+    public Vector3 SpawnUnitPerFaction(Faction faction)
+    {
+        for (int i = 0; i < _availablePlaces.Count; i++)
+        {
+            Vector3Int gridpos = _availableGridPlaces[i];
+            Vector3 unipos = _availablePlaces[i];
+            BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(gridpos);
+            if (currentTile.currentTileType == BattleGridTile.TileType.Spawn)
+            {
+                FactionTile factionTile = (FactionTile)currentTile;
+                if (factionTile.faction == faction && !CheckIfUnitIsHere(Player, (int)unipos.x, (int)unipos.y))
+                {
+                    return _availablePlaces[i];
+                }
+            }
+
+        }
+        Debug.LogError("Spawn Tile was not found");
+        return Vector3.zero;
     }
 
     public BattleGridTile GetTileType(Vector3Int tilePos)
