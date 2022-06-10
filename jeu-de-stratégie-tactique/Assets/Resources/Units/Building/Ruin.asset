@@ -26,4 +26,4 @@ MonoBehaviour:
     range: 0
   upgrades:
     upgrades: []
-  currentBuildType: 0
+  currentBuildType: 2
