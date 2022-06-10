@@ -28,7 +28,6 @@ public class UnitManager : MonoBehaviour
     [SerializeField] private List<ScriptableUnit> enemyUnits = new List<ScriptableUnit>();
     [SerializeField] private List<ScriptableUnit> buildingUnits = new List<ScriptableUnit>();
 
-    [Button("LoadUnits", ButtonSizes.Large)]
 
     private void ClearUnits()
     {
@@ -133,6 +132,7 @@ public class UnitManager : MonoBehaviour
         _gameManager = gm;
     }
 
+    [Button("LoadUnits", ButtonSizes.Large)]
     public void LoadUnits()
     {
         ClearUnits();
@@ -259,7 +259,7 @@ public class UnitManager : MonoBehaviour
             UpdateUnitsRenderAndSate(allDeployedHeroesUnits);
             SelectedHero = allDeployedHeroesUnits[0];
             SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-            Debug.Log("Tours de: " + SelectedHero.ScrUnit.unitsName);
+            Debug.Log("Tours de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
 

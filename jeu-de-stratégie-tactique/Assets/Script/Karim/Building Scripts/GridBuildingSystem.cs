@@ -9,7 +9,7 @@ using TEAM2;
 public class GridBuildingSystem : MonoBehaviour
 {
     private GameManager _gameManager;
-    public GridLayout GridLayout
+    public Tilemap Tilemap
     {
         get => _gameManager.BattleGrid.Tilemap;
     }
@@ -116,7 +116,7 @@ public class GridBuildingSystem : MonoBehaviour
         temp = new GameObject(unit.unitsName,typeof(Building),typeof(SpriteRenderer)).GetComponent<Building>();
         temp.GetComponent<SpriteRenderer>().sortingOrder = 4;
         temp.GetComponent<SpriteRenderer>().sprite = unit.renderUnit;
-        temp.transform.position = gridPos;
+        temp.transform.position = Tilemap.GetCellCenterWorld(gridPos);
         BuildManager.Buildings.Add(temp);
         //FollowBuilding();
     }

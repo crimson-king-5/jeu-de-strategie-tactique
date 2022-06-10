@@ -66,7 +66,7 @@ namespace TEAM2
 
         public Vector3Int GetSpecificGridPosition(Vector3 newPos)
         {
-            return BattleGrid.Tilemap.WorldToCell(newPos);;
+            return BattleGrid.Tilemap.WorldToCell(newPos);
         }
 
         public Vector3Int GetUnitDestinationGridPosition(Vector3 charaDestinationWorldPos)

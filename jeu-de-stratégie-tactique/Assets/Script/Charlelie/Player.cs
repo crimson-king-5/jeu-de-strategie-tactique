@@ -12,6 +12,7 @@ namespace TEAM2
         public List<Unit> Units
         {
             get => _unitsList;
+            set => _unitsList = value;
         }
         public bool Ready
         {

@@ -10,20 +10,26 @@ namespace TEAM2
     {
         private GameManager _gameManager;
 
+        private GameObject[] _playersGameObjects;
+
+        private List<Player> _players = new List<Player>();
+
         public GameObject[] PlayersGameObjects
         {
             get => _playersGameObjects;
         }
-        private GameObject[] _playersGameObjects;
-
-        private List<Player> players = new List<Player>();
 
         public Player CurrentPlayer
         {
-            get => players[index];
+            get => _players[index];
         }
 
         public int index;
+
+        public List<Player> Players
+        {
+            get => _players;
+        }
 
         public void Init(GameManager gm)
         {
@@ -32,11 +38,11 @@ namespace TEAM2
             _playersGameObjects = GameObject.FindGameObjectsWithTag("Player");
             for (int i = 0; i < _playersGameObjects.Length; i++)
             {
-                players.Add(_playersGameObjects[i].GetComponent<Player>());
-                players[i].Init(_gameManager);
+                _players.Add(_playersGameObjects[i].GetComponent<Player>());
+                _players[i].Init(_gameManager);
             }
-            players[0].PlayerFaction = Faction.Hero;
-            players[1].PlayerFaction = Faction.Enemy;
+            _players[0].PlayerFaction = Faction.Hero;
+            _players[1].PlayerFaction = Faction.Enemy;
         }
 
         public void SetUnit(Character unit, Vector3 unitPos)
@@ -64,9 +70,9 @@ namespace TEAM2
         private List<Unit> GetAllUnits()
         {
             List<Unit> Units = new List<Unit>();
-            for (int i = 0; i < players.Count; i++)
+            for (int i = 0; i < _players.Count; i++)
             {
-                Units.AddRange(players[i].Units);
+                Units.AddRange(_players[i].Units);
             }
             return Units;
         }
