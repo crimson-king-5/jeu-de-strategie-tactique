@@ -198,13 +198,34 @@ public class UnitManager : MonoBehaviour
     public Unit GetSpecificUnitPerName(string unitName, Faction UnitFaction)
     {
         List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
-        GameObject unitObj = new GameObject("", typeof(Building), typeof(SpriteRenderer));
-        Building newUnit = unitObj.GetComponent<Building>();
-        SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
         for (int i = 0; i < FactionUnit.Count; i++)
         {
             if (FactionUnit[i].unitsName == unitName)
             {
+                GameObject unitObj = new GameObject(unitName, typeof(Unit), typeof(SpriteRenderer));
+                Unit newUnit = unitObj.GetComponent<Unit>();
+                SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
+                newUnit.ScrUnit = FactionUnit[i];
+                unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
+                unitRenderer.sortingOrder = 1;
+                unitObj.name = newUnit.ScrUnit.unitsName;
+                return newUnit;
+            }
+        }
+        Debug.LogError("Unit was not found !");
+        return null;
+    }
+
+    public Building GetSpecificBuildingPerName(string unitName, Faction UnitFaction)
+    {
+        List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
+        for (int i = 0; i < FactionUnit.Count; i++)
+        {
+            if (FactionUnit[i].unitsName == unitName)
+            {
+                GameObject unitObj = new GameObject(unitName, typeof(Building), typeof(SpriteRenderer));
+                Building newUnit = unitObj.GetComponent<Building>();
+                SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
                 newUnit.ScrUnit = FactionUnit[i];
                 unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
                 unitRenderer.sortingOrder = 1;

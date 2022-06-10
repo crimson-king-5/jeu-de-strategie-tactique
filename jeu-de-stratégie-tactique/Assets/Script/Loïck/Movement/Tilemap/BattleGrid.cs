@@ -66,22 +66,22 @@ public class BattleGrid : MonoBehaviour
                     BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(localPlace);
                     if (currentTile.currentTileType == BattleGridTile.TileType.Ruin)
                     {
-                        Unit unit = UnitManager.GetSpecificUnitPerName("Ruines", Faction.Building);
-                        unit.Init(gm);
-                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(unit.ScrUnit, localPlace);
+                        Building building = UnitManager.GetSpecificBuildingPerName("Ruines", Faction.Building);
+                        building.Init(gm);
+                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, localPlace);
                     }
                     else if (currentTile.currentTileType == BattleGridTile.TileType.MotherBase)
                     {
-                        Unit unit = UnitManager.GetSpecificUnitPerName("MotherBase", Faction.Building);
-                        unit.Init(gm);
+                        Building building = UnitManager.GetSpecificBuildingPerName("MotherBase", Faction.Building);
+                        building.Init(gm);
                         FactionTile factionTile = (FactionTile) currentTile;
-                        unit.ScrUnit.faction = factionTile.faction;
-                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(unit.ScrUnit, localPlace);
+                        building.ScrUnit.faction = factionTile.faction;
+                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, localPlace);
                         for (int i = 0; i < _gameManager.PlayerManager.Players.Count; i++)
                         {
                             if (_gameManager.PlayerManager.Players[i].PlayerFaction == factionTile.faction)
                             {
-                                _gameManager.PlayerManager.Players[i].Units.Add(unit);
+                                _gameManager.PlayerManager.Players[i].Units.Add(building);
                             }
                         }
                     }
