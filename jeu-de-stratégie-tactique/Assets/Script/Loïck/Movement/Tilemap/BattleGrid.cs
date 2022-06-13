@@ -5,9 +5,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Sirenix.OdinInspector;
 using TEAM2;
-using UnityEditor;
-using UnityEditor.Animations;
-using UnityEditor.Graphs;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using UnityEngine.Tilemaps;
@@ -42,7 +39,7 @@ public class BattleGrid : MonoBehaviour
     public BattleGridTile.TileType tileType;
 
     #region Editor Function
-    [MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
+    //[MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
     public static void InstanceGridEditor()
     {
         GameObject instanceGridEditor = new GameObject("Grid Editor", typeof(BattleGrid));
@@ -69,7 +66,24 @@ public class BattleGrid : MonoBehaviour
                     BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(localPlace);
                     if (currentTile.currentTileType == BattleGridTile.TileType.Ruin)
                     {
-                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(UnitManager.GetSpecificUnitPerName("Ruines", Faction.Building).ScrUnit, localPlace);
+                        Building building = UnitManager.GetSpecificBuildingPerName("Ruines", Faction.Building);
+                        building.Init(gm);
+                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, localPlace);
+                    }
+                    else if (currentTile.currentTileType == BattleGridTile.TileType.MotherBase)
+                    {
+                        Building building = UnitManager.GetSpecificBuildingPerName("MotherBase", Faction.Building);
+                        building.Init(gm);
+                        FactionTile factionTile = (FactionTile) currentTile;
+                        building.ScrUnit.faction = factionTile.faction;
+                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, localPlace);
+                        for (int i = 0; i < _gameManager.PlayerManager.Players.Count; i++)
+                        {
+                            if (_gameManager.PlayerManager.Players[i].PlayerFaction == factionTile.faction)
+                            {
+                                _gameManager.PlayerManager.Players[i].Units.Add(building);
+                            }
+                        }
                     }
                 }
                 else

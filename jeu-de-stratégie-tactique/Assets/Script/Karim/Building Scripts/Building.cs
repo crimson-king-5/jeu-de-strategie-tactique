@@ -6,6 +6,9 @@ using UnityEngine;
 public class Building : Unit
 {
     [SerializeField] private Productor _productor;
+    public Faction faction;
+    public BuildType buildType;
+
     public UprgadeList UpgradeList
     {
         get
@@ -15,7 +18,6 @@ public class Building : Unit
         }
 
     }
-
 
     public float GainResourcePerTurn
     {
@@ -53,5 +55,6 @@ public class Building : Unit
 public enum BuildType
 {
     Base = 0,
-    Miner = 1
+    Miner = 1,
+    None = 2
 }

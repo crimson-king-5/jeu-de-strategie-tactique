@@ -10,14 +10,6 @@ public class BattleGridTile : Tile
     [Range(0,99)]public int mvRequire = 0;
     public bool Walkable => currentTileType == TileType.Walkable;
 
-    public void SetUnit(Character unit)
-    {
-        //if (unit.OccupiedTileGridPosition != null) unit.OccupiedTileGridPosition.OccupiedUnit = null;
-        //unit.transform.position = transform.position;
-        //OccupiedUnit = unit;
-        //unit.OccupiedTileGridPosition = this;
-    }
-
     public enum TileType
     {
         None = 0,

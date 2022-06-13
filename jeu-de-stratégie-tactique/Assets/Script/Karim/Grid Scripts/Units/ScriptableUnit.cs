@@ -23,8 +23,8 @@ public class UnitStats
 {
     public float life;
     [Range(0, 99)] public float lifemax;
-    [Range(0, 99)] public int armor;
-    [Range(0, 99)] public int atk;
+    [Range(0, 99)] public float armor;
+    [Range(0, 99)] public float atk;
     [Range(0, 99)] public int mv;
     [Range(0, 99)] public int range;
 }
