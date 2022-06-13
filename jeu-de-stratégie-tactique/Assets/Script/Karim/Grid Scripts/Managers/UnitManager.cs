@@ -174,20 +174,6 @@ public class UnitManager : MonoBehaviour
         return chars;
     }
 
-    public Building[] SpawnBuildings(int buildingCount)
-    {
-        Building[] buildings = new Building[buildingCount];
-
-        for (int i = 0; i < buildingCount; i++)
-        {
-            Building randomPrefab = (Building)GetSpecificUnitPerIndex(0, Faction.Building);
-            Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnRandomUnit();
-            _gameManager.PlayerManager.SetBuilding(randomPrefab, randomSpawnBattleGridTile);
-            buildings[i] = randomPrefab;
-        }
-        return buildings;
-    }
-
     public Unit GetSpecificUnitPerIndex(int index, Faction UnitFaction)
     {
         List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
@@ -200,6 +186,8 @@ public class UnitManager : MonoBehaviour
         unitObj.name = newUnit.ScrUnit.unitsName;
         return newUnit;
     }
+
+
     public Unit GetSpecificUnitPerName(string unitName, Faction UnitFaction)
     {
         List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
