@@ -15,7 +15,7 @@ MonoBehaviour:
   faction: 3
   unitUnitClass: 3
   unitsName: MotherBase
-  renderUnit: {fileID: 21300000, guid: 170577bce7cbda144b82578f81308d23, type: 3}
+  renderUnit: {fileID: 21300000, guid: 262876a24cf0f294ea4320aab988eaa0, type: 3}
   classBonus: 0
   unitStats:
     life: 0

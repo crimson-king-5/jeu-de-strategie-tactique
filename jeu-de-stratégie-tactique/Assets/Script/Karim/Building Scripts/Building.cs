@@ -24,15 +24,16 @@ public void Rest()
         {
             Vector3 mouseWorldPosition = BattleGrid.GetMouseWorldPosition();
             Vector3Int gridPos = GetSpecificGridPosition(mouseWorldPosition);
+            Vector3 place = BattleGrid.Tilemap.GetCellCenterWorld(gridPos);
             if (BattleGrid.Tilemap.HasTile(gridPos))
             {
                 FactionTile factionTile = (FactionTile)BattleGrid.Tilemap.GetTile(gridPos);
                 if (factionTile.faction == Faction && factionTile.currentTileType == BattleGridTile.TileType.Spawn && !PlayerManager.CheckifUnitWasHere(gridPos) && PlayerManager.CurrentPlayer.Gold >= PlayerManager.CurrentPlayer.CostGold)
                 {
-                    Character character = unitManager.GetSpecificCharacterPerName("Lorrence", Faction);
+                    Character character = unitManager.GetSpecificCharacterPerIndex(0, Faction);
                     PlayerManager.CurrentPlayer.Units.Add(character);
                     PlayerManager.CurrentPlayer.Gold -= PlayerManager.CurrentPlayer.CostGold;
-                    PlayerManager.SetUnit(character, mouseWorldPosition);
+                    PlayerManager.SetUnit(character, place);
                     Rest();
                 }
             }

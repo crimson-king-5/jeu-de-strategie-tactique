@@ -64,6 +64,11 @@ public class UnitManager : MonoBehaviour
         return newUnit;
     }
 
+    internal void UpdateUnitsList()
+    {
+        throw new System.NotImplementedException();
+    }
+
     private bool UpdateAndCheckifTeamisDead(Faction currentFaction)
     {
         bool isDead = true;
@@ -244,6 +249,19 @@ public class UnitManager : MonoBehaviour
         return null;
     }
 
+    public Character GetSpecificCharacterPerIndex(int index, Faction UnitFaction)
+    {
+        List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
+        GameObject unitObj = new GameObject("", typeof(Character), typeof(SpriteRenderer));
+        Character newUnit = unitObj.GetComponent<Character>();
+        SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
+        newUnit.ScrUnit = FactionUnit[index];
+        unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
+        unitRenderer.sortingOrder = 1;
+        unitObj.name = newUnit.ScrUnit.unitsName;
+        return newUnit;
+    }
+
     public Building GetSpecificBuildingPerName(string unitName, Faction UnitFaction)
     {
         List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
@@ -293,6 +311,23 @@ public class UnitManager : MonoBehaviour
         }
     }
 
+    public void UpdateUnitsList(Faction faction)
+    {
+        switch (faction)
+        {
+            case Faction.Hero:
+
+                break;
+            case Faction.Enemy:
+                break;
+            case Faction.Building:
+                break;
+            default:
+                break;
+        }
+    }
+
+
     public IEnumerator GameLoop()
     {
         #region TMP
@@ -311,7 +346,7 @@ public class UnitManager : MonoBehaviour
             Debug.Log("Tours de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
-
+            allDeployedHeroesUnits = GetFactionUnits(Faction.Hero);
             gameOver = UpdateAndCheckifTeamisDead(Faction.Hero);
 
             PlayerManager.index++;
@@ -322,6 +357,7 @@ public class UnitManager : MonoBehaviour
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
 
+            allDeployedEnemiesUnits = GetFactionUnits(Faction.Enemy);
             gameOver = UpdateAndCheckifTeamisDead(Faction.Enemy);
             UpdateUnitsRenderAndSate(allDeployedEnemiesUnits);
         }

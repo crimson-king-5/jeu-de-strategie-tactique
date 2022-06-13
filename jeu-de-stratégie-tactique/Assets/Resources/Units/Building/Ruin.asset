@@ -15,7 +15,7 @@ MonoBehaviour:
   faction: 3
   unitUnitClass: 3
   unitsName: Ruines
-  renderUnit: {fileID: 21300000, guid: 6a633aff9d90e8c4aa81c1fc15be727d, type: 3}
+  renderUnit: {fileID: 21300000, guid: 999f0467e2681904ea1e718311fad032, type: 3}
   classBonus: 0
   unitStats:
     life: 10
