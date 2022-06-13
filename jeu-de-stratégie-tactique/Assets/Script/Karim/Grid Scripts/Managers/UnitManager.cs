@@ -22,7 +22,7 @@ public class UnitManager : MonoBehaviour
 
     [SerializeField] private List<ScriptableUnit> _units;
 
-    public Character SelectedHero;
+    public Unit SelectedHero;
 
     [SerializeField] private List<ScriptableUnit> heroesUnits = new List<ScriptableUnit>();
     [SerializeField] private List<ScriptableUnit> enemyUnits = new List<ScriptableUnit>();
@@ -113,17 +113,22 @@ public class UnitManager : MonoBehaviour
     private void SelectUnit()
     {
         Vector3 mousPos = BattleGrid.GetMouseWorldPosition();
-        Unit selectedCharacter = _gameManager.PlayerManager.GetUnit(BattleGrid.Tilemap.WorldToCell(mousPos));
-        if (selectedCharacter != null && selectedCharacter.ScrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction && selectedCharacter.unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
+        if (PlayerManager.CheckifUnitWasHere(BattleGrid.Tilemap.WorldToCell(mousPos)))
         {
-            if (SelectedHero.GetComponent<SpriteRenderer>().color == Color.blue)
+            Unit selectedCharacter = _gameManager.PlayerManager.GetUnit(BattleGrid.Tilemap.WorldToCell(mousPos));
+            if (selectedCharacter != null &&
+                selectedCharacter.ScrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction &&
+                selectedCharacter.unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
             {
-                SelectedHero.GetComponent<SpriteRenderer>().color = Color.white;
-            }
+                if (SelectedHero.GetComponent<SpriteRenderer>().color == Color.blue)
+                {
+                    SelectedHero.GetComponent<SpriteRenderer>().color = Color.white;
+                }
 
-            SelectedHero = (Character)selectedCharacter;
-            SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-            Debug.Log("Tours de: " + SelectedHero.ScrUnit.unitsName);
+                SelectedHero = selectedCharacter;
+                SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
+                Debug.Log("Tours de: " + SelectedHero.ScrUnit.unitsName);
+            }
         }
     }
 
@@ -209,6 +214,7 @@ public class UnitManager : MonoBehaviour
                 unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
                 unitRenderer.sortingOrder = 1;
                 unitObj.name = newUnit.ScrUnit.unitsName;
+
                 return newUnit;
             }
         }

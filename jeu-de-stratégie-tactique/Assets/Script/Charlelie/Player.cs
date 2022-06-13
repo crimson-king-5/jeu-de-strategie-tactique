@@ -14,6 +14,12 @@ namespace TEAM2
             get => _unitsList;
             set => _unitsList = value;
         }
+
+        public BuildingManager BuildingManager
+        {
+            get => _gameManager.BuildingManager;
+        }
+
         public bool Ready
         {
             get { return hasFinishOrder; }
@@ -25,7 +31,8 @@ namespace TEAM2
 
         private GameManager _gameManager;
 
-        [SerializeField] private float _resource = 0;
+        [SerializeField] private float _lunarite = 0;
+        [SerializeField] private float _gold = 0;
 
         private bool hasFinishOrder = false;
 
@@ -37,6 +44,13 @@ namespace TEAM2
             {
                 _unitsList[i].Init(gm);
             }
+            for (int i = 0; i < BuildingManager.Buildings.Count; i++)
+            {
+                if (BuildingManager.Buildings[i].Faction == PlayerFaction)
+                {
+                    _unitsList.Add(BuildingManager.Buildings[i]);
+                }
+            }
         }
 
 
@@ -45,9 +59,17 @@ namespace TEAM2
             List<Building> buildings = GetUnitWithType(UnitType.Building).Cast<Building>().ToList();
             for (int i = 0; i < buildings.Count; i++)
             {
-                if (buildings[i].faction == PlayerFaction)
+                if (buildings[i].Faction == PlayerFaction)
                 {
-                    _resource += buildings[i].GainResourcePerTurn;
+                    switch (buildings[i].resourceType)
+                    {
+                        case ResourceType.Gold:
+                            _gold = buildings[i].GainResourcePerTurn(_gold);
+                            break;
+                        case ResourceType.Lunarite:
+                            _lunarite = buildings[i].GainResourcePerTurn(_lunarite);
+                            break;
+                    }
                 }
             }
         }

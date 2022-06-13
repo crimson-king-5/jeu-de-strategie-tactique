@@ -7,7 +7,7 @@ namespace TEAM2
     public class Unit : MonoBehaviour
     {
         protected GameManager _gameManager;
-        protected ScriptableUnit _scrUnit;
+        [SerializeField]protected ScriptableUnit _scrUnit;
         private Vector3Int _occupiedTileGridPosition;
         public int xPos;
         public int yPos;
