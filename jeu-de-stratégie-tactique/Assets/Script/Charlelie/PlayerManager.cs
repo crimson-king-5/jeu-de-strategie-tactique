@@ -45,7 +45,7 @@ namespace TEAM2
             _players[1].PlayerFaction = Faction.Enemy;
         }
 
-        public void SetUnit(Character unit, Vector3 unitPos)
+        public void SetUnit(Unit unit, Vector3 unitPos)
         {
             unit.transform.position = unitPos;
             unit.Init(_gameManager);

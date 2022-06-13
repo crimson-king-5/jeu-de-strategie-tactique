@@ -24,6 +24,29 @@ namespace TEAM2
         {
             get { return hasFinishOrder; }
         }
+        public int Gold
+        {
+            get => _gold;
+            set => _gold = value;
+        }
+
+        public int CostGold
+        {
+            get => _costgold;
+            set => _costgold = value;
+        }
+        public int Lunarite
+        {
+            get => _lunarite;
+            set => _lunarite = value;
+        }
+        public int CostLunarite
+        {
+            get => _costlunarite;
+            set => _costlunarite = value;
+        }
+
+
         public Faction PlayerFaction;
 
         [SerializeField] private List<Unit> _unitsList = new List<Unit>();
@@ -31,8 +54,10 @@ namespace TEAM2
 
         private GameManager _gameManager;
 
-        [SerializeField] private float _lunarite = 0;
-        [SerializeField] private float _gold = 0;
+        [SerializeField] private int _lunarite = 0;
+        [SerializeField] private int _costlunarite = 1;
+        [SerializeField] private int _costgold = 1;
+        [SerializeField] private int _gold = 0;
 
         private bool hasFinishOrder = false;
 
