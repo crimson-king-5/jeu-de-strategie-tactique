@@ -222,6 +222,28 @@ public class UnitManager : MonoBehaviour
         return null;
     }
 
+    public Character GetSpecificCharacterPerName(string unitName, Faction UnitFaction)
+    {
+        List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
+        for (int i = 0; i < FactionUnit.Count; i++)
+        {
+            if (FactionUnit[i].unitsName == unitName)
+            {
+                GameObject unitObj = new GameObject(unitName, typeof(Character), typeof(SpriteRenderer));
+                Character newUnit = unitObj.GetComponent<Character>();
+                SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
+                newUnit.ScrUnit = FactionUnit[i];
+                unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
+                unitRenderer.sortingOrder = 1;
+                unitObj.name = newUnit.ScrUnit.unitsName;
+
+                return newUnit;
+            }
+        }
+        Debug.LogError("Unit was not found !");
+        return null;
+    }
+
     public Building GetSpecificBuildingPerName(string unitName, Faction UnitFaction)
     {
         List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
