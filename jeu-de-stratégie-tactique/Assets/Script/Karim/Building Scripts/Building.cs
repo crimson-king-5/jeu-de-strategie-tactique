@@ -5,9 +5,14 @@ using UnityEngine;
 
 public class Building : Unit
 {
-    [SerializeField] private Productor _productor;
-    public Faction faction;
-    public BuildType buildType;
+    [SerializeField] private Productor _productor = new Productor();
+
+    public Faction Faction
+    {
+        get => _scrUnit.faction;
+    }
+
+    public ResourceType resourceType;
 
     public UprgadeList UpgradeList
     {
@@ -17,11 +22,6 @@ public class Building : Unit
             return building.upgrades;
         }
 
-    }
-
-    public float GainResourcePerTurn
-    {
-        get => _productor.resource * UpgradeList.upgrades[currentlevelBuilding].gainBonus;
     }
 
     public GridBuildingSystem GridBuildingSystem
@@ -40,6 +40,11 @@ public class Building : Unit
         }
     }
 
+    public float GainResourcePerTurn(float currentResource)
+    {
+        return (currentResource + _productor.resource * UpgradeList.upgrades[currentlevelBuilding].gainBonus);
+    }
+
     void SwitchObject(int lvl)
     {
         for (int i = 0; i < UpgradeList.upgrades.Count; i++)
@@ -51,10 +56,4 @@ public class Building : Unit
         }
     }
 
-}
-public enum BuildType
-{
-    Base = 0,
-    Miner = 1,
-    None = 2
 }

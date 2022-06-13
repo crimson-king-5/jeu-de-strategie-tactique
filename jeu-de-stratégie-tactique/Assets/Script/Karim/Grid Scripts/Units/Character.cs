@@ -94,7 +94,7 @@ public class Character : TEAM2.Unit
             transform.position = Vector3.MoveTowards(transform.position, newUnitPos, speed * Time.deltaTime);
             yield return null;
         }
-
+        OccupiedTileGridPosition = GetSpecificGridPosition(newUnitPos);
     }
 
     public void Rest()
