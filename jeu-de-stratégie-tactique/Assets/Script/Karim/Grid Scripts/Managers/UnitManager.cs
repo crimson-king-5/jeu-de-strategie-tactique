@@ -94,7 +94,7 @@ public class UnitManager : MonoBehaviour
 
         if (isDead)
         {
-            Debug.Log("Partie terminé ! Faction " + currentFaction + " battue !");
+           UIManager.InvokeInformation("Partie terminé ! Faction " + currentFaction + " battue !");
         }
         return isDead;
     }
@@ -167,7 +167,7 @@ public class UnitManager : MonoBehaviour
 
                 SelectedHero = selectedCharacter;
                 SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-                Debug.Log("Tours de: " + SelectedHero.ScrUnit.unitsName);
+               UIManager.InvokeInformation("Tours de: " + SelectedHero.ScrUnit.unitsName);
             }
         }
     }
@@ -246,7 +246,7 @@ public class UnitManager : MonoBehaviour
                 return newUnit;
             }
         }
-        Debug.LogError("Unit was not found !");
+       Debug.LogError("Unit was not found !");
         return null;
     }
 
@@ -368,7 +368,7 @@ public class UnitManager : MonoBehaviour
     {
         #region TMP
 
-        Debug.Log("Debut de Game");
+       UIManager.InvokeInformation("Debut de Game");
         List<Character> allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero);
         List<Building> allDeployedHeroesBuildings = GetFactionBuilding(Faction.Hero);
         List<Character> allDeployedEnemiesCharacters = GetFactionCharacters(Faction.Enemy);
@@ -383,7 +383,7 @@ public class UnitManager : MonoBehaviour
             UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings);
             SelectedHero = allDeployedHeroesCharacters[0];
             SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-            Debug.Log("Tours de : " + SelectedHero.ScrUnit.unitsName);
+           UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
             allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero);
@@ -394,7 +394,7 @@ public class UnitManager : MonoBehaviour
             UIManager.InvokeUpdateUI();
             SelectedHero = allDeployedEnemiesCharacters[0];
             SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-            Debug.Log("Tour de : " + SelectedHero.ScrUnit.unitsName);
+           UIManager.InvokeInformation("Tour de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
 

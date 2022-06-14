@@ -14,6 +14,12 @@ namespace TEAM2
 
         public UnitStateMachine unitStateMachine = new UnitStateMachine();
 
+        public UIManager UIManager
+        {
+            get => _gameManager.UIManager;
+            set => _gameManager.UIManager = value;
+        }
+
         public Vector3Int OccupiedTileGridPosition
         {
             get => _occupiedTileGridPosition;

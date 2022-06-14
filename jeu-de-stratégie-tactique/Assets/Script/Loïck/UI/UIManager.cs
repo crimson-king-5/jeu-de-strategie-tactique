@@ -28,8 +28,9 @@ namespace TEAM2
             get => Player.Lunarite;
         }
 
-        public event Action<int,int> UpdateResource;
+        public event Action<int,int,string> UpdateResource;
         public event Action<string,string> UpdateUnitsList;
+        public event Action<string> InformationUpdate;
 
         public void Init(GameManager gm)
         {
@@ -38,8 +39,13 @@ namespace TEAM2
 
        public void InvokeUpdateUI()
         {
-            UpdateResource?.Invoke(Lunarite,Gold);
+            UpdateResource?.Invoke(Lunarite,Gold,Player.name);
             UpdateUnitsList?.Invoke(Player.GetListUnitNamePerUnitype(UnitType.Character), Player.GetListUnitNamePerUnitype(UnitType.Building));
         }
+
+       public void InvokeInformation(string information)
+       {
+           InformationUpdate?.Invoke(information);
+       }
     }
 }
