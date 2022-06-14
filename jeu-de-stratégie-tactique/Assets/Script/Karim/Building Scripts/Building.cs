@@ -6,11 +6,38 @@ using UnityEngine;
 public class Building : Unit
 {
     [SerializeField] private Productor _productor = new Productor();
-    [SerializeField] private List<string> _unitNames = new List<string>();
     [SerializeField] private int index = 0;
-    public string UnitName { get => _unitNames[index];}
+    public int currentlevelBuilding = 0;
+
+    public UIManager UIManager
+    {
+        get => _gameManager.UIManager;
+    }
     public UnitManager unitManager { get => _gameManager.UnitManager;}
-public void Rest()
+    public Faction Faction
+    {
+        get => _scrUnit.faction;
+    }
+
+    public ResourceType resourceType;
+
+    public UprgadeList UpgradeList
+    {
+        get
+        {
+            ScriptableBuilding building = (ScriptableBuilding)_scrUnit;
+            return building.upgrades;
+        }
+
+    }
+
+    public GridBuildingSystem GridBuildingSystem
+    {
+        get => _gameManager.GridBuildingSystem;
+    }
+
+
+    public void Rest()
     {
         SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
         unitRenderer.color = Color.gray;
@@ -33,17 +60,13 @@ public void Rest()
                     Character character = unitManager.GetSpecificCharacterPerIndex(0, Faction);
                     PlayerManager.CurrentPlayer.Units.Add(character);
                     PlayerManager.CurrentPlayer.Gold -= PlayerManager.CurrentPlayer.CostGold;
+                    UIManager.InvokeUpdateUI();
                     PlayerManager.SetUnit(character, place);
                     Rest();
                 }
             }
         }
     }
-    public Faction Faction
-    {
-        get => _scrUnit.faction;
-    }
-
     public void Update()
     {
         if (_gameManager.UnitManager.SelectedHero == this)
@@ -59,25 +82,6 @@ public void Rest()
             }
         }
     }
-
-    public ResourceType resourceType;
-
-    public UprgadeList UpgradeList
-    {
-        get
-        {
-            ScriptableBuilding building = (ScriptableBuilding)_scrUnit;
-            return building.upgrades;
-        }
-
-    }
-
-    public GridBuildingSystem GridBuildingSystem
-    {
-        get => _gameManager.GridBuildingSystem;
-    }
-
-    public int currentlevelBuilding = 0;
 
     public void Upgrade()
     {

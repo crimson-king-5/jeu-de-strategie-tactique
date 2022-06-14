@@ -78,6 +78,28 @@ namespace TEAM2
             }
         }
 
+        public string GetListUnitNamePerUnitype(UnitType unitType)
+        {
+            string listName = "";
+            switch (unitType)
+            {
+                case UnitType.Building:
+                    List<Building> buildings = GetUnitWithType(UnitType.Building).Cast<Building>().ToList();
+                    for (int i = 0; i < buildings.Count; i++)
+                    {
+                        listName += buildings[i].ScrUnit.unitsName + "\n";
+                    }
+                    break;
+                case UnitType.Character:
+                    List<Character> characters = GetUnitWithType(UnitType.Character).Cast<Character>().ToList();
+                    for (int i = 0; i < characters.Count; i++)
+                    {
+                        listName += characters[i].ScrUnit.unitsName + "\n";
+                    }
+                    break;
+            }
+            return listName;
+        }
 
         public void AddResource()
         {

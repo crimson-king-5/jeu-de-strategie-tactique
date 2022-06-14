@@ -15,15 +15,25 @@ public class UnitManager : MonoBehaviour
         get => _gameManager.BattleGrid;
     }
 
+    public UIManager UIManager
+    {
+        get => _gameManager.UIManager;
+        set => _gameManager.UIManager = value;
+    }
+
     public PlayerManager PlayerManager
     {
         get => _gameManager.PlayerManager;
     }
 
+    public Unit SelectedHero
+    {
+        get => _selectedHero;
+        set => _selectedHero = value;
+    }
+
     [SerializeField] private List<ScriptableUnit> _units;
-
-    public Unit SelectedHero;
-
+    [SerializeField] private Unit _selectedHero;
     [SerializeField] private List<ScriptableUnit> heroesUnits = new List<ScriptableUnit>();
     [SerializeField] private List<ScriptableUnit> enemyUnits = new List<ScriptableUnit>();
     [SerializeField] private List<ScriptableUnit> buildingUnits = new List<ScriptableUnit>();
@@ -72,7 +82,7 @@ public class UnitManager : MonoBehaviour
     private bool UpdateAndCheckifTeamisDead(Faction currentFaction)
     {
         bool isDead = true;
-        List<Character> factionUnits = GetFactionUnits(currentFaction);
+        List<Character> factionUnits = GetFactionCharacters(currentFaction);
         for (int i = 0; i < factionUnits.Count; i++)
         {
             if (factionUnits[i].gameObject.activeSelf)
@@ -84,17 +94,42 @@ public class UnitManager : MonoBehaviour
 
         if (isDead)
         {
-            Debug.Log("Partie terminé ! Faction " + currentFaction.ToString() + " battue !");
+            Debug.Log("Partie terminé ! Faction " + currentFaction + " battue !");
         }
         return isDead;
     }
 
-    private List<Character> GetFactionUnits(Faction CurrentFaction)
+    private List<Building> GetFactionBuilding(Faction currentFaction)
+    {
+        List<Building> buildings = new List<Building>();
+        Building localCharacter;
+        switch (currentFaction)
+        {
+            case Faction.Hero:
+                for (int i = 0; i < _gameManager.P1.GetUnitWithType(UnitType.Building).Count; i++)
+                {
+                    localCharacter = (Building)_gameManager.P1.GetUnitWithType(UnitType.Building)[i];
+                    buildings.Add(localCharacter);
+                }
+                break;
+            case Faction.Enemy:
+                for (int i = 0; i < _gameManager.P2.GetUnitWithType(UnitType.Building).Count; i++)
+                {
+
+                    localCharacter = (Building)_gameManager.P2.GetUnitWithType(UnitType.Building)[i];
+                    buildings.Add(localCharacter);
+                }
+                break;
+        }
+        return buildings;
+    }
+
+    private List<Character> GetFactionCharacters(Faction currentFaction)
     {
         //TODO
         List<Character> characters = new List<Character>();
         Character localCharacter;
-        switch (CurrentFaction)
+        switch (currentFaction)
         {
             case Faction.Hero:
                 for (int i = 0; i < _gameManager.P1.GetUnitWithType(UnitType.Character).Count; i++)
@@ -286,7 +321,20 @@ public class UnitManager : MonoBehaviour
         return null;
     }
 
-    public void UpdateUnitsRenderAndSate(List<Character> units)
+    public void UpdateCharactersRenderAndSate(List<Character> units)
+    {
+        for (int i = 0; i < units.Count; i++)
+        {
+            if (units[i].unitStateMachine.currentState != UnitStateMachine.UnitState.Dead)
+            {
+                SpriteRenderer uniRenderer = units[i].GetComponent<SpriteRenderer>();
+                uniRenderer.color = Color.white;
+                units[i].unitStateMachine.currentState = UnitStateMachine.UnitState.None;
+            }
+        }
+    }
+
+    public void UpdateBuildingsRenderAndSate(List<Building> units)
     {
         for (int i = 0; i < units.Count; i++)
         {
@@ -321,33 +369,39 @@ public class UnitManager : MonoBehaviour
         #region TMP
 
         Debug.Log("Debut de Game");
-        List<Character> allDeployedHeroesUnits = GetFactionUnits(Faction.Hero);
-        List<Character> allDeployedEnemiesUnits = GetFactionUnits(Faction.Enemy);
+        List<Character> allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero);
+        List<Building> allDeployedHeroesBuildings = GetFactionBuilding(Faction.Hero);
+        List<Character> allDeployedEnemiesCharacters = GetFactionCharacters(Faction.Enemy);
+        List<Building> allDeployedEnemiesBuildings = GetFactionBuilding(Faction.Enemy);
         bool gameOver = false;
         while (!gameOver)
         {
             PlayerManager.index = 0;
             PlayerManager.CurrentPlayer.AddResource();
-            UpdateUnitsRenderAndSate(allDeployedHeroesUnits);
-            SelectedHero = allDeployedHeroesUnits[0];
+            UIManager.InvokeUpdateUI();
+            UpdateCharactersRenderAndSate(allDeployedHeroesCharacters);
+            UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings);
+            SelectedHero = allDeployedHeroesCharacters[0];
             SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
             Debug.Log("Tours de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
-            allDeployedHeroesUnits = GetFactionUnits(Faction.Hero);
+            allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero);
             gameOver = UpdateAndCheckifTeamisDead(Faction.Hero);
 
             PlayerManager.index++;
             PlayerManager.CurrentPlayer.AddResource();
-            SelectedHero = allDeployedEnemiesUnits[0];
+            UIManager.InvokeUpdateUI();
+            SelectedHero = allDeployedEnemiesCharacters[0];
             SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
             Debug.Log("Tour de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
 
-            allDeployedEnemiesUnits = GetFactionUnits(Faction.Enemy);
+            allDeployedEnemiesCharacters = GetFactionCharacters(Faction.Enemy);
             gameOver = UpdateAndCheckifTeamisDead(Faction.Enemy);
-            UpdateUnitsRenderAndSate(allDeployedEnemiesUnits);
+            UpdateCharactersRenderAndSate(allDeployedEnemiesCharacters);
+            UpdateBuildingsRenderAndSate(allDeployedEnemiesBuildings);
         }
 
         yield return null;
