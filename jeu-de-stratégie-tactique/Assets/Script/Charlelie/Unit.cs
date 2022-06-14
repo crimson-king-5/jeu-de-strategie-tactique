@@ -84,8 +84,6 @@ namespace TEAM2
         {
             return BattleGrid.Tilemap.GetCellCenterWorld(gridPos);
         }
-
-
     }
 
     public enum UnitType

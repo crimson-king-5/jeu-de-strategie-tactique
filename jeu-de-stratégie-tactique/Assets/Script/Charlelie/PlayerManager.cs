@@ -101,5 +101,20 @@ namespace TEAM2
             }
             return false;
         }
+        public Player GetPlayerPerFaction(Faction faction)
+        {
+            switch (faction)
+            {
+                case Faction.Hero:
+                    return Players[0];
+                    break;
+                case Faction.Enemy:
+                    return Players[1];
+                    break;
+            }
+            Debug.LogError("Faction Non reconnue");
+            return null;
+        }
+
     }
 }

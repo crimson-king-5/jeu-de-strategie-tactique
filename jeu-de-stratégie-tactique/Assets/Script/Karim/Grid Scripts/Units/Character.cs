@@ -116,6 +116,7 @@ public class Character : TEAM2.Unit
         {
             unitStateMachine.currentState = UnitStateMachine.UnitState.Dead;
             gameObject.SetActive(false);
+            PlayerManager.GetPlayerPerFaction(_scrUnit.faction).Units.Remove(this);
         }
     }
 
