@@ -114,6 +114,7 @@ public class GameManager : MonoBehaviour
     //When Game starting
     public void OnGameStart()
     {
+        _uiManager.Init(this);
         //First, spawn grid and Building
         _buildingManager.Init(this);
         _gridBuildingSystem.Init(this);

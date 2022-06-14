@@ -214,12 +214,4 @@ public class BattleGrid : MonoBehaviour
         Vector2 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition);
         return worldPosition;
     }
-
-    void OnGUI()
-    {
-        Vector3 mousPos = GetMouseWorldPosition();
-        Vector3Int intMousPos = new Vector3Int((int)mousPos.x, (int)mousPos.y);
-        Vector3 centerMousePos = _tilemap.GetCellCenterWorld(intMousPos);
-        GUI.Label(new Rect(10f, 10, 1000, 1000), "Mouse position : " + mousPos.x + " " + mousPos.y + " \n Center Mouse Position :" + centerMousePos.x + " " + centerMousePos.y);
-    }
 }
