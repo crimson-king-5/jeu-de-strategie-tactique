@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using Sirenix.OdinInspector;
+using TEAM2;
 using Unity.Netcode;
 using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
@@ -27,6 +28,7 @@ public class Character : TEAM2.Unit
     //    }
     //}
 
+    public Builder Builder { get => GetComponent<Builder>(); }
     public float Life { get { return ScrUnit.unitStats.life; } set { ScrUnit.unitStats.life = value; } }
     public int Range { get { return ScrUnit.unitStats.range; } }
     public float Atk { get { return ScrUnit.unitStats.atk; } }
@@ -227,6 +229,7 @@ public class Character : TEAM2.Unit
             if (Input.GetMouseButtonDown(0))
             {
                 CharacterMouseEvent();
+                Builder.HandleSelection(transform.gameObject);
             }
 
             if (Input.GetMouseButtonDown(1))
