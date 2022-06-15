@@ -32,7 +32,11 @@ namespace TEAM2
                 Instantiate(_prefabCharacter);
             }
 
-            _buildingsText.text = buildings;
+            if (buildings != _buildingsText.text)
+            {
+                _buildingsText.text = buildings;
+                Instantiate(_prefabCharacter);
+            }
         }
     }
 }

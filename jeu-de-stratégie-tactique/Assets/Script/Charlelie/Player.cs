@@ -82,7 +82,15 @@ namespace TEAM2
         public string GetListUnitNamePerUnitype(UnitType unitType)
         {
             string listName = "";
-            listName += GetUnitWithType(unitType).SelectMany(i => i.ScrUnit.unitsName + "\n");
+            switch (unitType)
+            {
+                case UnitType.Building:
+                    listName = string.Join("\n", Buildings.Select(i => i.ScrUnit.unitsName));
+                    break;    
+                case UnitType.Character:
+                    listName = string.Join("\n", Characters.Select(i => i.ScrUnit.unitsName));
+                    break;
+            }
             return listName;
         }
 

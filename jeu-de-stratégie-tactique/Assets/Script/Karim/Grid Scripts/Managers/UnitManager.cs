@@ -127,29 +127,8 @@ public class UnitManager : MonoBehaviour
 
     private IEnumerable<Character> GetFactionCharacters(Faction currentFaction)
     {
-        return PlayerManager.Players.Where(i => i.PlayerFaction == currentFaction).SelectMany(i => i.Characters);
         //TODO
-        //List<Characters> characters = new List<Characters>();
-        //Characters localCharacter;
-        //switch (currentFaction)
-        //{
-        //    case Faction.Hero:
-        //        for (int i = 0; i < _gameManager.P1.GetUnitWithType(UnitType.Characters).Count; i++)
-        //        {
-        //            localCharacter = (Characters)_gameManager.P1.GetUnitWithType(UnitType.Characters)[i];
-        //            characters.Add(localCharacter);
-        //        }
-        //        break;
-        //    case Faction.Enemy:
-        //        for (int i = 0; i < _gameManager.P2.GetUnitWithType(UnitType.Characters).Count; i++)
-        //        {
-
-        //            localCharacter = (Characters)_gameManager.P2.GetUnitWithType(UnitType.Characters)[i];
-        //            characters.Add(localCharacter);
-        //        }
-        //        break;
-        //}
-        //return characters;
+        return PlayerManager.Players.Where(i => i.PlayerFaction == currentFaction).SelectMany(i => i.Characters);
     }
 
     private void SelectUnit()
