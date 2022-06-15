@@ -23,12 +23,9 @@ namespace TEAM2
         {
             get => Player.Gold;
         }  
-        private int Lunarite
-        {
-            get => Player.Lunarite;
-        }
 
-        public event Action<int,int,string> UpdateResource;
+
+        public event Action<int,string> UpdateResource;
         public event Action<string,string> UpdateUnitsList;
         public event Action<string> InformationUpdate;
 
@@ -39,7 +36,7 @@ namespace TEAM2
 
        public void InvokeUpdateUI()
         {
-            UpdateResource?.Invoke(Lunarite,Gold,Player.name);
+            UpdateResource?.Invoke(Gold,Player.name);
             UpdateUnitsList?.Invoke(Player.GetListUnitNamePerUnitype(UnitType.Character), Player.GetListUnitNamePerUnitype(UnitType.Building));
         }
 

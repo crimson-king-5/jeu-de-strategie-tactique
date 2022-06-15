@@ -82,7 +82,7 @@ public class UnitManager : MonoBehaviour
     private bool UpdateAndCheckifTeamisDead(Faction currentFaction)
     {
         bool isDead = true;
-        List<Character> factionUnits = GetFactionCharacters(currentFaction);
+        List<Character> factionUnits = GetFactionCharacters(currentFaction).ToList();
         for (int i = 0; i < factionUnits.Count; i++)
         {
             if (factionUnits[i].gameObject.activeSelf)
@@ -94,60 +94,62 @@ public class UnitManager : MonoBehaviour
 
         if (isDead)
         {
-           UIManager.InvokeInformation("Partie terminé ! Faction " + currentFaction + " battue !");
+            UIManager.InvokeInformation("Partie terminé ! Faction " + currentFaction + " battue !");
         }
         return isDead;
     }
 
-    private List<Building> GetFactionBuilding(Faction currentFaction)
+    private  IEnumerable<Building> GetFactionBuilding(Faction currentFaction)
     {
-        List<Building> buildings = new List<Building>();
-        Building localCharacter;
-        switch (currentFaction)
-        {
-            case Faction.Hero:
-                for (int i = 0; i < _gameManager.P1.GetUnitWithType(UnitType.Building).Count; i++)
-                {
-                    localCharacter = (Building)_gameManager.P1.GetUnitWithType(UnitType.Building)[i];
-                    buildings.Add(localCharacter);
-                }
-                break;
-            case Faction.Enemy:
-                for (int i = 0; i < _gameManager.P2.GetUnitWithType(UnitType.Building).Count; i++)
-                {
+        return PlayerManager.Players.Where(i =>i.PlayerFaction == currentFaction).SelectMany(i => i.Buildings).ToList();
+        //List<Buildings> buildings = new List<Buildings>();
+        //Buildings localCharacter;
+        //switch (currentFaction)
+        //{
+        //    case Faction.Hero:
+        //        for (int i = 0; i < _gameManager.P1.GetUnitWithType(UnitType.Buildings).Count; i++)
+        //        {
+        //            localCharacter = (Buildings)_gameManager.P1.GetUnitWithType(UnitType.Buildings)[i];
+        //            buildings.Add(localCharacter);
+        //        }
+        //        break;
+        //    case Faction.Enemy:
+        //        for (int i = 0; i < _gameManager.P2.GetUnitWithType(UnitType.Buildings).Count; i++)
+        //        {
 
-                    localCharacter = (Building)_gameManager.P2.GetUnitWithType(UnitType.Building)[i];
-                    buildings.Add(localCharacter);
-                }
-                break;
-        }
-        return buildings;
+        //            localCharacter = (Buildings)_gameManager.P2.GetUnitWithType(UnitType.Buildings)[i];
+        //            buildings.Add(localCharacter);
+        //        }
+        //        break;
+        //}
+        //return buildings;
     }
 
-    private List<Character> GetFactionCharacters(Faction currentFaction)
+    private IEnumerable<Character> GetFactionCharacters(Faction currentFaction)
     {
+        return PlayerManager.Players.Where(i => i.PlayerFaction == currentFaction).SelectMany(i => i.Characters);
         //TODO
-        List<Character> characters = new List<Character>();
-        Character localCharacter;
-        switch (currentFaction)
-        {
-            case Faction.Hero:
-                for (int i = 0; i < _gameManager.P1.GetUnitWithType(UnitType.Character).Count; i++)
-                {
-                    localCharacter = (Character)_gameManager.P1.GetUnitWithType(UnitType.Character)[i];
-                    characters.Add(localCharacter);
-                }
-                break;
-            case Faction.Enemy:
-                for (int i = 0; i < _gameManager.P2.GetUnitWithType(UnitType.Character).Count; i++)
-                {
+        //List<Characters> characters = new List<Characters>();
+        //Characters localCharacter;
+        //switch (currentFaction)
+        //{
+        //    case Faction.Hero:
+        //        for (int i = 0; i < _gameManager.P1.GetUnitWithType(UnitType.Characters).Count; i++)
+        //        {
+        //            localCharacter = (Characters)_gameManager.P1.GetUnitWithType(UnitType.Characters)[i];
+        //            characters.Add(localCharacter);
+        //        }
+        //        break;
+        //    case Faction.Enemy:
+        //        for (int i = 0; i < _gameManager.P2.GetUnitWithType(UnitType.Characters).Count; i++)
+        //        {
 
-                    localCharacter = (Character)_gameManager.P2.GetUnitWithType(UnitType.Character)[i];
-                    characters.Add(localCharacter);
-                }
-                break;
-        }
-        return characters;
+        //            localCharacter = (Characters)_gameManager.P2.GetUnitWithType(UnitType.Characters)[i];
+        //            characters.Add(localCharacter);
+        //        }
+        //        break;
+        //}
+        //return characters;
     }
 
     private void SelectUnit()
@@ -167,7 +169,7 @@ public class UnitManager : MonoBehaviour
 
                 SelectedHero = selectedCharacter;
                 SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-               UIManager.InvokeInformation("Tours de: " + SelectedHero.ScrUnit.unitsName);
+                UIManager.InvokeInformation("Tours de: " + SelectedHero.ScrUnit.unitsName);
             }
         }
     }
@@ -208,7 +210,7 @@ public class UnitManager : MonoBehaviour
         {
             Character randomPrefab = GetRandomUnitPerFaction(currentfaction);
             Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnUnitPerFaction(currentfaction);
-            _gameManager.PlayerManager.SetUnit(randomPrefab, randomSpawnBattleGridTile);
+            _gameManager.PlayerManager.SetCharacter(randomPrefab, randomSpawnBattleGridTile);
             chars[i] = randomPrefab;
         }
         return chars;
@@ -246,7 +248,7 @@ public class UnitManager : MonoBehaviour
                 return newUnit;
             }
         }
-       Debug.LogError("Unit was not found !");
+        Debug.LogError("Unit was not found !");
         return null;
     }
 
@@ -368,25 +370,25 @@ public class UnitManager : MonoBehaviour
     {
         #region TMP
 
-       UIManager.InvokeInformation("Debut de Game");
-        List<Character> allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero);
-        List<Building> allDeployedHeroesBuildings = GetFactionBuilding(Faction.Hero);
-        List<Character> allDeployedEnemiesCharacters = GetFactionCharacters(Faction.Enemy);
-        List<Building> allDeployedEnemiesBuildings = GetFactionBuilding(Faction.Enemy);
+        UIManager.InvokeInformation("Debut de Game");
+        List<Character> allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero).ToList();
+        List<Building> allDeployedHeroesBuildings = GetFactionBuilding(Faction.Hero).ToList();
+        List<Character> allDeployedEnemiesCharacters = GetFactionCharacters(Faction.Enemy).ToList();
+        List<Building> allDeployedEnemiesBuildings = GetFactionBuilding(Faction.Enemy).ToList();
         bool gameOver = false;
         while (!gameOver)
         {
             PlayerManager.index = 0;
             PlayerManager.CurrentPlayer.AddResource();
-            UIManager.InvokeUpdateUI();
             UpdateCharactersRenderAndSate(allDeployedHeroesCharacters);
             UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings);
+            UIManager.InvokeUpdateUI();
             SelectedHero = allDeployedHeroesCharacters[0];
             SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-           UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName);
+            UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
-            allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero);
+            allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero).ToList();
             gameOver = UpdateAndCheckifTeamisDead(Faction.Hero);
 
             PlayerManager.index++;
@@ -394,11 +396,11 @@ public class UnitManager : MonoBehaviour
             UIManager.InvokeUpdateUI();
             SelectedHero = allDeployedEnemiesCharacters[0];
             SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-           UIManager.InvokeInformation("Tour de : " + SelectedHero.ScrUnit.unitsName);
+            UIManager.InvokeInformation("Tour de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
 
-            allDeployedEnemiesCharacters = GetFactionCharacters(Faction.Enemy);
+            allDeployedEnemiesCharacters = GetFactionCharacters(Faction.Enemy).ToList();
             gameOver = UpdateAndCheckifTeamisDead(Faction.Enemy);
             UpdateCharactersRenderAndSate(allDeployedEnemiesCharacters);
             UpdateBuildingsRenderAndSate(allDeployedEnemiesBuildings);

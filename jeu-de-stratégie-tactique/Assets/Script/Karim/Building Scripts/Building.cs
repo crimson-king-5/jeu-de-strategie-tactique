@@ -9,17 +9,8 @@ public class Building : Unit
     [SerializeField] private int index = 0;
     public int currentlevelBuilding = 0;
 
-    public UIManager UIManager
-    {
-        get => _gameManager.UIManager;
-    }
+    public UIManager UIManager => _gameManager.UIManager;
     public UnitManager unitManager { get => _gameManager.UnitManager;}
-    public Faction Faction
-    {
-        get => _scrUnit.faction;
-    }
-
-    public ResourceType resourceType;
 
     public UprgadeList UpgradeList
     {
@@ -31,18 +22,11 @@ public class Building : Unit
 
     }
 
-    public GridBuildingSystem GridBuildingSystem
-    {
-        get => _gameManager.GridBuildingSystem;
-    }
-
-
     public void Rest()
     {
         SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
         unitRenderer.color = Color.gray;
         unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
-
     }
 
     public void BuildingMouseEvent()
@@ -57,11 +41,11 @@ public class Building : Unit
                 FactionTile factionTile = (FactionTile)BattleGrid.Tilemap.GetTile(gridPos);
                 if (factionTile.faction == Faction && factionTile.currentTileType == BattleGridTile.TileType.Spawn && !PlayerManager.CheckifUnitWasHere(gridPos) && PlayerManager.CurrentPlayer.Gold >= PlayerManager.CurrentPlayer.CostGold)
                 {
-                    Character character = unitManager.GetSpecificCharacterPerIndex(0, Faction);
+                    Character character = unitManager.GetSpecificCharacterPerIndex(index, Faction);
                     PlayerManager.CurrentPlayer.Units.Add(character);
                     PlayerManager.CurrentPlayer.Gold -= PlayerManager.CurrentPlayer.CostGold;
                     UIManager.InvokeUpdateUI();
-                    PlayerManager.SetUnit(character, place);
+                    PlayerManager.SetCharacter(character, place);
                     Rest();
                 }
             }

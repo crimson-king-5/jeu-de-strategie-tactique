@@ -108,7 +108,7 @@ public class GridBuildingSystem : MonoBehaviour
     //}
 
     #endregion
-    #region Building Placement
+    #region Buildings Placement
     public void IntitializeWithBuilding(Building unitPos,Vector3Int gridPos)
     {
         unitPos.transform.position = Tilemap.GetCellCenterWorld(gridPos);

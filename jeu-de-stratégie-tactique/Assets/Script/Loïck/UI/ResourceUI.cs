@@ -21,9 +21,9 @@ namespace TEAM2
           _uIManager.UpdateResource -= UIResourceUpdate;
       }
 
-      void UIResourceUpdate(int lunarite,int gold,string PlayerName)
+      void UIResourceUpdate(int gold,string PlayerName)
       {
-          _resourceText.text = PlayerName + "  " + lunarite + " : Lunarite " + "/ " + gold + " Miaounai";
+          _resourceText.text = PlayerName + "  "+" Miaounai : "+ gold;
       }
     }
 }

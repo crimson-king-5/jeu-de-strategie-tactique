@@ -9,11 +9,22 @@ namespace TEAM2
         protected GameManager _gameManager;
         [SerializeField]protected ScriptableUnit _scrUnit;
         private Vector3Int _occupiedTileGridPosition;
+        private UnitType _unitType;
+
         public int xPos;
         public int yPos;
 
         public UnitStateMachine unitStateMachine = new UnitStateMachine();
 
+        public Faction Faction
+        {
+            get => _scrUnit.faction;
+        }
+
+        public UnitType UnitType
+        {
+            get => _unitType;
+        }
         public UIManager UIManager
         {
             get => _gameManager.UIManager;
@@ -42,7 +53,7 @@ namespace TEAM2
             set => _scrUnit = value;
         }
 
-        public void Init(GameManager gm)
+        public void Init(GameManager gm,UnitType unitType)
         {
             _gameManager = gm;
            _scrUnit = _scrUnit.GetCloneUnit();

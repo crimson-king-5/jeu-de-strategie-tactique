@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.Rendering.UI;
 
 namespace TEAM2
 {
@@ -45,16 +47,16 @@ namespace TEAM2
             _players[1].PlayerFaction = Faction.Enemy;
         }
 
-        public void SetUnit(Unit unit, Vector3 unitPos)
+        public void SetCharacter(Unit unit, Vector3 unitPos)
         {
             unit.transform.position = unitPos;
-            unit.Init(_gameManager);
+            unit.Init(_gameManager,UnitType.Character);
         }
 
         public void SetBuilding(Building unit, Vector3 unitPos)
         {
             unit.transform.position = unitPos;
-            unit.Init(_gameManager);
+            unit.Init(_gameManager,UnitType.Building);
         }
 
         public void CheckIfOrdersFinished()
@@ -67,39 +69,19 @@ namespace TEAM2
             GameManager.Instance.ChangeState(GameManager.GameState.RESOLUTIONPHASE);
         }
 
-        private List<Unit> GetAllUnits()
+        public IEnumerable<Unit> GetAllUnits()
         {
-            List<Unit> Units = new List<Unit>();
-            for (int i = 0; i < _players.Count; i++)
-            {
-                Units.AddRange(_players[i].Units);
-            }
-            return Units;
+            return _players.SelectMany(i => i.Units);
         }
 
         public Unit GetUnit(Vector3Int gridPos)
         {
-            List<Unit> characters = GetAllUnits();
-            for (int i = 0; i < characters.Count; i++)
-            {
-                if (characters[i].OccupiedTileGridPosition == gridPos)
-                {
-                    return characters[i];
-                }
-            }
-            return null;
+            return GetAllUnits().FirstOrDefault(i => i.OccupiedTileGridPosition == gridPos);
         }
 
         public bool CheckifUnitWasHere(Vector3Int newUnitPos)
         {
-            for (int i = 0; i < GetAllUnits().Count; i++)
-            {
-                if (GetAllUnits()[i].OccupiedTileGridPosition == newUnitPos)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return GetAllUnits().FirstOrDefault(i => i.OccupiedTileGridPosition == newUnitPos);
         }
         public Player GetPlayerPerFaction(Faction faction)
         {

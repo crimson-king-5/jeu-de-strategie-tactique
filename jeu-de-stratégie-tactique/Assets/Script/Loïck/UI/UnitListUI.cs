@@ -10,22 +10,28 @@ namespace TEAM2
 
         [SerializeField] private TextMeshProUGUI _charactersText;
         [SerializeField] private TextMeshProUGUI _buildingsText;
+        [SerializeField] private GameObject _prefabCharacter;
+        [SerializeField] private GameObject _prefabBuilding;
         [SerializeField] private UIManager _uIManager;
 
-        // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
-            _uIManager.UpdateUnitsList += UpdateUnitList;
+            _uIManager.UpdateUnitsList += UpdateList;
         }
 
         void OnDestroy()
         {
-            _uIManager.UpdateUnitsList -= UpdateUnitList;
+            _uIManager.UpdateUnitsList -= UpdateList;
         }
 
-        void UpdateUnitList(string characters, string buildings)
+        void UpdateList(string characters, string buildings)
         {
-            _charactersText.text = characters;
+            if (characters != _charactersText.text)
+            {
+                _charactersText.text = characters;
+                Instantiate(_prefabCharacter);
+            }
+
             _buildingsText.text = buildings;
         }
     }

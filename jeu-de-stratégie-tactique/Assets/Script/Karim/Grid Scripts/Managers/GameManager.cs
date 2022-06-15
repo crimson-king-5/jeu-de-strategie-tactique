@@ -50,15 +50,6 @@ public class GameManager : MonoBehaviour
 
     public GameState gameState;
 
-    public Player P1
-    {
-        get => PlayerManager.PlayersGameObjects[0].GetComponent<Player>();
-    }
-    public Player P2
-    {
-        get => PlayerManager.PlayersGameObjects[1].GetComponent<Player>();
-    }
-
   //  [MenuItem("GameObject/GameManager")]
     static void InstanceGameManager()
     {
@@ -98,7 +89,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     void Reset()
     {
         _unitManager = _unitManager ?? GetComponent<UnitManager>() ?? gameObject.AddComponent<UnitManager>();
@@ -115,7 +105,7 @@ public class GameManager : MonoBehaviour
     public void OnGameStart()
     {
         _uiManager.Init(this);
-        //First, spawn grid and Building
+        //First, spawn grid and Buildings
         _buildingManager.Init(this);
         _gridBuildingSystem.Init(this);
         _battleGrid.Init(this);
