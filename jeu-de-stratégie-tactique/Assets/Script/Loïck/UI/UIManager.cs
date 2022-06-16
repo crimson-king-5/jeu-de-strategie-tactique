@@ -7,9 +7,8 @@ namespace TEAM2
 {
     public class UIManager : MonoBehaviour
     {
-        [SerializeField] private GameObject unitBuildUI;
         private GameManager _gameManager;
-        public GameObject UnitBuildUI { get => unitBuildUI; }
+
         public PlayerManager PlayerManager
         {
             get => _gameManager.PlayerManager;
@@ -24,29 +23,26 @@ namespace TEAM2
         {
             get => Player.Gold;
         }  
-        private int Lunarite
-        {
-            get => Player.Lunarite;
-        }
 
-        public event Action<int,int> UpdateResource;
+
+        public event Action<int,string> UpdateResource;
         public event Action<string,string> UpdateUnitsList;
-        public event Action<GameObject> BuildUI;
+        public event Action<string> InformationUpdate;
 
         public void Init(GameManager gm)
         {
             _gameManager = gm;
         }
 
-        public void InvokeBuildUI(GameObject gameObject)
+       public void InvokeUpdateUI()
         {
-            BuildUI.Invoke(gameObject);
-        }
-
-        public void InvokeUpdateUI()
-        {
-            UpdateResource?.Invoke(Lunarite,Gold);
+            UpdateResource?.Invoke(Gold,Player.name);
             UpdateUnitsList?.Invoke(Player.GetListUnitNamePerUnitype(UnitType.Character), Player.GetListUnitNamePerUnitype(UnitType.Building));
         }
+
+       public void InvokeInformation(string information)
+       {
+           InformationUpdate?.Invoke(information);
+       }
     }
 }

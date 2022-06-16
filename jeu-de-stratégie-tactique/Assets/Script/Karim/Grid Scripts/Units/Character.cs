@@ -81,9 +81,9 @@ public class Character : TEAM2.Unit
         float damage = bonus * Atk;
         float targetLife = targetCharacter.Life;
         float targetArmor = targetCharacter.Armor;
-        Debug.Log("Unit " + targetCharacter.ScrUnit.unitsName + " take " + (damage - targetArmor) + " damage");
+        UIManager.InvokeInformation("Unit " + targetCharacter.ScrUnit.unitsName + " take " + (damage - targetArmor) + " damage");
         targetLife -= damage - targetArmor;
-        Debug.Log("Unit :" + targetCharacter.ScrUnit.unitsName + " have " + targetLife + " Life now !");
+        UIManager.InvokeInformation("Unit :" + targetCharacter.ScrUnit.unitsName + " have " + targetLife + " Life now !");
         targetCharacter.Life = targetLife;
         _gameManager.InstantiateEffect(targetCharacter.GetUnitDestinationWorldPosition(targetCharacter.GetCurrentUnitGridlPosition()), 0);
         targetCharacter.CheckifUnitDie();
@@ -119,6 +119,8 @@ public class Character : TEAM2.Unit
         {
             unitStateMachine.currentState = UnitStateMachine.UnitState.Dead;
             gameObject.SetActive(false);
+            PlayerManager.GetPlayerPerFaction(_scrUnit.faction).Units.Remove(this);
+            UIManager.InvokeUpdateUI();
         }
     }
 

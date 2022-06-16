@@ -12,9 +12,5 @@ public class Productor
     public int resource = 1;
 }
 
-public enum ResourceType
-{
-    Gold = 0,
-    Lunarite = 1
-}
+
 

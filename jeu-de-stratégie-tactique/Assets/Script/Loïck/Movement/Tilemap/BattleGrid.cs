@@ -67,14 +67,14 @@ public class BattleGrid : MonoBehaviour
                     if (currentTile.currentTileType == BattleGridTile.TileType.Ruin)
                     {
                         Building building = UnitManager.GetSpecificBuildingPerName("Ruines", Faction.Building);
-                        building.Init(gm);
+                        building.Init(gm,UnitType.Building);
                         _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, localPlace);
                     }
                     else if (currentTile.currentTileType == BattleGridTile.TileType.MotherBase)
                     {
                         Building building = UnitManager.GetSpecificBuildingPerName("MotherBase", Faction.Building);
                         _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, localPlace);
-                        building.Init(_gameManager);
+                        building.Init(_gameManager,UnitType.Building);
                         FactionTile factionTile = (FactionTile) currentTile;
                         building.ScrUnit.faction = factionTile.faction;
                     }
