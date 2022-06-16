@@ -39,19 +39,19 @@ namespace TEAM2
                 }
             }
         }
-        private void OnDestroy()
-        {
-            lobbyPlayers.OnListChanged -= HandheldLobbyPlayersStateChanged;
+        //private void OnDestroy()
+        //{
+        //    lobbyPlayers.OnListChanged -= HandheldLobbyPlayersStateChanged;
 
-            if (NetworkManager.Singleton)
-            {
-                NetworkManager.Singleton.OnClientConnectedCallback -= HandlecClientConnected;
-                NetworkManager.Singleton.OnClientDisconnectCallback -= HandlecClientDisconnect;
+        //    if (NetworkManager.Singleton)
+        //    {
+        //        NetworkManager.Singleton.OnClientConnectedCallback -= HandlecClientConnected;
+        //        NetworkManager.Singleton.OnClientDisconnectCallback -= HandlecClientDisconnect;
 
-            }
+        //    }
 
        
-        }
+        //}
 
 
         private bool IsEveroneReady()
