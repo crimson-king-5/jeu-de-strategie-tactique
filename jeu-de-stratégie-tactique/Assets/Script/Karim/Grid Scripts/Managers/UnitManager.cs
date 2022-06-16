@@ -73,6 +73,7 @@ public class UnitManager : MonoBehaviour
            Builder builder =  unitObj.AddComponent<Builder>();
             builder.BuilderUnit = newUnit;
             builder.UnitBuildUI = UIManager.UnitBuildUI;
+            builder.UIManager = UIManager;
         }
         unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
         unitRenderer.sortingOrder = 1;

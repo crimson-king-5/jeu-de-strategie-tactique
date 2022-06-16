@@ -9,11 +9,14 @@ namespace TEAM2
     {
         [SerializeField] private GameObject unitBuildUI;
         [SerializeField] private UIManager _uIManager;
-        private Unit builderUnit;
-        public Unit BuilderUnit { get => builderUnit; set => builderUnit = value; }
-        public GameObject UnitBuildUI { get => unitBuildUI; set => unitBuildUI = value; }
+        private Character builderUnit;
+        public UIManager UIManager { set => _uIManager = value; }
+        public Character BuilderUnit { get => builderUnit; set => builderUnit = value; }
+        public GameObject UnitBuildUI { set => unitBuildUI = value; }
 
-        private void Awake()
+        private bool showMenu = false;
+
+        private void Start()
         {
             _uIManager.BuildUI += HandleSelection;
         }
@@ -25,31 +28,25 @@ namespace TEAM2
 
         public void HandleSelection(GameObject selectedObject)
         {
-            RestBuildingSystem();
-
+            showMenu = !showMenu;
             if (selectedObject == null)
                 return;
-            builderUnit = selectedObject.GetComponent<Unit>();
-            if (builderUnit != null)
-            {
-                HandleUnitSelection();
-            }
+            HandleUnitSelection();
         }
 
         public void HandleUnitSelection()
         {
-            unitBuildUI.SetActive(true);
-        }
-
-        private void RestBuildingSystem()
-        {
-            builderUnit = null;
-            unitBuildUI.SetActive(false);
+            unitBuildUI.SetActive(showMenu);
         }
 
         public void BuildStructure()
         {
-            Debug.Log("Placing structure at" + this.builderUnit.transform.position);
+            _uIManager.InvokeInformation("Placing structure ");
+            builderUnit.HasBuild = true;
+            if (builderUnit.HasMoved)
+            {
+                builderUnit.Rest();
+            }
         }
     }
 }
