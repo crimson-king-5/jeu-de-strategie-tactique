@@ -9,6 +9,7 @@ public class ScriptableUnit : ScriptableObject
     public Faction faction;
     public UnitClass unitUnitClass;
     public string unitsName;
+    public bool isBuilder = false;
     public Sprite renderUnit;
     [Range(0, 99)] public float classBonus = 1.5f; 
     [SerializeField] public UnitStats unitStats;
@@ -23,8 +24,8 @@ public class UnitStats
 {
     public float life;
     [Range(0, 99)] public float lifemax;
-    [Range(0, 99)] public int armor;
-    [Range(0, 99)] public int atk;
+    [Range(0, 99)] public float armor;
+    [Range(0, 99)] public float atk;
     [Range(0, 99)] public int mv;
     [Range(0, 99)] public int range;
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,42 +10,98 @@ namespace TEAM2
 {
     public class Player : MonoBehaviour
     {
-        [SerializeField] private List<Unit> _unitsList = new List<Unit>();
         public List<Unit> Units
         {
             get => _unitsList;
+            set => _unitsList = value;
         }
 
-        [SerializeField] private List<Character> _characters = new List<Character>();
+        public List<Building> Buildings
+        {
+            get => _buildings ;
+        }
+
         public List<Character> Characters
         {
-            get => Characters;
+            get => _characters ;
         }
 
-        List<Order> orderList = new List<Order>();
-
-        public Order CurrentOrder { get; set; }
-
-        public Faction PlayerFaction;
-
-        private GameManager _gameManager;
-
-        bool hasFinishOrder = false;
+        public BuildingManager BuildingManager
+        {
+            get => _gameManager.BuildingManager;
+        }
 
         public bool Ready
         {
             get { return hasFinishOrder; }
         }
+        public int Gold
+        {
+            get => _gold;
+            set => _gold = value;
+        }
 
+        public int CostGold
+        {
+            get => _costgold;
+            set => _costgold = value;
+        }
+
+        public Faction PlayerFaction;
+
+        [SerializeField] private List<Unit> _unitsList = new List<Unit>();
+        private List<Order> orderList = new List<Order>();
+
+        private GameManager _gameManager;
+        private List<Character> _characters = new List<Character>();
+        private List<Building> _buildings = new List<Building>();
+
+        [SerializeField] private int _costgold = 1;
+        [SerializeField] private int _gold = 0;
+
+        private bool hasFinishOrder = false;
 
         public void Init(GameManager gm)
         {
             _gameManager = gm;
             SpawnCharacter();
-            SpawnBuildings();
             for (int i = 0; i < _unitsList.Count; i++)
             {
-                _unitsList[i].Init(gm);
+                _unitsList[i].Init(gm,UnitType.Character);
+            }
+            for (int i = 0; i < BuildingManager.Buildings.Count; i++)
+            {
+                if (BuildingManager.Buildings[i].Faction == PlayerFaction)
+                {
+                    _unitsList.Add(BuildingManager.Buildings[i]);
+                    _buildings.Add(BuildingManager.Buildings[i]);
+                }
+            }
+        }
+
+        public string GetListUnitNamePerUnitype(UnitType unitType)
+        {
+            string listName = "";
+            switch (unitType)
+            {
+                case UnitType.Building:
+                    listName = string.Join("\n", Buildings.Select(i => i.ScrUnit.unitsName));
+                    break;    
+                case UnitType.Character:
+                    listName = string.Join("\n", Characters.Select(i => i.ScrUnit.unitsName));
+                    break;
+            }
+            return listName;
+        }
+
+        public void AddResource()
+        {
+            for (int i = 0; i < Buildings.Count; i++)
+            {
+                if (Buildings[i].Faction == PlayerFaction)
+                {
+                    _gold = Buildings[i].GainResourcePerTurn(_gold);
+                }
             }
         }
 
@@ -58,21 +115,10 @@ namespace TEAM2
             }
         }
 
-        public void SpawnBuildings()
+
+        public void AddOrderToList(OrderType orderType)
         {
-            int numBuildins = 0;
-
-            Building[] list = _gameManager.UnitManager.SpawnBuildings(numBuildins);
-        }
-
-        void SendOrdersToClientRPC()
-        {
-            //Send order list to client, so he can play resolution phase without latency or desync
-        }
-
-        public void AddOrderToList(Order order)
-        {   
-            orderList.Add(order);
+            orderList.Add(new Order(orderType));
         }
 
         public void ExecuteOrders(List<Order> orderList)
@@ -80,33 +126,11 @@ namespace TEAM2
             //Execute both own list and received order list from client
         }
 
-        public List<Unit> GetUnitWithType(UnitType currentUnitType)
+        public IEnumerable<Unit> GetUnitWithType(UnitType currentUnitType)
         {
-            List<Unit> units = new List<Unit>();
-            for (int i = 0; i < _unitsList.Count; i++)
-            {
-                if (GetUnitClass(_unitsList[i]) == currentUnitType)
-                {
-                    units.Add(_unitsList[i]);
-                }
-            }
-
-            return units;
+            return _unitsList.Where(i=> i.UnitType == currentUnitType);
         }
 
-        private UnitType GetUnitClass(Unit unit)
-        {
-            Character unitCharacter = unit as Character;
-            Building unitBuilding = unit as Building;
-            if (unitCharacter != null)
-            {
-                return UnitType.Character;
-            }
-            else
-            {
-                return UnitType.Building;
-            }
-        }
         public bool CheckifAllUnitsHasEndTurn()
         {
             for (int i = 0; i < _unitsList.Count; i++)
@@ -119,15 +143,6 @@ namespace TEAM2
             }
 
             return true;
-        }
-
-        public void MakeUnitsEnd()
-        {
-            for (int i = 0; i < _unitsList.Count; i++)
-            {
-                _unitsList[i].unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
-
-            }
         }
     }
 }

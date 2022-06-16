@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
-using PlasticGui;
-using Sirenix.OdinInspector.Editor;
 using UnityEngine;
+using UnityEngine.Rendering.UI;
 
 namespace TEAM2
 {
@@ -12,20 +12,26 @@ namespace TEAM2
     {
         private GameManager _gameManager;
 
+        private GameObject[] _playersGameObjects;
+
+        private List<Player> _players = new List<Player>();
+
         public GameObject[] PlayersGameObjects
         {
             get => _playersGameObjects;
         }
-        private GameObject[] _playersGameObjects;
-
-        private List<Player> players = new List<Player>();
 
         public Player CurrentPlayer
         {
-            get => players[index];
+            get => _players[index];
         }
 
         public int index;
+
+        public List<Player> Players
+        {
+            get => _players;
+        }
 
         public void Init(GameManager gm)
         {
@@ -34,21 +40,23 @@ namespace TEAM2
             _playersGameObjects = GameObject.FindGameObjectsWithTag("Player");
             for (int i = 0; i < _playersGameObjects.Length; i++)
             {
-                players.Add(_playersGameObjects[i].GetComponent<Player>());
-                players[i].Init(_gameManager);
+                _players.Add(_playersGameObjects[i].GetComponent<Player>());
+                _players[i].Init(_gameManager);
             }
-            players[0].PlayerFaction = Faction.Hero;
-            players[1].PlayerFaction = Faction.Enemy;
+            _players[0].PlayerFaction = Faction.Hero;
+            _players[1].PlayerFaction = Faction.Enemy;
         }
 
-        public void SetUnit(Character unit, Vector3 unitPos)
+        public void SetCharacter(Unit unit, Vector3 unitPos)
         {
             unit.transform.position = unitPos;
+            unit.Init(_gameManager,UnitType.Character);
         }
 
         public void SetBuilding(Building unit, Vector3 unitPos)
         {
             unit.transform.position = unitPos;
+            unit.Init(_gameManager,UnitType.Building);
         }
 
         public void CheckIfOrdersFinished()
@@ -61,39 +69,34 @@ namespace TEAM2
             GameManager.Instance.ChangeState(GameManager.GameState.RESOLUTIONPHASE);
         }
 
-        private List<Unit> GetAllUnits()
+        public IEnumerable<Unit> GetAllUnits()
         {
-            List<Unit> Units = new List<Unit>();
-            for (int i = 0; i < players.Count; i++)
-            {
-                Units.AddRange(players[i].Units);
-            }
-            return Units;
+            return _players.SelectMany(i => i.Units);
         }
 
         public Unit GetUnit(Vector3Int gridPos)
         {
-            List<Unit> characters = GetAllUnits();
-            for (int i = 0; i < characters.Count; i++)
-            {
-                if (characters[i].OccupiedTileGridPosition == gridPos)
-                {
-                    return characters[i];
-                }
-            }
-            return null;
+            return GetAllUnits().FirstOrDefault(i => i.OccupiedTileGridPosition == gridPos);
         }
 
         public bool CheckifUnitWasHere(Vector3Int newUnitPos)
         {
-            for (int i = 0; i < GetAllUnits().Count; i++)
-            {
-                if (GetAllUnits()[i].OccupiedTileGridPosition == newUnitPos)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return GetAllUnits().FirstOrDefault(i => i.OccupiedTileGridPosition == newUnitPos);
         }
+        public Player GetPlayerPerFaction(Faction faction)
+        {
+            switch (faction)
+            {
+                case Faction.Hero:
+                    return Players[0];
+                    break;
+                case Faction.Enemy:
+                    return Players[1];
+                    break;
+            }
+            Debug.LogError("Faction Non reconnue");
+            return null;
+        }
+
     }
 }

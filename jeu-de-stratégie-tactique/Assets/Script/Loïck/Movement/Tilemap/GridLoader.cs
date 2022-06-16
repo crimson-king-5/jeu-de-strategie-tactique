@@ -2,9 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Sirenix.OdinInspector;
-using UnityEditor;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class GridLoader : ScriptableObject

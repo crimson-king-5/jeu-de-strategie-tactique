@@ -8,7 +8,7 @@ namespace TEAM2
     {
         //public Productor Productor
         //{
-        //    get => GetComponent<Building>();
+        //    get => GetComponent<Buildings>();
         //}
 
         //int currenIndexLevel = 0;
@@ -28,7 +28,7 @@ namespace TEAM2
         //    {
         //        if (i == lvl)
         //        {
-        //            Building.ScrUnit.unitStats = levels[i].UpgradeStat;
+        //            Buildings.ScrUnit.unitStats = levels[i].UpgradeStat;
         //            GetComponent<SpriteRenderer>().sprite = levels[i]._upgradeSprite;
         //        }
         //    }

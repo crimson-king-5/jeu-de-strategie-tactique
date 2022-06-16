@@ -8,7 +8,6 @@ namespace TEAM2
     public class BuildingManager : MonoBehaviour
     {
         [SerializeField] private GameManager _gameManager;
-        [SerializeField] private GameObject unitBuildUI;
         [SerializeField] private List<Building> _buildings;
         public List<Building> Buildings
         {

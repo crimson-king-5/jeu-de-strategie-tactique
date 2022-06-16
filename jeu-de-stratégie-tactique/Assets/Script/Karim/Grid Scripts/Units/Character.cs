@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
-using Codice.CM.Common;
 using Sirenix.OdinInspector;
+using TEAM2;
 using Unity.Netcode;
 using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
@@ -28,66 +28,67 @@ public class Character : TEAM2.Unit
     //    }
     //}
 
+    public Builder Builder { get => GetComponent<Builder>(); }
     public float Life { get { return ScrUnit.unitStats.life; } set { ScrUnit.unitStats.life = value; } }
     public int Range { get { return ScrUnit.unitStats.range; } }
-    public int Atk { get { return ScrUnit.unitStats.atk; } }
+    public float Atk { get { return ScrUnit.unitStats.atk; } }
     public float ClassBonus { get => ScrUnit.classBonus; }
     public int Mv { get => ScrUnit.unitStats.mv; set => ScrUnit.unitStats.mv = value; }
+    public float Armor { get => ScrUnit.unitStats.armor; set => ScrUnit.unitStats.armor = value; }
     public UnitClass UnitClass { get => ScrUnit.unitUnitClass; }
+    public UIManager UIManager { get => _gameManager.UIManager; }
+    public bool HasBuild { set => hasBuild = value; }
+    public bool HasMoved { get => hasMoved; }
 
     private bool hasMoved = false;
-
-    public int Armor { get => ScrUnit.unitStats.armor; set => ScrUnit.unitStats.armor = value; }
-
-    public void Init()
-    {
-        ScrUnit = ScrUnit.GetCloneUnit();
-    }
+    private bool hasAttack = false;
+    private bool hasBuild = false;
 
     public void Attack(Character targetCharacter)
     {
-        float atk = Atk;
+        float bonus = 1;
         switch (targetCharacter.UnitClass)
         {
             case UnitClass.Tank:
                 if (UnitClass == UnitClass.Mage)
                 {
-                    atk = atk * ClassBonus;
+                    bonus = Atk * ClassBonus;
                 }
                 else if (UnitClass == UnitClass.Warrior)
                 {
-                    atk = atk / ClassBonus;
+                    bonus = Atk / ClassBonus;
                 }
                 break;
             case UnitClass.Mage:
                 if (UnitClass == UnitClass.Warrior)
                 {
-                    atk = atk * ClassBonus;
+                    bonus = Atk * ClassBonus;
                 }
                 else if (UnitClass == UnitClass.Tank)
                 {
-                    atk = atk / ClassBonus;
+                    bonus = Atk / ClassBonus;
                 }
                 break;
             case UnitClass.Warrior:
                 if (UnitClass == UnitClass.Tank)
                 {
-                    atk = atk * ClassBonus;
+                    bonus = Atk * ClassBonus;
                 }
                 if (UnitClass == UnitClass.Mage)
                 {
-                    atk = atk / ClassBonus;
+                    bonus = Atk / ClassBonus;
                 }
                 break;
         }
-
+        float damage = bonus * Atk;
         float targetLife = targetCharacter.Life;
-        int targetArmor = targetCharacter.Armor;
-        Debug.Log("Unit " + targetCharacter.ScrUnit.unitsName + " take " + (targetArmor - atk) + " damage");
-        targetLife -= targetArmor - atk;
-        Debug.Log("Unit :" + targetCharacter.ScrUnit.unitsName + " have " + targetLife + " Life now !");
+        float targetArmor = targetCharacter.Armor;
+        UIManager.InvokeInformation("Unit " + targetCharacter.ScrUnit.unitsName + " take " + (damage - targetArmor) + " damage");
+        targetLife -= damage - targetArmor;
+        UIManager.InvokeInformation("Unit :" + targetCharacter.ScrUnit.unitsName + " have " + targetLife + " Life now !");
         targetCharacter.Life = targetLife;
         _gameManager.InstantiateEffect(targetCharacter.GetUnitDestinationWorldPosition(targetCharacter.GetCurrentUnitGridlPosition()), 0);
+        targetCharacter.CheckifUnitDie();
     }
 
     private IEnumerator MoveUnit(Vector3 newUnitPos, float speed)
@@ -97,7 +98,7 @@ public class Character : TEAM2.Unit
             transform.position = Vector3.MoveTowards(transform.position, newUnitPos, speed * Time.deltaTime);
             yield return null;
         }
-
+        OccupiedTileGridPosition = GetSpecificGridPosition(newUnitPos);
     }
 
     public void Rest()
@@ -105,19 +106,24 @@ public class Character : TEAM2.Unit
         SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
         unitRenderer.color = Color.gray;
         hasMoved = false;
+        hasAttack = false;
         unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
     }
-    public void Wait() { }
-
 
     public override void DoAction()
     {
         base.DoAction();
     }
 
-    public override void Die()
+    public void CheckifUnitDie()
     {
-        base.Die();
+        if (Life <= 0)
+        {
+            unitStateMachine.currentState = UnitStateMachine.UnitState.Dead;
+            gameObject.SetActive(false);
+            PlayerManager.GetPlayerPerFaction(_scrUnit.faction).Units.Remove(this);
+            UIManager.InvokeUpdateUI();
+        }
     }
 
     private void Update()
@@ -228,6 +234,7 @@ public class Character : TEAM2.Unit
             if (Input.GetMouseButtonDown(0))
             {
                 CharacterMouseEvent();
+
             }
 
             if (Input.GetMouseButtonDown(1))
@@ -268,6 +275,10 @@ public class Character : TEAM2.Unit
                         unitStateMachine.currentState = UnitStateMachine.UnitState.Attack;
                     }
                 }
+                else if (gridTile.currentTileType == BattleGridTile.TileType.Ruin && ScrUnit.isBuilder && tileRange <= Range)
+                {
+                    unitStateMachine.currentState = UnitStateMachine.UnitState.Build;
+                }
                 else if (tileRange <= Mv && gridTile.Walkable)
                 {
                     unitStateMachine.currentState = UnitStateMachine.UnitState.MoveTo;
@@ -275,13 +286,17 @@ public class Character : TEAM2.Unit
                 switch (unitStateMachine.currentState)
                 {
                     case UnitStateMachine.UnitState.Attack:
-                        Attack(mouseCharacter);
-                        if (mouseCharacter.Range <= mouseCharacter.GetTileRange(transform.position))
+                        if (!hasAttack)
                         {
-                            Attack(this);
+                            Attack(mouseCharacter);
+                            hasAttack = true;
                             if (hasMoved)
                             {
                                 Rest();
+                            }
+                            if (mouseCharacter.Range <= mouseCharacter.GetTileRange(transform.position))
+                            {
+                                Attack(this);
                             }
                         }
                         break;
@@ -290,6 +305,16 @@ public class Character : TEAM2.Unit
                         {
                             MouseClickMoveTo(mouseWorldPosition);
                             hasMoved = true;
+                            if (hasAttack)
+                            {
+                                Rest();
+                            }
+                        }
+                        break;
+                    case UnitStateMachine.UnitState.Build:
+                        if (!hasBuild)
+                        {
+                            UIManager.InvokeBuildUI(UIManager.UnitBuildUI);
                         }
                         break;
                 }

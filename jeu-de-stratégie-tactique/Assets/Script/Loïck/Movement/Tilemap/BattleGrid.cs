@@ -5,9 +5,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Sirenix.OdinInspector;
 using TEAM2;
-using UnityEditor;
-using UnityEditor.Animations;
-using UnityEditor.Graphs;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using UnityEngine.Tilemaps;
@@ -42,7 +39,7 @@ public class BattleGrid : MonoBehaviour
     public BattleGridTile.TileType tileType;
 
     #region Editor Function
-    [MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
+    //[MenuItem("GameObject/Cassoulet Objects/Grid Editor")]
     public static void InstanceGridEditor()
     {
         GameObject instanceGridEditor = new GameObject("Grid Editor", typeof(BattleGrid));
@@ -69,7 +66,17 @@ public class BattleGrid : MonoBehaviour
                     BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(localPlace);
                     if (currentTile.currentTileType == BattleGridTile.TileType.Ruin)
                     {
-                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(UnitManager.GetSpecificUnitPerName("Ruines", Faction.Building).ScrUnit, localPlace);
+                        Building building = UnitManager.GetSpecificBuildingPerName("Ruines", Faction.Building);
+                        building.Init(gm,UnitType.Building);
+                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, localPlace);
+                    }
+                    else if (currentTile.currentTileType == BattleGridTile.TileType.MotherBase)
+                    {
+                        Building building = UnitManager.GetSpecificBuildingPerName("MotherBase", Faction.Building);
+                        _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, localPlace);
+                        building.Init(_gameManager,UnitType.Building);
+                        FactionTile factionTile = (FactionTile) currentTile;
+                        building.ScrUnit.faction = factionTile.faction;
                     }
                 }
                 else
@@ -79,7 +86,6 @@ public class BattleGrid : MonoBehaviour
             }
         }
     }
-
 
     public Vector3 SpawnRandomUnit()
     {
@@ -101,17 +107,22 @@ public class BattleGrid : MonoBehaviour
 
     public Vector3 SpawnUnitPerFaction(Faction faction)
     {
-        for (int i = 0; i < _availablePlaces.Count; i++)
+       List<Vector3> localAvailablePlaces = _availablePlaces;
+       List<Vector3Int> gridAvailablePlaces = _availableGridPlaces;
+        for (int i = 0; i < localAvailablePlaces.Count; i++)
         {
-            Vector3Int gridpos = _availableGridPlaces[i];
-            Vector3 unipos = _availablePlaces[i];
+            Vector3Int gridpos = gridAvailablePlaces[i];
+            Vector3 unipos = localAvailablePlaces[i];
             BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(gridpos);
+
             if (currentTile.currentTileType == BattleGridTile.TileType.Spawn)
             {
                 FactionTile factionTile = (FactionTile)currentTile;
-                if (factionTile.faction == faction && !CheckIfUnitIsHere(Player, (int)unipos.x, (int)unipos.y))
+                if (factionTile.faction == faction)
                 {
-                    return _availablePlaces[i];
+                    localAvailablePlaces.Remove(localAvailablePlaces[i]);
+                    gridAvailablePlaces.Remove(gridAvailablePlaces[i]);
+                    return unipos;
                 }
             }
 
@@ -202,13 +213,5 @@ public class BattleGrid : MonoBehaviour
     {
         Vector2 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition);
         return worldPosition;
-    }
-
-    void OnGUI()
-    {
-        Vector3 mousPos = GetMouseWorldPosition();
-        Vector3Int intMousPos = new Vector3Int((int)mousPos.x, (int)mousPos.y);
-        Vector3 centerMousePos = _tilemap.GetCellCenterWorld(intMousPos);
-        GUI.Label(new Rect(10f, 10, 1000, 1000), "Mouse position : " + mousPos.x + " " + mousPos.y + " \n Center Mouse Position :" + centerMousePos.x + " " + centerMousePos.y);
     }
 }

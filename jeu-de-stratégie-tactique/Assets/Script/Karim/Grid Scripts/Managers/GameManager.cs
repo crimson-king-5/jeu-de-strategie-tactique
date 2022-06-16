@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TEAM2;
-using UnityEditor;
-using UnityEditor.SceneManagement;
-using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,10 +13,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerManager _playerManager;
     [SerializeField] private GridBuildingSystem _gridBuildingSystem;
     [SerializeField] private BuildingManager _buildingManager;
+    [SerializeField] private UIManager _uiManager;
+
     public GridBuildingSystem GridBuildingSystem
     {
         get => _gridBuildingSystem;
         set => _gridBuildingSystem = value;
+    }  
+    public UIManager UIManager
+    {
+        get => _uiManager;
+        set => _uiManager = value;
     }
 
     public BuildingManager BuildingManager
@@ -45,16 +50,7 @@ public class GameManager : MonoBehaviour
 
     public GameState gameState;
 
-    public Player P1
-    {
-        get => PlayerManager.PlayersGameObjects[0].GetComponent<Player>();
-    }
-    public Player P2
-    {
-        get => PlayerManager.PlayersGameObjects[1].GetComponent<Player>();
-    }
-
-    [MenuItem("GameObject/GameManager")]
+  //  [MenuItem("GameObject/GameManager")]
     static void InstanceGameManager()
     {
         GameObject gameManager = new GameObject("GameManager", typeof(GameManager));
@@ -94,7 +90,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     void Reset()
     {
         _unitManager = _unitManager ?? GetComponent<UnitManager>() ?? gameObject.AddComponent<UnitManager>();
@@ -102,6 +97,7 @@ public class GameManager : MonoBehaviour
         _playerManager = _playerManager ?? GetComponent<PlayerManager>() ?? gameObject.AddComponent<PlayerManager>();
         _gridBuildingSystem = _gridBuildingSystem ?? GetComponent<GridBuildingSystem>() ?? gameObject.AddComponent<GridBuildingSystem>();
         _buildingManager = _buildingManager ?? GetComponent<BuildingManager>() ?? gameObject.AddComponent<BuildingManager>();
+        _uiManager = _uiManager ?? GetComponent<UIManager>() ?? gameObject.AddComponent<UIManager>();
         effectManager.effects = Resources.LoadAll<GameObject>("Effect").ToList();
         gameObject.tag = "GameManager";
     }
@@ -109,12 +105,13 @@ public class GameManager : MonoBehaviour
     //When Game starting
     public void OnGameStart()
     {
-        _unitManager.Init(this);
-        //thirdly spawn pre-placed buildings (with some effects)
+        _uiManager.Init(this);
+        //First, spawn grid and Buildings
         _buildingManager.Init(this);
         _gridBuildingSystem.Init(this);
-        //First, spawn grid
         _battleGrid.Init(this);
+        //Second, Unit manager
+        _unitManager.Init(this);
         //Then spawn each playersGameObjects characters randomly on grid
         _playerManager.Init(this);
         //after choose randomly a player to start (Online Stuff)

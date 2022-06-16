@@ -8,7 +8,6 @@ namespace TEAM2
     public class ScriptableBuilding : ScriptableUnit
     {
         public UprgadeList upgrades;
-        public BuildType currentBuildType;
         void Reset()
         {
             faction = Faction.Building;
