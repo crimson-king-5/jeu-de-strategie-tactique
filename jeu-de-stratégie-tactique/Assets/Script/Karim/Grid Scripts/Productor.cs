@@ -11,6 +11,3 @@ public class Productor
 {
     public int resource = 1;
 }
-
-
-

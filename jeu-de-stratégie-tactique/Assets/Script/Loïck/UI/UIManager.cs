@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace TEAM2
@@ -27,7 +28,7 @@ namespace TEAM2
 
 
         public event Action<int,string> UpdateResource;
-        public event Action<string,string> UpdateUnitsList;
+        public event Action<IEnumerable<Unit>,UnitType> UpdateUnitsList;
         public event Action<string> InformationUpdate;
         public event Action<GameObject> BuildUI;
 
@@ -39,7 +40,8 @@ namespace TEAM2
        public void InvokeUpdateUI()
         {
             UpdateResource?.Invoke(Gold,Player.name);
-            UpdateUnitsList?.Invoke(Player.GetListUnitNamePerUnitype(UnitType.Character), Player.GetListUnitNamePerUnitype(UnitType.Building));
+            UpdateUnitsList?.Invoke(Player.GetUnitWithType(UnitType.Character),UnitType.Character);
+            UpdateUnitsList?.Invoke(Player.GetUnitWithType(UnitType.Building),UnitType.Building);
         }
 
         public void InvokeBuildUI(GameObject gameObject)
