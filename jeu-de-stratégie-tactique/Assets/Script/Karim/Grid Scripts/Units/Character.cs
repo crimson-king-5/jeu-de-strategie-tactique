@@ -36,6 +36,7 @@ public class Character : TEAM2.Unit
     public int Mv { get => ScrUnit.unitStats.mv; set => ScrUnit.unitStats.mv = value; }
     public float Armor { get => ScrUnit.unitStats.armor; set => ScrUnit.unitStats.armor = value; }
     public UnitClass UnitClass { get => ScrUnit.unitUnitClass; }
+    public UIManager UIManager { get => _gameManager.UIManager; }
 
     private bool hasMoved = false;
     private bool hasAttack = false;
@@ -229,7 +230,7 @@ public class Character : TEAM2.Unit
             if (Input.GetMouseButtonDown(0))
             {
                 CharacterMouseEvent();
-                Builder.HandleSelection(transform.gameObject);
+               
             }
 
             if (Input.GetMouseButtonDown(1))
@@ -269,6 +270,10 @@ public class Character : TEAM2.Unit
                     {
                         unitStateMachine.currentState = UnitStateMachine.UnitState.Attack;
                     }
+                }
+                else if (gridTile.currentTileType == BattleGridTile.TileType.Ruin && ScrUnit.isBuilder)
+                {
+                    UIManager.InvokeBuildUI(Builder.UnitBuildUI);
                 }
                 else if (tileRange <= Mv && gridTile.Walkable)
                 {

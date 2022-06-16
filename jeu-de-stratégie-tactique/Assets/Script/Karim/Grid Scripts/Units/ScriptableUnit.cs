@@ -9,6 +9,7 @@ public class ScriptableUnit : ScriptableObject
     public Faction faction;
     public UnitClass unitUnitClass;
     public string unitsName;
+    public bool isBuilder = false;
     public Sprite renderUnit;
     [Range(0, 99)] public float classBonus = 1.5f; 
     [SerializeField] public UnitStats unitStats;

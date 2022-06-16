@@ -7,9 +7,21 @@ namespace TEAM2
 {
     public class Builder : MonoBehaviour
     {
-        [SerializeField]
-        private GameObject unitBuildUI;
+        [SerializeField] private GameObject unitBuildUI;
+        [SerializeField] private UIManager _uIManager;
         private Unit builderUnit;
+        public Unit BuilderUnit { get => builderUnit; set => builderUnit = value; }
+        public GameObject UnitBuildUI { get => unitBuildUI; set => unitBuildUI = value; }
+
+        private void Awake()
+        {
+            _uIManager.BuildUI += HandleSelection;
+        }
+
+        private void OnDestroy()
+        {
+            _uIManager.BuildUI -= HandleSelection;
+        }
 
         public void HandleSelection(GameObject selectedObject)
         {
@@ -18,7 +30,7 @@ namespace TEAM2
             if (selectedObject == null)
                 return;
             builderUnit = selectedObject.GetComponent<Unit>();
-            if(builderUnit != null)
+            if (builderUnit != null)
             {
                 HandleUnitSelection();
             }
