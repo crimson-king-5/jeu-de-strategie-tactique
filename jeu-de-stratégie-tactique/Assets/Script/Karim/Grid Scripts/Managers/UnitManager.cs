@@ -68,6 +68,13 @@ public class UnitManager : MonoBehaviour
         Character newUnit = unitObj.GetComponent<Character>();
         SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
         newUnit.ScrUnit = FactionUnit[randomIndex];
+        if (newUnit.ScrUnit.isBuilder)
+        {
+           Builder builder =  unitObj.AddComponent<Builder>();
+            builder.BuilderUnit = newUnit;
+            builder.UnitBuildUI = UIManager.UnitBuildUI;
+            builder.UIManager = UIManager;
+        }
         unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
         unitRenderer.sortingOrder = 1;
         unitObj.name = newUnit.ScrUnit.unitsName;

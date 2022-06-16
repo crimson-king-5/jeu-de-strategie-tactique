@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using Sirenix.OdinInspector;
+using TEAM2;
 using Unity.Netcode;
 using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
@@ -27,6 +28,7 @@ public class Character : TEAM2.Unit
     //    }
     //}
 
+    public Builder Builder { get => GetComponent<Builder>(); }
     public float Life { get { return ScrUnit.unitStats.life; } set { ScrUnit.unitStats.life = value; } }
     public int Range { get { return ScrUnit.unitStats.range; } }
     public float Atk { get { return ScrUnit.unitStats.atk; } }
@@ -34,10 +36,13 @@ public class Character : TEAM2.Unit
     public int Mv { get => ScrUnit.unitStats.mv; set => ScrUnit.unitStats.mv = value; }
     public float Armor { get => ScrUnit.unitStats.armor; set => ScrUnit.unitStats.armor = value; }
     public UnitClass UnitClass { get => ScrUnit.unitUnitClass; }
+    public UIManager UIManager { get => _gameManager.UIManager; }
+    public bool HasBuild { set => hasBuild = value; }
+    public bool HasMoved { get => hasMoved; }
 
     private bool hasMoved = false;
     private bool hasAttack = false;
-
+    private bool hasBuild = false;
 
     public void Attack(Character targetCharacter)
     {
@@ -110,7 +115,7 @@ public class Character : TEAM2.Unit
         base.DoAction();
     }
 
-    public  void CheckifUnitDie()
+    public void CheckifUnitDie()
     {
         if (Life <= 0)
         {
@@ -229,6 +234,7 @@ public class Character : TEAM2.Unit
             if (Input.GetMouseButtonDown(0))
             {
                 CharacterMouseEvent();
+
             }
 
             if (Input.GetMouseButtonDown(1))
@@ -269,6 +275,10 @@ public class Character : TEAM2.Unit
                         unitStateMachine.currentState = UnitStateMachine.UnitState.Attack;
                     }
                 }
+                else if (gridTile.currentTileType == BattleGridTile.TileType.Ruin && ScrUnit.isBuilder && tileRange <= Range)
+                {
+                    unitStateMachine.currentState = UnitStateMachine.UnitState.Build;
+                }
                 else if (tileRange <= Mv && gridTile.Walkable)
                 {
                     unitStateMachine.currentState = UnitStateMachine.UnitState.MoveTo;
@@ -299,6 +309,12 @@ public class Character : TEAM2.Unit
                             {
                                 Rest();
                             }
+                        }
+                        break;
+                    case UnitStateMachine.UnitState.Build:
+                        if (!hasBuild)
+                        {
+                            UIManager.InvokeBuildUI(UIManager.UnitBuildUI);
                         }
                         break;
                 }
