@@ -7,5 +7,6 @@ public enum OrderType
 {
     ATTACK,
     WALK,
-    DEFEND
+    DEFEND,
+    BUILD
 }

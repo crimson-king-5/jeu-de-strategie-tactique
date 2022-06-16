@@ -80,6 +80,7 @@ public class BattleGrid : MonoBehaviour
         }
     }
 
+
     public Vector3 SpawnRandomUnit()
     {
         int randomIndex = Random.Range(0, _availablePlaces.Count);

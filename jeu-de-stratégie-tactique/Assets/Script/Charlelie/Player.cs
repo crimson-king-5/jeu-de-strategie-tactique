@@ -15,13 +15,15 @@ namespace TEAM2
             get => _unitsList;
         }
 
-       [SerializeField] private List<Character> _characters = new List<Character>();
+        [SerializeField] private List<Character> _characters = new List<Character>();
         public List<Character> Characters
         {
             get => Characters;
         }
 
         List<Order> orderList = new List<Order>();
+
+        public Order CurrentOrder { get; set; }
 
         public Faction PlayerFaction;
 
@@ -68,9 +70,9 @@ namespace TEAM2
             //Send order list to client, so he can play resolution phase without latency or desync
         }
 
-        public void AddOrderToList(OrderType orderType)
-        {
-            orderList.Add(new Order(orderType));
+        public void AddOrderToList(Order order)
+        {   
+            orderList.Add(order);
         }
 
         public void ExecuteOrders(List<Order> orderList)
@@ -113,10 +115,19 @@ namespace TEAM2
                 {
                     return false;
                 }
-                
+
             }
 
             return true;
+        }
+
+        public void MakeUnitsEnd()
+        {
+            for (int i = 0; i < _unitsList.Count; i++)
+            {
+                _unitsList[i].unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
+
+            }
         }
     }
 }

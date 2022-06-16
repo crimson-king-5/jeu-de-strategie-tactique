@@ -220,6 +220,7 @@ public class UnitManager : MonoBehaviour
             }
             else
             {
+                Debug.Log(PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
                 yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
             }
 
