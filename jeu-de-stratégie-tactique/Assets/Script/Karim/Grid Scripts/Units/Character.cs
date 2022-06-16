@@ -240,6 +240,7 @@ public class Character : TEAM2.Unit
             if (Input.GetMouseButtonDown(1))
             {
                 Rest();
+                UIManager.UnitBuildUI.SetActive(false);
             }
         }
     }
