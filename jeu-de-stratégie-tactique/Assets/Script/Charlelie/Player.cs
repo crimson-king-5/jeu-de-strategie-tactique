@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,16 @@ namespace TEAM2
         {
             get => _unitsList;
             set => _unitsList = value;
+        }
+
+        public List<Building> Buildings
+        {
+            get => _buildings ;
+        }
+
+        public List<Character> Characters
+        {
+            get => _characters ;
         }
 
         public BuildingManager BuildingManager
@@ -35,17 +46,6 @@ namespace TEAM2
             get => _costgold;
             set => _costgold = value;
         }
-        public int Lunarite
-        {
-            get => _lunarite;
-            set => _lunarite = value;
-        }
-        public int CostLunarite
-        {
-            get => _costlunarite;
-            set => _costlunarite = value;
-        }
-
 
         public Faction PlayerFaction;
 
@@ -53,9 +53,9 @@ namespace TEAM2
         private List<Order> orderList = new List<Order>();
 
         private GameManager _gameManager;
+        private List<Character> _characters = new List<Character>();
+        private List<Building> _buildings = new List<Building>();
 
-        [SerializeField] private int _lunarite = 0;
-        [SerializeField] private int _costlunarite = 1;
         [SerializeField] private int _costgold = 1;
         [SerializeField] private int _gold = 0;
 
@@ -67,34 +67,40 @@ namespace TEAM2
             SpawnCharacter();
             for (int i = 0; i < _unitsList.Count; i++)
             {
-                _unitsList[i].Init(gm);
+                _unitsList[i].Init(gm,UnitType.Character);
             }
             for (int i = 0; i < BuildingManager.Buildings.Count; i++)
             {
                 if (BuildingManager.Buildings[i].Faction == PlayerFaction)
                 {
                     _unitsList.Add(BuildingManager.Buildings[i]);
+                    _buildings.Add(BuildingManager.Buildings[i]);
                 }
             }
         }
 
+        public string GetListUnitNamePerUnitype(UnitType unitType)
+        {
+            string listName = "";
+            switch (unitType)
+            {
+                case UnitType.Building:
+                    listName = string.Join("\n", Buildings.Select(i => i.ScrUnit.unitsName));
+                    break;    
+                case UnitType.Character:
+                    listName = string.Join("\n", Characters.Select(i => i.ScrUnit.unitsName));
+                    break;
+            }
+            return listName;
+        }
 
         public void AddResource()
         {
-            List<Building> buildings = GetUnitWithType(UnitType.Building).Cast<Building>().ToList();
-            for (int i = 0; i < buildings.Count; i++)
+            for (int i = 0; i < Buildings.Count; i++)
             {
-                if (buildings[i].Faction == PlayerFaction)
+                if (Buildings[i].Faction == PlayerFaction)
                 {
-                    switch (buildings[i].resourceType)
-                    {
-                        case ResourceType.Gold:
-                            _gold = buildings[i].GainResourcePerTurn(_gold);
-                            break;
-                        case ResourceType.Lunarite:
-                            _lunarite = buildings[i].GainResourcePerTurn(_lunarite);
-                            break;
-                    }
+                    _gold = Buildings[i].GainResourcePerTurn(_gold);
                 }
             }
         }
@@ -105,6 +111,7 @@ namespace TEAM2
             for (int i = _unitsList.Count; i < list.Length; i++)
             {
                 _unitsList.Add(list[i]);
+                _characters.Add(list[i]);
             }
         }
 
@@ -119,18 +126,9 @@ namespace TEAM2
             //Execute both own list and received order list from client
         }
 
-        public List<Unit> GetUnitWithType(UnitType currentUnitType)
+        public IEnumerable<Unit> GetUnitWithType(UnitType currentUnitType)
         {
-            List<Unit> units = new List<Unit>();
-            for (int i = 0; i < _unitsList.Count; i++)
-            {
-                if (GetUnitClass(_unitsList[i]) == currentUnitType)
-                {
-                    units.Add(_unitsList[i]);
-                }
-            }
-
-            return units;
+            return _unitsList.Where(i=> i.UnitType == currentUnitType);
         }
 
         public bool CheckifAllUnitsHasEndTurn()
@@ -145,19 +143,6 @@ namespace TEAM2
             }
 
             return true;
-        }
-        private UnitType GetUnitClass(Unit unit)
-        {
-            Character unitCharacter = unit as Character;
-            Building unitBuilding = unit as Building;
-            if (unitCharacter != null)
-            {
-                return UnitType.Character;
-            }
-            else
-            {
-                return UnitType.Building;
-            }
         }
     }
 }

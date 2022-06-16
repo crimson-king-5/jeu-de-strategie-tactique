@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 70f4db814b898a34db8f4bcd9dabdeb4, type: 3}
-  m_Name: Ruin
+  m_Name: Soutient
   m_EditorClassIdentifier: 
   faction: 3
   unitUnitClass: 3
   unitsName: Ruines
-  renderUnit: {fileID: 21300000, guid: 6a633aff9d90e8c4aa81c1fc15be727d, type: 3}
+  renderUnit: {fileID: 21300000, guid: 9941be3fdc7e532478fa61ccd14d9334, type: 3}
   classBonus: 0
   unitStats:
     life: 10

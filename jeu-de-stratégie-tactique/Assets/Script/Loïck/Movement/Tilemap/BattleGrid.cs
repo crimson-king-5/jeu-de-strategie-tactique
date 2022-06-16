@@ -67,14 +67,14 @@ public class BattleGrid : MonoBehaviour
                     if (currentTile.currentTileType == BattleGridTile.TileType.Ruin)
                     {
                         Building building = UnitManager.GetSpecificBuildingPerName("Ruines", Faction.Building);
-                        building.Init(gm);
+                        building.Init(gm,UnitType.Building);
                         _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, localPlace);
                     }
                     else if (currentTile.currentTileType == BattleGridTile.TileType.MotherBase)
                     {
                         Building building = UnitManager.GetSpecificBuildingPerName("MotherBase", Faction.Building);
                         _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, localPlace);
-                        building.Init(_gameManager);
+                        building.Init(_gameManager,UnitType.Building);
                         FactionTile factionTile = (FactionTile) currentTile;
                         building.ScrUnit.faction = factionTile.faction;
                     }
@@ -213,13 +213,5 @@ public class BattleGrid : MonoBehaviour
     {
         Vector2 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition);
         return worldPosition;
-    }
-
-    void OnGUI()
-    {
-        Vector3 mousPos = GetMouseWorldPosition();
-        Vector3Int intMousPos = new Vector3Int((int)mousPos.x, (int)mousPos.y);
-        Vector3 centerMousePos = _tilemap.GetCellCenterWorld(intMousPos);
-        GUI.Label(new Rect(10f, 10, 1000, 1000), "Mouse position : " + mousPos.x + " " + mousPos.y + " \n Center Mouse Position :" + centerMousePos.x + " " + centerMousePos.y);
     }
 }
