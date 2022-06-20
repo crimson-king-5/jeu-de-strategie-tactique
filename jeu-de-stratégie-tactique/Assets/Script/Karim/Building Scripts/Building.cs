@@ -35,7 +35,7 @@ public class Building : Unit
         {
             Vector3 mouseWorldPosition = BattleGrid.GetMouseWorldPosition();
             Vector3Int gridPos = GetSpecificGridPosition(mouseWorldPosition);
-            Vector3 place = BattleGrid.Tilemap.GetCellCenterWorld(gridPos);
+            //Vector3Int place = BattleGrid.Tilemap.GetCellCenterWorld(gridPos);
             if (BattleGrid.Tilemap.HasTile(gridPos))
             {
                 FactionTile factionTile = (FactionTile)BattleGrid.Tilemap.GetTile(gridPos);
@@ -45,7 +45,7 @@ public class Building : Unit
                     PlayerManager.CurrentPlayer.Units.Add(character);
                     PlayerManager.CurrentPlayer.Gold -= PlayerManager.CurrentPlayer.CostGold;
                     UIManager.InvokeUpdateUI();
-                    PlayerManager.SetCharacter(character, place);
+                    PlayerManager.SetCharacter(character, gridPos);
                     Rest();
                 }
             }

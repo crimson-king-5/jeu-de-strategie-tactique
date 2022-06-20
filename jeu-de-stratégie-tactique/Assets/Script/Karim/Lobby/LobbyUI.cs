@@ -15,7 +15,7 @@ namespace TEAM2
         [SerializeField] private LobbyPlayerCard[] lobbyPlayerCards;
         [SerializeField] private Button startGameButton;
 
-        private NetworkList<LobbyPlayerState> lobbyPlayers = new NetworkList<LobbyPlayerState>();
+        //private NetworkList<LobbyPlayerState> lobbyPlayers = new NetworkList<LobbyPlayerState>();
 
 
         public override void OnNetworkSpawn()
@@ -23,7 +23,7 @@ namespace TEAM2
 
             if (IsClient)
             {
-                lobbyPlayers.OnListChanged += HandheldLobbyPlayersStateChanged;
+                //lobbyPlayers.OnListChanged += HandheldLobbyPlayersStateChanged;
             }
             if (IsServer)
             {
@@ -39,23 +39,24 @@ namespace TEAM2
                 }
             }
         }
-        //private void OnDestroy()
-        //{
-        //    lobbyPlayers.OnListChanged -= HandheldLobbyPlayersStateChanged;
+        private void OnDestroy()
+        {
+            //lobbyPlayers.OnListChanged -= HandheldLobbyPlayersStateChanged;
 
-        //    if (NetworkManager.Singleton)
-        //    {
-        //        NetworkManager.Singleton.OnClientConnectedCallback -= HandlecClientConnected;
-        //        NetworkManager.Singleton.OnClientDisconnectCallback -= HandlecClientDisconnect;
+            if (NetworkManager.Singleton)
+            {
+                NetworkManager.Singleton.OnClientConnectedCallback -= HandlecClientConnected;
+                NetworkManager.Singleton.OnClientDisconnectCallback -= HandlecClientDisconnect;
 
-        //    }
+            }
 
        
-        //}
+        }
 
 
         private bool IsEveroneReady()
         {
+            /*
             if(lobbyPlayers.Count < 2)
             {
                 return false;
@@ -68,7 +69,7 @@ namespace TEAM2
                 {
                     return false;
                 }
-            }
+            }*/
             return true;
         }
         private void HandlecClientConnected(ulong clientId)
@@ -77,7 +78,7 @@ namespace TEAM2
 
             if (!playerData.HasValue) { return; }
 
-            lobbyPlayers.Add(new LobbyPlayerState(clientId, playerData.Value.PlayerName, false));
+            //lobbyPlayers.Add(new LobbyPlayerState(clientId, playerData.Value.PlayerName, false));
         }
 
         private void HandlecClientDisconnect(ulong clientId)

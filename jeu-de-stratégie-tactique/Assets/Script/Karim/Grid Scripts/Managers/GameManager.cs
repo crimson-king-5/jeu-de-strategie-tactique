@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour
         if (Instance != this)
         {
             Destroy(Instance);
+            Instance = this;
         }
         else
         {

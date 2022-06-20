@@ -10,18 +10,18 @@ namespace TEAM2
     public struct LobbyPlayerState : INetworkSerializable, IEquatable<LobbyPlayerState>
     {
         public ulong ClientId;
-        public ForceNetworkSerializeByMemcpy<FixedString32Bytes> PlayerName;
+        public /*ForceNetworkSerializeByMemcpy<FixedString32Bytes>*/string PlayerName;
         public bool IsReady;
         
         
-        public LobbyPlayerState(ulong clientId, ForceNetworkSerializeByMemcpy<FixedString32Bytes> playerName, bool isReady)
+        public LobbyPlayerState(ulong clientId, /*ForceNetworkSerializeByMemcpy<FixedString32Bytes>*/string playerName, bool isReady)
         {
             ClientId = clientId;
             PlayerName = playerName;
             IsReady = isReady;
         }
 
-        public LobbyPlayerState(ulong clientId, ForceNetworkSerializeByMemcpy<FixedString32Bytes> playerName) : this()
+        public LobbyPlayerState(ulong clientId, /*ForceNetworkSerializeByMemcpy<FixedString32Bytes>*/string playerName) : this()
         {
             ClientId = clientId;
             PlayerName = playerName;

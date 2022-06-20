@@ -15,6 +15,34 @@ public class BattleGrid : MonoBehaviour
     [SerializeField] private Tilemap _tilemap;
     [SerializeField] private List<Vector3> _availablePlaces = new List<Vector3>();
     [SerializeField] private List<Vector3Int> _availableGridPlaces = new List<Vector3Int>();
+    [SerializeField] private Grid grid;
+
+
+    #region TileSelection
+    Cell selectedTile;
+    Vector3Int selectedTileVec;
+    Cell mouseOverTile;
+    Vector3Int mouseOverTileVec;
+
+    Dictionary<Vector3Int, Cell> dict = new Dictionary<Vector3Int, Cell>();
+
+    public Dictionary<Vector3Int, Cell> CellDict { get => dict; }
+
+    public event Action<Dictionary<Vector3Int, Cell>> OnSetNeighbors;
+
+    public Cell SelectedTile
+    {
+        get => selectedTile;
+    }
+
+    public Vector3Int SelectedTileVec
+    {
+        get => selectedTileVec;
+    }
+
+    public Cell MouseOverCell { get => mouseOverTile;  }
+
+    #endregion
 
     private Player Player
     {
@@ -52,12 +80,14 @@ public class BattleGrid : MonoBehaviour
     public void Init(GameManager gm)
     {
         _gameManager = gm;
+        /*
         for (int n = _tilemap.cellBounds.xMin; n < _tilemap.cellBounds.xMax; n++)
         {
             for (int p = _tilemap.cellBounds.yMin; p < _tilemap.cellBounds.yMax; p++)
             {
                 Vector3Int localPlace = (new Vector3Int(n, p, (int)_tilemap.transform.position.y));
                 Vector3 place = _tilemap.GetCellCenterWorld(localPlace);
+                Debug.Log(localPlace);
                 if (_tilemap.HasTile(localPlace))
                 {
                     //Tile at "place"
@@ -84,7 +114,73 @@ public class BattleGrid : MonoBehaviour
                     //No tile at "place"
                 }
             }
+
         }
+        */
+
+        foreach (Vector3Int position in Tilemap.cellBounds.allPositionsWithin)
+        {
+            if(_tilemap.HasTile(position))
+            {
+                //Debug.Log(position);
+                _availablePlaces.Add(position);
+                _availableGridPlaces.Add(position);
+                BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(position);
+                Cell cell = new Cell(position, _tilemap, currentTile);
+                dict.Add(position, cell);
+                if (currentTile.currentTileType == BattleGridTile.TileType.Ruin)
+                {
+                    Building building = UnitManager.GetSpecificBuildingPerName("Ruines", Faction.Building);
+                    building.Init(gm, UnitType.Building);
+                    _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, position);
+                }
+                else if (currentTile.currentTileType == BattleGridTile.TileType.MotherBase)
+                {
+                    Building building = UnitManager.GetSpecificBuildingPerName("MotherBase", Faction.Building);
+                    _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, position);
+                    building.Init(_gameManager, UnitType.Building);
+                    FactionTile factionTile = (FactionTile)currentTile;
+                    building.ScrUnit.faction = factionTile.faction;
+                }
+            }
+           
+        }
+
+        OnSetNeighbors?.Invoke(dict);
+    }
+
+    private void Update()
+    {
+        Vector3 mousePos = BattleGrid.GetMouseWorldPosition();
+        Vector3Int cellPosition = grid.WorldToCell(mousePos);
+        Cell currentCell;
+        if (dict.TryGetValue(cellPosition, out currentCell))
+        {
+            if (mouseOverTile == null)
+            {
+                mouseOverTileVec = cellPosition;
+                mouseOverTile = currentCell;
+                mouseOverTile.OnMouseEnter();
+            }
+            else if (currentCell != mouseOverTile)
+            {
+                mouseOverTile.OnMouseLeave();
+                mouseOverTile = currentCell;
+                mouseOverTile.OnMouseEnter();
+                mouseOverTileVec = cellPosition;
+                //if (Input.GetMouseButton(0)) currentCell.OnMouseClickDown();
+            }
+            else mouseOverTile.OnMouseOver();
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                currentCell.OnMouseClickDown();
+                selectedTile = currentCell;
+            }
+            else if (Input.GetMouseButtonUp(0) && currentCell == selectedTile) currentCell.OnMouseClickUp();
+            else if (Input.GetMouseButton(0) && currentCell == selectedTile) currentCell.OnMouseDown();
+        }
+        else if (currentCell == null && mouseOverTile != null) mouseOverTile.OnMouseLeave();
     }
 
     public Vector3 SpawnRandomUnit()
@@ -105,8 +201,9 @@ public class BattleGrid : MonoBehaviour
         return unitPos;
     }
 
-    public Vector3 SpawnUnitPerFaction(Faction faction)
+    public Vector3Int SpawnUnitPerFaction(Faction faction)
     {
+        /*
        List<Vector3> localAvailablePlaces = _availablePlaces;
        List<Vector3Int> gridAvailablePlaces = _availableGridPlaces;
         for (int i = 0; i < localAvailablePlaces.Count; i++)
@@ -128,7 +225,23 @@ public class BattleGrid : MonoBehaviour
 
         }
         Debug.LogError("Spawn Tile was not found");
-        return Vector3.zero;
+        return Vector3Int.zero;
+        */
+
+        for (int i = 0; i < dict.Count; i++)
+        {
+            BattleGridTile currentTile = (BattleGridTile)_tilemap.GetTile(dict.ElementAt(i).Key);
+            if (currentTile.currentTileType == BattleGridTile.TileType.Spawn && dict.ElementAt(i).Value.Contains == null)
+            {
+                FactionTile factionTile = (FactionTile)currentTile;
+                if (factionTile.faction == faction)
+                {
+                    return dict.ElementAt(i).Key;
+                }
+            }
+        }
+        Debug.LogError("Spawn Tile was not found");
+        return Vector3Int.zero;
     }
 
     public BattleGridTile GetTileType(Vector3Int tilePos)

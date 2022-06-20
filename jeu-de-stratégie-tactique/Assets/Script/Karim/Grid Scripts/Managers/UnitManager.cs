@@ -32,6 +32,8 @@ public class UnitManager : MonoBehaviour
         set => _selectedHero = value;
     }
 
+    public bool CanSelectUnit { get; set; }
+
     [SerializeField] private List<ScriptableUnit> _units;
     [SerializeField] private Unit _selectedHero;
     [SerializeField] private List<ScriptableUnit> heroesUnits = new List<ScriptableUnit>();
@@ -56,8 +58,10 @@ public class UnitManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            SelectUnit();
+            //SelectUnit();
         }
+
+        if (Input.GetKeyDown(KeyCode.A)) _selectedHero.DoAction();
     }
 
     public void Build()
@@ -143,12 +147,13 @@ public class UnitManager : MonoBehaviour
         return PlayerManager.Players.Where(i => i.PlayerFaction == currentFaction).SelectMany(i => i.Characters);
     }
 
-    private void SelectUnit()
+    public void SelectUnit(Unit unit)
     {
-        Vector3 mousPos = BattleGrid.GetMouseWorldPosition();
-        if (PlayerManager.CheckifUnitWasHere(BattleGrid.Tilemap.WorldToCell(mousPos)))
+        /*
+        Vector3 mousePos = BattleGrid.GetMouseWorldPosition();
+        if (PlayerManager.CheckifUnitWasHere(BattleGrid.Tilemap.WorldToCell(mousePos)))
         {
-            Unit selectedCharacter = _gameManager.PlayerManager.GetUnit(BattleGrid.Tilemap.WorldToCell(mousPos));
+            Unit selectedCharacter = _gameManager.PlayerManager.GetUnit(BattleGrid.Tilemap.WorldToCell(mousePos));
             if (selectedCharacter != null &&
                 selectedCharacter.ScrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction &&
                 selectedCharacter.unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
@@ -163,11 +168,22 @@ public class UnitManager : MonoBehaviour
                 UIManager.InvokeInformation("Tours de: " + SelectedHero.ScrUnit.unitsName);
             }
         }
+        */
+        SelectedHero = unit;
+        SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
+        UIManager.InvokeInformation("Tours de: " + SelectedHero.ScrUnit.unitsName);
+    }
+
+    public void DeselectUnit()
+    {
+        SelectedHero.GetComponent<SpriteRenderer>().color = Color.white;
+        SelectedHero = null;
     }
 
     public void Init(GameManager gm)
     {
         _gameManager = gm;
+        _gameManager.UnitManager.CanSelectUnit = true;
     }
 
     [Button("LoadUnits", ButtonSizes.Large)]
@@ -200,7 +216,7 @@ public class UnitManager : MonoBehaviour
         for (int i = 0; i < unitCount; i++)
         {
             Character randomPrefab = GetRandomUnitPerFaction(currentfaction);
-            Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnUnitPerFaction(currentfaction);
+            Vector3Int randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnUnitPerFaction(currentfaction);
             _gameManager.PlayerManager.SetCharacter(randomPrefab, randomSpawnBattleGridTile);
             chars[i] = randomPrefab;
         }
@@ -372,7 +388,7 @@ public class UnitManager : MonoBehaviour
             UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings);
             UIManager.InvokeUpdateUI();
             SelectedHero = allDeployedHeroesCharacters[0];
-            SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
+            //SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
             UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
@@ -383,7 +399,7 @@ public class UnitManager : MonoBehaviour
             PlayerManager.CurrentPlayer.AddResource();
             UIManager.InvokeUpdateUI();
             SelectedHero = allDeployedEnemiesCharacters[0];
-            SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
+            //SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
             UIManager.InvokeInformation("Tour de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());

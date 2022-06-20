@@ -33,6 +33,10 @@ namespace TEAM2
             get => _players;
         }
 
+        [SerializeField] float moveRange;
+
+        public float MoveRange { get => moveRange; }
+
         public void Init(GameManager gm)
         {
             _gameManager = gm;
@@ -47,9 +51,11 @@ namespace TEAM2
             _players[1].PlayerFaction = Faction.Enemy;
         }
 
-        public void SetCharacter(Unit unit, Vector3 unitPos)
+        public void SetCharacter(Unit unit, Vector3Int unitPos)
         {
-            unit.transform.position = unitPos;
+            unit.transform.position = _gameManager.BattleGrid.CellDict[unitPos].PosCenter;            
+            _gameManager.BattleGrid.CellDict[unitPos].Contains = unit;
+            (unit as Character).CellOn = _gameManager.BattleGrid.CellDict[unitPos];
             unit.Init(_gameManager,UnitType.Character);
         }
 
