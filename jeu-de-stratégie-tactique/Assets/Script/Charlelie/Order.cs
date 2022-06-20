@@ -19,7 +19,7 @@ public class Order : MonoBehaviour
     public Order(OrderType type)
     {
         _orderType = type;
-        GameManager.Instance.PlayerManager.CurrentPlayer.CurrentOrder = this;
+        //GameManager.Instance.PlayerManager.CurrentPlayer.CurrentOrder = this;
     }
 
 
@@ -36,8 +36,8 @@ public class MoveOrder : Order
 
     public override void Set()
     {
-        chara = GameManager.Instance.UnitManager.SelectedHero;
-        _nextTile = TileSelector.instance.SelectedTileVec;
+        //chara = GameManager.Instance.UnitManager.SelectedHero;
+        //_nextTile = TileSelector.instance.SelectedTileVec;
     }
 
 
@@ -51,8 +51,8 @@ public class MoveOrder : Order
     {
         if (!TileSelector.instance.SelectTile)
         {
-            TileSelector.instance.SelectTile = true;
-            TileSelector.instance.currType = OrderType.WALK;
+            //TileSelector.instance.SelectTile = true;
+            //TileSelector.instance.currType = OrderType.WALK;
         }
     }
 
@@ -72,7 +72,7 @@ public class BuildOrder : Order
 
     public static void SetBuild()
     {
-        UIManager.Instance.CreateOrder(OrderType.BUILD);
+        UIManagerC.Instance.CreateOrder(OrderType.BUILD);
     }
 }
 
@@ -81,7 +81,7 @@ public class DefendOrder : Order
 
     public override void Set()
     {
-        chara = GameManager.Instance.UnitManager.SelectedHero;
+        //chara = GameManager.Instance.UnitManager.SelectedHero;
     }
     public override void ApplyOrder()
     {
@@ -90,14 +90,16 @@ public class DefendOrder : Order
 
     public static void SetDefend()
     {
-        GameManager.Instance.StartCoroutine(Select());
+        //GameManager.Instance.StartCoroutine(Select());
     }
 
+    /*
     static IEnumerator Select()
     {
-        yield return new WaitUntil(() => GameManager.Instance.UnitManager.SelectedHero != null);
-        UIManager.Instance.CreateOrder(OrderType.DEFEND);
+        //yield return new WaitUntil(() => GameManager.Instance.UnitManager.SelectedHero != null);
+        //UIManagerC.Instance.CreateOrder(OrderType.DEFEND);
     }
+    */
 }
 
 public class AttackOrder : Order
@@ -115,6 +117,6 @@ public class AttackOrder : Order
 
     public static void SetAttack()
     {
-        UIManager.Instance.CreateOrder(OrderType.ATTACK);
+        UIManagerC.Instance.CreateOrder(OrderType.ATTACK);
     }
 }

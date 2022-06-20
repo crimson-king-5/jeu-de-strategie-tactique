@@ -10,6 +10,8 @@ public class BattleGridTile : Tile
     [Range(0,99)]public int mvRequire = 0;
     public bool Walkable => currentTileType == TileType.Walkable;
 
+    public Color baseColor;
+
     public enum TileType
     {
         None = 0,
@@ -18,4 +20,15 @@ public class BattleGridTile : Tile
         Ruin = 3,
         MotherBase = 4
     }
+
+    public override bool StartUp(Vector3Int location, ITilemap tilemap, GameObject go)
+    {
+        baseColor = color;
+        flags = TileFlags.LockTransform;
+        return true;
+    }
+
+
+
+   
 }

@@ -39,10 +39,29 @@ public class Character : TEAM2.Unit
     public UIManager UIManager { get => _gameManager.UIManager; }
     public bool HasBuild { set => hasBuild = value; }
     public bool HasMoved { get => hasMoved; }
+    public bool AwaitMoveOrder { get; set; }
+    public bool AwaitAttackOrder { get; set; }
+    public Cell CellOn { get; set; }
 
     private bool hasMoved = false;
     private bool hasAttack = false;
     private bool hasBuild = false;
+    private bool canWalkOnCell = false;
+    private Cell moveCell;
+    private Cell nextPosCell;
+    private List<Unit> nbsUnits;
+    private Character toAttack;
+
+    public override void Init(GameManager gm, UnitType unitType)
+    {
+        base.Init(gm, unitType);
+        Cell.OnClickCell += OnClickCell;
+    }
+
+    private void OnDestroy()
+    {
+        Cell.OnClickCell -= OnClickCell;
+    }
 
     public void Attack(Character targetCharacter)
     {
@@ -113,6 +132,14 @@ public class Character : TEAM2.Unit
     public override void DoAction()
     {
         base.DoAction();
+        CellOn.ResetColor();
+        CellOn.Contains = null;
+        CellOn = null;
+        transform.position = moveCell.PosCenter;
+        CellOn = moveCell;
+        CellOn.Contains = this;
+        if (toAttack) Attack(toAttack);
+        _gameManager.UnitManager.DeselectUnit();
     }
 
     public void CheckifUnitDie()
@@ -228,14 +255,18 @@ public class Character : TEAM2.Unit
 
 
         #endregion
-
+        if(_gameManager.UnitManager.SelectedHero == this) Debug.Log(moveCell);
+        //if (_gameManager.UnitManager.SelectedHero == this && moveCell == null) Debug.Log("null");
         if (_gameManager.UnitManager.SelectedHero == this)
         {
             if (Input.GetMouseButtonDown(0))
             {
-                CharacterMouseEvent();
+                //CharacterMouseEvent();
 
             }
+
+            if (AwaitMoveOrder)
+                canWalkOnCell = CellOn.CanWalkOnCell(PlayerManager.MoveRange);
 
             if (Input.GetMouseButtonDown(1))
             {
@@ -256,8 +287,85 @@ public class Character : TEAM2.Unit
         }
     }
 
+    public override void OnClick()
+    {
+        base.OnClick();
+        if (_scrUnit.faction != PlayerManager.CurrentPlayer.PlayerFaction) return;
+        if (_scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction &&
+                unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn && _gameManager.UnitManager.CanSelectUnit)
+            _gameManager.UnitManager.SelectUnit(this);
+
+        if (!AwaitAttackOrder)
+        {
+            if (_gameManager.UnitManager.SelectedHero == this) CellOn.ShowWalkableCells(PlayerManager.MoveRange);
+            else Debug.Log(_gameManager.UnitManager.SelectedHero);
+            AwaitMoveOrder = true;
+        }
+        
+        canWalkOnCell = false;
+    }
+
+    public override bool OnDeselect()
+    {
+        //base.OnDeselect();
+        if (!AwaitAttackOrder) CellOn.HideWalkableCells(PlayerManager.MoveRange);
+        AwaitMoveOrder = false;
+        canWalkOnCell = false; 
+        if (AwaitAttackOrder) 
+        {
+            Debug.Log("Returning");
+            return false;
+        } else Debug.Log("Not Returning");
+        if (moveCell != null)
+        {
+            Debug.Log(":");
+            moveCell.ResetColor();
+            moveCell = null;
+            nextPosCell = null;
+        }
+        return true;
+    }
+
+    void OnClickCell(Cell cell)
+    {
+        if (!AwaitAttackOrder && (cell.Position == CellOn.Position || _gameManager.UnitManager.SelectedHero != this)) return;
+        if (canWalkOnCell && AwaitMoveOrder)
+        {
+            moveCell = cell;
+            AwaitMoveOrder = false;
+            CellOn.HideWalkableCells(PlayerManager.MoveRange);
+            cell.SetColor(Color.gray);
+            nextPosCell = cell;
+            nbsUnits = nextPosCell.CheckNeighbours(this);
+            if (nbsUnits.Count > 0)
+            {
+                foreach (Unit u in nbsUnits) u.GetComponent<SpriteRenderer>().color = Color.magenta;
+                AwaitAttackOrder = true;
+                AwaitMoveOrder = false;
+                _gameManager.UnitManager.CanSelectUnit = false;
+            }
+            return;
+        } else if (AwaitAttackOrder)
+        {
+            Debug.Log("Search Unit...");
+            Unit search = nbsUnits.Find(x => x == cell.Contains);
+            if (search)
+            {
+                Debug.Log("Unit found: " + search.ScrUnit.name + "  " +  (search as Character).CellOn.Position);
+                foreach (Unit u in nbsUnits) 
+                { 
+                    if (u != search)
+                        u.GetComponent<SpriteRenderer>().color = Color.white;
+                }
+                toAttack = (Character)search;
+            } else Debug.Log("Unit not found");
+        }
+    }
+
     void CharacterMouseEvent()
     {
+        
+        /*
         if (unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
             Vector3 mouseWorldPosition = BattleGrid.GetMouseWorldPosition();
@@ -320,5 +428,7 @@ public class Character : TEAM2.Unit
                 }
             }
         }
+        */
     }
+        
 }

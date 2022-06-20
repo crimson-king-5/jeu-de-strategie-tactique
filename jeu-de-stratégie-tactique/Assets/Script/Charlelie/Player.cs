@@ -61,13 +61,15 @@ namespace TEAM2
 
         private bool hasFinishOrder = false;
 
+        public Order CurrentOrder { get; set; }
+
         public void Init(GameManager gm)
         {
             _gameManager = gm;
             SpawnCharacter();
             for (int i = 0; i < _unitsList.Count; i++)
             {
-                _unitsList[i].Init(gm,UnitType.Character);
+                //_unitsList[i].Init(gm,UnitType.Character);
             }
             for (int i = 0; i < BuildingManager.Buildings.Count; i++)
             {
@@ -121,6 +123,11 @@ namespace TEAM2
             orderList.Add(new Order(orderType));
         }
 
+        public void AddOrderToList(Order order)
+        {
+            orderList.Add(order);
+        }
+
         public void ExecuteOrders(List<Order> orderList)
         {
             //Execute both own list and received order list from client
@@ -143,6 +150,15 @@ namespace TEAM2
             }
 
             return true;
+        }
+
+        public void MakeUnitsEnd()
+        {
+            for (int i = 0; i < _unitsList.Count; i++)
+            {
+                _unitsList[i].unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
+
+            }
         }
     }
 }

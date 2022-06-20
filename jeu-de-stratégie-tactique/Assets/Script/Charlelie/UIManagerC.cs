@@ -4,11 +4,11 @@ using UnityEngine;
 using TEAM2;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class UIManagerC : MonoBehaviour
 {
-    private static UIManager _Instance;
+    private static UIManagerC _Instance;
 
-    public static UIManager Instance
+    public static UIManagerC Instance
     {
         get { return _Instance; }
     }
@@ -69,8 +69,8 @@ public class UIManager : MonoBehaviour
     public void ChangeOrderPlayer()
     {
         Color col = Color.white;
-        if (GameManager.Instance.PlayerManager.CurrentPlayer == GameManager.Instance.P1) col = p1UIColor;
-        else if (GameManager.Instance.PlayerManager.CurrentPlayer == GameManager.Instance.P2) col = p2UIColor;
+        //if (GameManager.Instance.PlayerManager.CurrentPlayer == GameManager.Instance.P1) col = p1UIColor;
+        //else if (GameManager.Instance.PlayerManager.CurrentPlayer == GameManager.Instance.P2) col = p2UIColor;
         for (int i = 0; i < orderUI.transform.childCount; i++)
         {
             orderUI.transform.GetChild(i).GetComponent<Image>().color = col;

@@ -53,7 +53,7 @@ namespace TEAM2
             set => _scrUnit = value;
         }
 
-        public void Init(GameManager gm,UnitType unitType)
+        public virtual void Init(GameManager gm,UnitType unitType)
         {
             _gameManager = gm;
            _scrUnit = _scrUnit.GetCloneUnit();
@@ -72,6 +72,17 @@ namespace TEAM2
         virtual public void Die()
         {
 
+        }
+
+        virtual public void OnClick()
+        {
+            if (_gameManager.UnitManager.SelectedHero != null && _gameManager.UnitManager.SelectedHero != this) 
+                if (_gameManager.UnitManager.SelectedHero.OnDeselect()) _gameManager.UnitManager.SelectedHero = this;
+        }
+
+        virtual public bool OnDeselect()
+        {
+            return true;
         }
 
         public int GetTileRange(Vector3 newPos)

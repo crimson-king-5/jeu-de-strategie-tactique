@@ -38,14 +38,14 @@ public class TileSelector : MonoBehaviour
     public void ResetTile()
     {
         if (selectedTile == null) return;
-        grid.Tilemap.SetColor(selectedTileVec, mouseOverTile.baseColor);
+        //grid.Tilemap.SetColor(selectedTileVec, mouseOverTile.baseColor);
         selectedTile = null;
         mouseOverTile = null;
         selectedTileVec = Vector3Int.zero;
         mouseOverTileVec = Vector3Int.zero;
     }
 
-
+    /*
     void Update()
     {
         if (SelectTile)
@@ -76,12 +76,14 @@ public class TileSelector : MonoBehaviour
             }
             if (Input.GetMouseButtonDown(0))
             {
+                
                 selectedTile = mouseOverTile;
                 SelectTile = false;
                 selectedTileVec = mouseOverTileVec;
-                UIManager.Instance.CreateOrder(currType);
+                UIManagerC.Instance.CreateOrder(currType);
+                
             }
         }
     }
-   
+   */
 }
