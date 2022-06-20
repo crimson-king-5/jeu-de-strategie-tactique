@@ -136,6 +136,9 @@ namespace TEAM2
 
         public IEnumerable<Unit> GetUnitWithType(UnitType currentUnitType)
         {
+            var t = _unitsList.ToList();
+            var el = _unitsList.Where(i => i.UnitType == currentUnitType).ToList();
+
             return _unitsList.Where(i=> i.UnitType == currentUnitType);
         }
 

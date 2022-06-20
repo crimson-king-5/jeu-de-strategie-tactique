@@ -9,7 +9,7 @@ using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class Character : TEAM2.Unit
+public class Character : Unit
 {
     //public enum Team
     //{

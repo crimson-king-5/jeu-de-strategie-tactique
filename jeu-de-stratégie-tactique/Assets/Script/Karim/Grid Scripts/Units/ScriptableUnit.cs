@@ -11,6 +11,8 @@ public class ScriptableUnit : ScriptableObject
     public string unitsName;
     public bool isBuilder = false;
     public Sprite renderUnit;
+    public string descritpion;
+    public int unitCost;
     [Range(0, 99)] public float classBonus = 1.5f; 
     [SerializeField] public UnitStats unitStats;
     public ScriptableUnit GetCloneUnit()
