@@ -8,8 +8,8 @@ namespace TEAM2
     {
         protected GameManager _gameManager;
         [SerializeField]protected ScriptableUnit _scrUnit;
+        UnitType _unitType;
         private Vector3Int _occupiedTileGridPosition;
-        private UnitType _unitType;
 
         public int xPos;
         public int yPos;
@@ -58,6 +58,7 @@ namespace TEAM2
             _gameManager = gm;
            _scrUnit = _scrUnit.GetCloneUnit();
            OccupiedTileGridPosition = GetCurrentUnitGridlPosition();
+           _unitType = unitType;
         }
 
         virtual public void DoAction()
@@ -116,6 +117,7 @@ namespace TEAM2
 
     public enum UnitType
     {
-        Building,Character
+        Building = 0,
+        Character = 1
     }
 }

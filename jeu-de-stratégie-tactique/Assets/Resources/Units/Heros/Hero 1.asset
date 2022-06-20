@@ -15,7 +15,10 @@ MonoBehaviour:
   faction: 0
   unitUnitClass: 1
   unitsName: Bebou
+  isBuilder: 1
   renderUnit: {fileID: 21300000, guid: 3564a7ec5490cc943b84ef4157df2150, type: 3}
+  descritpion: 
+  unitCost: 0
   classBonus: 1.5
   unitStats:
     life: 5

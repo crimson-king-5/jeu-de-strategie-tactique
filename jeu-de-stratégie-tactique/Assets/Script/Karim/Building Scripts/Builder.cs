@@ -14,8 +14,6 @@ namespace TEAM2
         public Character BuilderUnit { get => builderUnit; set => builderUnit = value; }
         public GameObject UnitBuildUI { set => unitBuildUI = value; }
 
-        private bool showMenu = false;
-
         private void Start()
         {
             _uIManager.BuildUI += HandleSelection;
@@ -28,7 +26,6 @@ namespace TEAM2
 
         public void HandleSelection(GameObject selectedObject)
         {
-            showMenu = !showMenu;
             if (selectedObject == null)
                 return;
             HandleUnitSelection();
@@ -36,7 +33,7 @@ namespace TEAM2
 
         public void HandleUnitSelection()
         {
-            unitBuildUI.SetActive(showMenu);
+            unitBuildUI.SetActive(true);
         }
 
         public void BuildStructure()
