@@ -14,13 +14,17 @@ namespace TEAM2
 
         public Unit UnitReferenced { get; private set; }
 
+        public UnitSheetUI Init(ScriptableUnit unit)
+        {
+            _cost.text = "Cost : " + unit.unitCost;
+            _image.sprite = unit.renderUnit;
+            _description.text = unit.descritpion;
+            return this;
+        }
         public UnitSheetUI Init(Unit unit)
         {
             UnitReferenced = unit;
-
-            _cost.text = "Cost : " + unit.ScrUnit.unitCost;
-            _image.sprite = unit.ScrUnit.renderUnit;
-            _description.text = unit.ScrUnit.descritpion;
+            Init(UnitReferenced.ScrUnit);
             return this;
         }
 

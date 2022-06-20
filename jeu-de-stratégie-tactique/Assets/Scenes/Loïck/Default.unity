@@ -199,6 +199,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 449176901}
   m_CullTransparentMesh: 1
+--- !u!1 &451775915 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6523323521680885397, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+  m_PrefabInstance: {fileID: 1021423593}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &538448972
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,6 +294,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1197974416}
+        m_TargetAssemblyTypeName: "TEAM2.UIManager, com.iim.jeu-de-strat\xE9gie-tactique"
+        m_MethodName: InvokeUpdateUI
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -563,6 +580,115 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 965023821}
   m_CullTransparentMesh: 1
+--- !u!1001 &1021423593
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5551748050345682466, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551748050345682466, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885393, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885397, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_Name
+      value: Scriptable UnitList
+      objectReference: {fileID: 0}
+    - target: {fileID: 6523323521680885397, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5bc751964291c234ebaf4086169fe15e, type: 3}
 --- !u!1 &1155905250
 GameObject:
   m_ObjectHideFlags: 0
@@ -621,7 +747,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Unit List
+  m_text: List
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1239,8 +1365,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameManager: {fileID: 0}
   _units:
+  - {fileID: 11400000, guid: e681db1defe9ba041b76943d4c352e17, type: 2}
+  - {fileID: 11400000, guid: 451ad2f1b28eb964d96c13f89c715489, type: 2}
   - {fileID: 11400000, guid: 074f0b892fc4ec0498c5c6fb899e1980, type: 2}
   - {fileID: 11400000, guid: 0df031915e39ee1458bcf1ab57334f93, type: 2}
+  - {fileID: 11400000, guid: a3679c3d62297b946a052583712bb94b, type: 2}
+  - {fileID: 11400000, guid: e9795dab835e1c14eb80ad793bfa7805, type: 2}
   - {fileID: 11400000, guid: 55aa6012ed93b124b9e98d1eca418ba9, type: 2}
   - {fileID: 11400000, guid: 5045868d353ce634ba6e79a8699cc91b, type: 2}
   - {fileID: 11400000, guid: 5351d965b9f0479408aa0990529746d1, type: 2}
@@ -1251,8 +1381,12 @@ MonoBehaviour:
   enemyUnits:
   - {fileID: 11400000, guid: 55aa6012ed93b124b9e98d1eca418ba9, type: 2}
   buildingUnits:
+  - {fileID: 11400000, guid: e681db1defe9ba041b76943d4c352e17, type: 2}
+  - {fileID: 11400000, guid: 451ad2f1b28eb964d96c13f89c715489, type: 2}
   - {fileID: 11400000, guid: 074f0b892fc4ec0498c5c6fb899e1980, type: 2}
   - {fileID: 11400000, guid: 0df031915e39ee1458bcf1ab57334f93, type: 2}
+  - {fileID: 11400000, guid: a3679c3d62297b946a052583712bb94b, type: 2}
+  - {fileID: 11400000, guid: e9795dab835e1c14eb80ad793bfa7805, type: 2}
 --- !u!114 &1197974414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1291,7 +1425,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e0d1125fc55c24dbf7896f4b8c6d73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitBuildUI: {fileID: 6523323521680885397, guid: 8533eb8f37a970b4eb3fa316f042433d, type: 3}
+  unitBuildUI: {fileID: 451775915}
 --- !u!1 &1215691546
 GameObject:
   m_ObjectHideFlags: 0
@@ -1772,7 +1906,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSpacing: 10.25
   horizontalMargin: 0
-  verticalMargin: 10
+  verticalMargin: 20
   horizontal: 0
   vertical: 1
 --- !u!1 &1393862469
@@ -1910,6 +2044,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1197974416}
+        m_TargetAssemblyTypeName: "TEAM2.UIManager, com.iim.jeu-de-strat\xE9gie-tactique"
+        m_MethodName: InvokeUpdateUI
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2305,7 +2451,7 @@ RectTransform:
   - {fileID: 2028580254}
   - {fileID: 1309470241}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2602,7 +2748,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSpacing: 10.25
   horizontalMargin: 0
-  verticalMargin: 10
+  verticalMargin: 20
   horizontal: 0
   vertical: 1
 --- !u!114 &114860356476757616
