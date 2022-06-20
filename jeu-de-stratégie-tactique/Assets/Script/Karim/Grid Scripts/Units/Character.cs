@@ -39,6 +39,7 @@ public class Character : TEAM2.Unit
     public UIManager UIManager { get => _gameManager.UIManager; }
     public bool HasBuild { set => hasBuild = value; }
     public bool HasMoved { get => hasMoved; }
+    public bool HasBeenUsed { get; set; }
     public bool AwaitMoveOrder { get; set; }
     public bool AwaitAttackOrder { get; set; }
     public Cell CellOn { get; set; }
@@ -135,11 +136,16 @@ public class Character : TEAM2.Unit
         CellOn.ResetColor();
         CellOn.Contains = null;
         CellOn = null;
-        transform.position = moveCell.PosCenter;
-        CellOn = moveCell;
+        if (moveCell != null)
+        {
+            transform.position = moveCell.PosCenter;
+            CellOn = moveCell;
+        }
         CellOn.Contains = this;
         if (toAttack) Attack(toAttack);
         _gameManager.UnitManager.DeselectUnit();
+        HasBeenUsed = true;
+        Rest();
     }
 
     public void CheckifUnitDie()
@@ -255,8 +261,6 @@ public class Character : TEAM2.Unit
 
 
         #endregion
-        if(_gameManager.UnitManager.SelectedHero == this) Debug.Log(moveCell);
-        //if (_gameManager.UnitManager.SelectedHero == this && moveCell == null) Debug.Log("null");
         if (_gameManager.UnitManager.SelectedHero == this)
         {
             if (Input.GetMouseButtonDown(0))
@@ -290,6 +294,7 @@ public class Character : TEAM2.Unit
     public override void OnClick()
     {
         base.OnClick();
+        if (HasBeenUsed) return;
         if (_scrUnit.faction != PlayerManager.CurrentPlayer.PlayerFaction) return;
         if (_scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction &&
                 unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn && _gameManager.UnitManager.CanSelectUnit)
@@ -311,14 +316,9 @@ public class Character : TEAM2.Unit
         if (!AwaitAttackOrder) CellOn.HideWalkableCells(PlayerManager.MoveRange);
         AwaitMoveOrder = false;
         canWalkOnCell = false; 
-        if (AwaitAttackOrder) 
-        {
-            Debug.Log("Returning");
-            return false;
-        } else Debug.Log("Not Returning");
+        if (AwaitAttackOrder) return false;
         if (moveCell != null)
         {
-            Debug.Log(":");
             moveCell.ResetColor();
             moveCell = null;
             nextPosCell = null;
