@@ -114,6 +114,7 @@ namespace TEAM2
             {
                 _unitsList.Add(list[i]);
                 _characters.Add(list[i]);
+                list[i].Master = this;
             }
         }
 
@@ -142,6 +143,7 @@ namespace TEAM2
         {
             for (int i = 0; i < _unitsList.Count; i++)
             {
+                //Debug.Log(_unitsList[i].ScrUnit.name + "   " + _unitsList[i].unitStateMachine.currentState);
                 if (_unitsList[i].unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
                 {
                     return false;

@@ -53,6 +53,8 @@ namespace TEAM2
             set => _scrUnit = value;
         }
 
+        public Player Master { get; set; }
+
         public virtual void Init(GameManager gm,UnitType unitType)
         {
             _gameManager = gm;
