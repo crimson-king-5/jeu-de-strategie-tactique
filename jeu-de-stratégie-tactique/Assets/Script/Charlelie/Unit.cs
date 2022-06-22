@@ -79,8 +79,24 @@ namespace TEAM2
 
         virtual public void OnClick()
         {
-            if (_gameManager.UnitManager.SelectedHero != null && _gameManager.UnitManager.SelectedHero != this) 
-                if (_gameManager.UnitManager.SelectedHero.OnDeselect()) _gameManager.UnitManager.SelectedHero = this;
+            if (_gameManager.UnitManager.SelectedHero != null) 
+            {
+                if (_gameManager.UnitManager.SelectedHero != this)
+                    if (_gameManager.UnitManager.SelectedHero.OnDeselect())
+                    {
+                         _gameManager.UnitManager.SelectedHero = this;
+                        OnSelect();
+                    }
+            } else if (_gameManager.UnitManager.SelectedHero == null) 
+            {
+                _gameManager.UnitManager.SelectedHero = this;
+                _gameManager.UnitManager.SelectedHero.OnSelect();
+            }
+        }
+
+        virtual public void OnSelect()
+        {
+
         }
 
         virtual public bool OnDeselect()

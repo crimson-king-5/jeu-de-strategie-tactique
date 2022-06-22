@@ -51,6 +51,7 @@ public class Character : Unit
     private Cell moveCell;
     private Cell nextPosCell;
     private List<Unit> nbsUnits;
+    private List<Cell> ruins;
     private Character toAttack;
 
     public override void Init(GameManager gm, UnitType unitType)
@@ -310,6 +311,12 @@ public class Character : Unit
         canWalkOnCell = false;
     }
 
+    public override void OnSelect()
+    {
+        base.OnSelect();
+        if (ScrUnit.isBuilder) BuilderRuinsAround(CellOn);
+    }
+
     public override bool OnDeselect()
     {
         //base.OnDeselect();
@@ -326,9 +333,21 @@ public class Character : Unit
         return true;
     }
 
+    void BuilderRuinsAround(Cell cell)
+    {
+        ruins = cell.CheckForRuin();
+        if (ruins.Count > 0)
+            for (int i = 0; i < ruins.Count; i++)
+            {
+                ruins[i].SetColor(Color.magenta);
+            }
+    }
+
     void OnClickCell(Cell cell)
     {
         if (!AwaitAttackOrder && (cell.Position == CellOn.Position || _gameManager.UnitManager.SelectedHero != this)) return;
+        Cell ruin = ruins.Find(x => x == cell);
+        if (ruin != null) Debug.Log("YOU CLICKED ON AN AVAILABLE RUIN");
         if (canWalkOnCell && AwaitMoveOrder)
         {
             moveCell = cell;
@@ -336,6 +355,7 @@ public class Character : Unit
             CellOn.HideWalkableCells(PlayerManager.MoveRange);
             cell.SetColor(Color.gray);
             nextPosCell = cell;
+            BuilderRuinsAround(nextPosCell);
             nbsUnits = nextPosCell.CheckNeighbours(this);
             if (nbsUnits.Count > 0)
             {
@@ -347,6 +367,7 @@ public class Character : Unit
             return;
         } else if (AwaitAttackOrder)
         {
+            #region ATTACK
             Debug.Log("Search Unit...");
             Unit search = nbsUnits.Find(x => x == cell.Contains);
             if (search)
@@ -359,6 +380,7 @@ public class Character : Unit
                 }
                 toAttack = (Character)search;
             } else Debug.Log("Unit not found");
+            #endregion
         }
     }
 

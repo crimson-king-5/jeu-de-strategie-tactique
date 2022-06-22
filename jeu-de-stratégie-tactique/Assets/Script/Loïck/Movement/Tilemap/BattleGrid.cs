@@ -143,7 +143,6 @@ public class BattleGrid : MonoBehaviour
                     building.ScrUnit.faction = factionTile.faction;
                 }
             }
-           
         }
 
         OnSetNeighbors?.Invoke(dict);

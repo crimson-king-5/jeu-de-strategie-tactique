@@ -58,6 +58,7 @@ public class Cell
 
         public Neighbors(Dictionary<Vector3Int, Cell> dict, Vector3Int pos)
         {
+            
             a = new Cell[] {tl, top, tr,
                                       left, right,
                                       bl, bottom, br};
@@ -135,8 +136,19 @@ public class Cell
             List<Unit> list = new List<Unit>();
             for (int i = 0; i < a.Length; i++)
             {
-                if (a[i].Contains != null && a[i].Contains.Faction != currUnit.Faction) list.Add(a[i].Contains);
+                if (a[i].Contains != null && a[i].Contains.TryGetComponent<Character>(out Character c) && c.Faction != currUnit.Faction) list.Add(a[i].Contains);
             }
+            return list;
+        }
+
+        public List<Cell> CheckForRuin()
+        {
+            List<Cell> list = new List<Cell>();
+            if (a[1] != null && a[1]._tile.currentTileType == BattleGridTile.TileType.Ruin) list.Add(a[1]);
+            if (a[3] != null && a[3]._tile.currentTileType == BattleGridTile.TileType.Ruin) list.Add(a[3]);
+            if (a[4] != null && a[4]._tile.currentTileType == BattleGridTile.TileType.Ruin) list.Add(a[4]);
+            if (a[6] != null && a[6]._tile.currentTileType == BattleGridTile.TileType.Ruin) list.Add(a[6]);
+
             return list;
         }
 
@@ -166,6 +178,11 @@ public class Cell
     public List<Unit> CheckNeighbours(Unit currUnit)
     {
         return nbs.CheckAroundAll(currUnit);
+    }
+
+    public List<Cell> CheckForRuin()
+    {
+        return nbs.CheckForRuin();
     }
 
     public void HideWalkableCells(float range)
