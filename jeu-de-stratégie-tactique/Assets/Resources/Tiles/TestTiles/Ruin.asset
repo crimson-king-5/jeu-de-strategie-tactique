@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Ruin
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 21300000, guid: 74ab21cec141770478ec5d45138a7568, type: 3}
-  m_Color: {r: 0.9622642, g: 0.79432184, b: 0.79432184, a: 1}
+  m_Color: {r: 0.7924528, g: 0.10840159, b: 0.10840159, a: 1}
   m_Transform:
     e00: 1
     e01: 0
