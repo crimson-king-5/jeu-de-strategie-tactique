@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24d6b59350033aa47a0d60560ab6d755, type: 3}
   m_Name: SpawnTileEnemy
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 7482667652216324306, guid: 7ac2d5b1814e54f40963e43b9d0f583e, type: 3}
-  m_Color: {r: 0.77521706, g: 0, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: b610100dd27f9cf47b80341806d5d221, type: 3}
+  m_Color: {r: 0.9528302, g: 0.88053614, b: 0.63372195, a: 1}
   m_Transform:
     e00: 1
     e01: 0

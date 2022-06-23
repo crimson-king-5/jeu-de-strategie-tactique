@@ -14,11 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   faction: 3
   unitUnitClass: 3
-  unitsName: Caserne
+  unitsName: Ruines
   isBuilder: 0
-  renderUnit: {fileID: 21300000, guid: 7df1eb0f693e98448a707c561feaf815, type: 3}
-  descritpion: 
-  unitCost: 0
+  renderUnit: {fileID: 21300000, guid: 6a2dad25ac08d0d41993a22b9ecd41bf, type: 3}
   classBonus: 0
   unitStats:
     life: 10

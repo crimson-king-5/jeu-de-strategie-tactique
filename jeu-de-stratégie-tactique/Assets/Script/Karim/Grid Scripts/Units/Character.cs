@@ -267,6 +267,7 @@ public class Character : Unit
             if (Input.GetMouseButtonDown(1))
             {
                 Rest();
+                UIManager.UnitBuildUI.SetActive(false);
             }
         }
     }
