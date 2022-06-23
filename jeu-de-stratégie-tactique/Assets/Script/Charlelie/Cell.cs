@@ -27,6 +27,8 @@ public class Cell
 
     public Vector3 PosCenter { get => posCenter; }
 
+    public BattleGridTile Tile { get => _tile; }
+
     static public event System.Action<Cell> OnClickCell;
 
     public Cell(Vector3Int pos, Tilemap tilemap, BattleGridTile tile)
@@ -45,24 +47,26 @@ public class Cell
 
     class Neighbors
     {
-        internal Cell top;
-        internal Cell bottom;
-        internal Cell left;
-        internal Cell right;
-        internal Cell tr;
-        internal Cell tl;
-        internal Cell br;
-        internal Cell bl;
+        //Also work with refs
+        internal Cell top { get { return a[4]; } }
+        internal Cell bottom { get => a[3]; } //?
+        internal Cell left { get => a[1]; }
+        internal Cell right { get => a[6]; }
+        internal Cell tr { get => a[7]; }
+        internal Cell tl { get => a[2]; }
+        internal Cell br { get => a[5]; } //?
+        internal Cell bl { get => a[0]; } //?
         internal Cell curr; 
         internal Cell[] a;
 
         public Neighbors(Dictionary<Vector3Int, Cell> dict, Vector3Int pos)
         {
-            
+            /*
             a = new Cell[] {tl, top, tr,
                                       left, right,
                                       bl, bottom, br};
-
+            */
+            a = new Cell[8];
             curr = dict[pos];
 
             int index = 0;
@@ -136,7 +140,7 @@ public class Cell
             List<Unit> list = new List<Unit>();
             for (int i = 0; i < a.Length; i++)
             {
-                if (a[i].Contains != null && a[i].Contains.TryGetComponent<Character>(out Character c) && c.Faction != currUnit.Faction) list.Add(a[i].Contains);
+                if (a[i] != null && a[i].Contains != null && a[i].Contains.TryGetComponent<Character>(out Character c) && c.Faction != currUnit.Faction) list.Add(a[i].Contains);
             }
             return list;
         }
@@ -190,9 +194,21 @@ public class Cell
         nbs.DesillumWithRange(range);
     }
 
+    public bool CanWalkOnCell()
+    {
+        if (battleGrid.MouseOverCell == null) return false;
+        if ((battleGrid.MouseOverCell == nbs.top && !nbs.top.Contains) | (battleGrid.MouseOverCell == nbs.bottom && !nbs.bottom.Contains) | (battleGrid.MouseOverCell == nbs.left && !nbs.left.Contains) |( battleGrid.MouseOverCell == nbs.right && !nbs.right.Contains))
+        {
+            _tilemap.SetColor(battleGrid.MouseOverCell.position, Color.white);
+            return true;
+        }
+        else return false;
+    }
+
     public bool CanWalkOnCell(float range)
     {
         if (battleGrid.MouseOverCell == null) return false;
+
         float dist = Vector3Int.Distance(position, battleGrid.MouseOverCell.position);
         if (dist <= range)
         {

@@ -61,7 +61,7 @@ public class UnitManager : MonoBehaviour
             //SelectUnit();
         }
 
-        if (Input.GetKeyDown(KeyCode.A)) _selectedHero.DoAction();
+        if (Input.GetKeyDown(KeyCode.A)) _selectedHero.EndTurn();
     }
 
     public void Build()

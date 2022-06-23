@@ -79,19 +79,21 @@ namespace TEAM2
 
         virtual public void OnClick()
         {
-            if (_gameManager.UnitManager.SelectedHero != null) 
+            
+            if (_gameManager.UnitManager.SelectedHero != null)
             {
-                if (_gameManager.UnitManager.SelectedHero != this)
+                if(_gameManager.UnitManager.SelectedHero != this && _scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction && ((_gameManager.UnitManager.SelectedHero as Character).CellOn.Position == (_gameManager.UnitManager.SelectedHero as Character).StartCell.Position))
                     if (_gameManager.UnitManager.SelectedHero.OnDeselect())
                     {
-                         _gameManager.UnitManager.SelectedHero = this;
+                         _gameManager.UnitManager.SelectUnit(this);
                         OnSelect();
                     }
             } else if (_gameManager.UnitManager.SelectedHero == null) 
             {
-                _gameManager.UnitManager.SelectedHero = this;
+                _gameManager.UnitManager.SelectUnit(this);
                 _gameManager.UnitManager.SelectedHero.OnSelect();
             }
+            
         }
 
         virtual public void OnSelect()
@@ -103,6 +105,8 @@ namespace TEAM2
         {
             return true;
         }
+
+        virtual public void EndTurn() { }
 
         public int GetTileRange(Vector3 newPos)
         {
