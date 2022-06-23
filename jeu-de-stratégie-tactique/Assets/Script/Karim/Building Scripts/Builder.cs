@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CodeMonkey.Utils;
 using UnityEngine;
 
 namespace TEAM2
@@ -36,13 +37,17 @@ namespace TEAM2
             unitBuildUI.SetActive(true);
         }
 
-        public void BuildStructure()
+        public void BuildStructure(GameManager gameManager)
         {
-            _uIManager.InvokeInformation("Placing structure ");
-            builderUnit.HasBuild = true;
-            if (builderUnit.HasMoved)
+            if (gameManager.PlayerManager.CurrentPlayer.Gold >= _uIManager.SheetUI.ScriptableUnit.unitCost)
             {
-                builderUnit.Rest();
+                _uIManager.InvokeInformation("Placing structure ");
+                _uIManager.CurrentBuilding.UpdateBuilding((ScriptableBuilding)_uIManager.SheetUI.ScriptableUnit, _uIManager.CurrentCell, gameManager);
+                BuilderUnit.DoAction();
+            }
+            else
+            {
+                _uIManager.InvokeInformation("Gold insufficient ");
             }
         }
     }

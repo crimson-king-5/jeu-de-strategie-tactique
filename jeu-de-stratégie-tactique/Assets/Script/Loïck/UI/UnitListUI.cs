@@ -56,7 +56,7 @@ namespace TEAM2
                 // Unit a de nouvelles instances
                 foreach (var el in units.Except(AllUnitPerSheet())) // Sheet a trop d'élements
                 {
-                    UnitSheetUI unitSheetUi = Instantiate(_prefabSheet, _unitTypeRoots.First(i => i.UnitType == unitType).Root)
+                    UnitSheetUI unitSheetUi = Instantiate(_prefabSheet, _unitTypeRoots.FirstOrDefault(i => i.UnitType == unitType).Root)
                         .GetComponent<UnitSheetUI>()
                         .Init(el);
                     UnitSheets.Add(unitSheetUi);

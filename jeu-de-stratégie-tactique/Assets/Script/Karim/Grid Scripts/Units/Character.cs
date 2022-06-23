@@ -122,15 +122,6 @@ public class Character : Unit
         OccupiedTileGridPosition = GetSpecificGridPosition(newUnitPos);
     }
 
-    public void Rest()
-    {
-        SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
-        unitRenderer.color = Color.gray;
-        hasMoved = false;
-        hasAttack = false;
-        unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
-    }
-
     public override void DoAction()
     {
         base.DoAction();
@@ -347,7 +338,7 @@ public class Character : Unit
     {
         if (!AwaitAttackOrder && (cell.Position == CellOn.Position || _gameManager.UnitManager.SelectedHero != this)) return;
         Cell ruin = ruins.Find(x => x == cell);
-        if (ruin != null) Debug.Log("YOU CLICKED ON AN AVAILABLE RUIN");
+        if (ruin != null) UIManager.InvokeBuildUI(ruin);
         if (canWalkOnCell && AwaitMoveOrder)
         {
             moveCell = cell;

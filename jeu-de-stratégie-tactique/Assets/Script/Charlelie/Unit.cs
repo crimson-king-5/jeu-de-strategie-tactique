@@ -7,7 +7,7 @@ namespace TEAM2
     public class Unit : MonoBehaviour
     {
         protected GameManager _gameManager;
-        [SerializeField]protected ScriptableUnit _scrUnit;
+        [SerializeField] protected ScriptableUnit _scrUnit;
         UnitType _unitType;
         private Vector3Int _occupiedTileGridPosition;
 
@@ -55,17 +55,17 @@ namespace TEAM2
 
         public Player Master { get; set; }
 
-        public virtual void Init(GameManager gm,UnitType unitType)
+        public virtual void Init(GameManager gm, UnitType unitType)
         {
             _gameManager = gm;
-           _scrUnit = _scrUnit.GetCloneUnit();
-           OccupiedTileGridPosition = GetCurrentUnitGridlPosition();
-           _unitType = unitType;
+            _scrUnit = _scrUnit.GetCloneUnit();
+            OccupiedTileGridPosition = GetCurrentUnitGridlPosition();
+            _unitType = unitType;
         }
 
         virtual public void DoAction()
         {
-            
+
         }
 
         virtual public void TakeDamage()
@@ -79,15 +79,16 @@ namespace TEAM2
 
         virtual public void OnClick()
         {
-            if (_gameManager.UnitManager.SelectedHero != null) 
+            if (_gameManager.UnitManager.SelectedHero != null)
             {
                 if (_gameManager.UnitManager.SelectedHero != this)
                     if (_gameManager.UnitManager.SelectedHero.OnDeselect())
                     {
-                         _gameManager.UnitManager.SelectedHero = this;
+                        _gameManager.UnitManager.SelectedHero = this;
                         OnSelect();
                     }
-            } else if (_gameManager.UnitManager.SelectedHero == null) 
+            }
+            else if (_gameManager.UnitManager.SelectedHero == null)
             {
                 _gameManager.UnitManager.SelectedHero = this;
                 _gameManager.UnitManager.SelectedHero.OnSelect();
@@ -131,7 +132,15 @@ namespace TEAM2
         {
             return BattleGrid.Tilemap.GetCellCenterWorld(gridPos);
         }
+
+        public void Rest()
+        {
+            SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
+            unitRenderer.color = Color.gray;
+            unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
+        }
     }
+
 
     public enum UnitType
     {

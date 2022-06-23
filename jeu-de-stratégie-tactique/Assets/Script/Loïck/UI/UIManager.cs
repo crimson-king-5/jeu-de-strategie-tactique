@@ -9,8 +9,14 @@ namespace TEAM2
     public class UIManager : MonoBehaviour
     {
         private GameManager _gameManager;
+        private Cell _currentCell;
         [SerializeField] private GameObject unitBuildUI;
+        [SerializeField] private GameObject _sheetUI;
+        public Building CurrentBuilding { get => (Building)_currentCell.Contains;}
+        public Cell CurrentCell { get => _currentCell; set => _currentCell = value; }
         public GameObject UnitBuildUI { get => unitBuildUI; }
+        public UnitSheetUI SheetUI => _sheetUI.transform.GetChild(1).GetComponent<UnitSheetUI>();
+
         public PlayerManager PlayerManager
         {
             get => _gameManager.PlayerManager;
@@ -44,9 +50,14 @@ namespace TEAM2
             UpdateUnitsList?.Invoke(Player.GetUnitWithType(UnitType.Building),UnitType.Building);
         }
 
-        public void InvokeBuildUI(GameObject gameObject)
+        public void InvokeBuildUI(Cell newBuildingCell)
         {
-            BuildUI.Invoke(gameObject);
+            if (!newBuildingCell.Contains)
+            {
+                newBuildingCell.Contains = new Building();
+            }
+            _currentCell = newBuildingCell;
+            BuildUI.Invoke(unitBuildUI);
         }
 
         public void InvokeInformation(string information)
