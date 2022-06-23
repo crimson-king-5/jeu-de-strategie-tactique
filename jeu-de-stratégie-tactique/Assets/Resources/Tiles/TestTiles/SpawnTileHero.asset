@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24d6b59350033aa47a0d60560ab6d755, type: 3}
   m_Name: SpawnTileHero
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 7482667652216324306, guid: 7ac2d5b1814e54f40963e43b9d0f583e, type: 3}
-  m_Color: {r: 1, g: 0.8461648, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 74ab21cec141770478ec5d45138a7568, type: 3}
+  m_Color: {r: 0.6907956, g: 0.8962264, b: 0.6552599, a: 1}
   m_Transform:
     e00: 1
     e01: 0

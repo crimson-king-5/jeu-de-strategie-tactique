@@ -66,7 +66,7 @@ public class UnitManager : MonoBehaviour
 
     public void Build()
     {
-        SelectedHero.GetComponent<Builder>().BuildStructure();
+        SelectedHero.GetComponent<Builder>().BuildStructure(_gameManager);
     }
 
     private Character GetRandomUnitPerFaction(Faction faction)
@@ -118,27 +118,6 @@ public class UnitManager : MonoBehaviour
     private IEnumerable<Building> GetFactionBuilding(Faction currentFaction)
     {
         return PlayerManager.Players.Where(i => i.PlayerFaction == currentFaction).SelectMany(i => i.Buildings).ToList();
-        //List<Buildings> buildings = new List<Buildings>();
-        //Buildings localCharacter;
-        //switch (currentFaction)
-        //{
-        //    case Faction.Hero:
-        //        for (int i = 0; i < _gameManager.P1.GetUnitWithType(UnitType.Buildings).Count; i++)
-        //        {
-        //            localCharacter = (Buildings)_gameManager.P1.GetUnitWithType(UnitType.Buildings)[i];
-        //            buildings.Add(localCharacter);
-        //        }
-        //        break;
-        //    case Faction.Enemy:
-        //        for (int i = 0; i < _gameManager.P2.GetUnitWithType(UnitType.Buildings).Count; i++)
-        //        {
-
-        //            localCharacter = (Buildings)_gameManager.P2.GetUnitWithType(UnitType.Buildings)[i];
-        //            buildings.Add(localCharacter);
-        //        }
-        //        break;
-        //}
-        //return buildings;
     }
 
     private IEnumerable<Character> GetFactionCharacters(Faction currentFaction)
@@ -149,26 +128,7 @@ public class UnitManager : MonoBehaviour
 
     public void SelectUnit(Unit unit)
     {
-        /*
-        Vector3 mousePos = BattleGrid.GetMouseWorldPosition();
-        if (PlayerManager.CheckifUnitWasHere(BattleGrid.Tilemap.WorldToCell(mousePos)))
-        {
-            Unit selectedCharacter = _gameManager.PlayerManager.GetUnit(BattleGrid.Tilemap.WorldToCell(mousePos));
-            if (selectedCharacter != null &&
-                selectedCharacter.ScrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction &&
-                selectedCharacter.unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-            {
-                if (SelectedHero.GetComponent<SpriteRenderer>().color == Color.blue)
-                {
-                    SelectedHero.GetComponent<SpriteRenderer>().color = Color.white;
-                }
-
-                SelectedHero = selectedCharacter;
-                SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-                UIManager.InvokeInformation("Tours de: " + SelectedHero.ScrUnit.unitsName);
-            }
-        }
-        */
+        unit.GetComponent<SpriteRenderer>().color = Color.white;
         SelectedHero = unit;
         SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
         UIManager.InvokeInformation("Tours de: " + SelectedHero.ScrUnit.unitsName);
@@ -296,7 +256,8 @@ public class UnitManager : MonoBehaviour
 
     public Building GetSpecificBuildingPerName(string unitName, Faction UnitFaction)
     {
-        ScriptableUnit FactionUnit = GetFactionScriptableUnits(UnitFaction).FirstOrDefault(i => i.unitsName == unitName);
+        ScriptableUnit FactionUnit = _units.FirstOrDefault(i => i.unitsName == unitName);
+        FactionUnit.faction = UnitFaction;
         GameObject unitObj = new GameObject(unitName, typeof(Building), typeof(SpriteRenderer));
         Building newUnit = unitObj.GetComponent<Building>();
         SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();

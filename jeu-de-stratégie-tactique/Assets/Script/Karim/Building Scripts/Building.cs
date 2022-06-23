@@ -10,7 +10,7 @@ public class Building : Unit
     public int currentlevelBuilding = 0;
 
     public UIManager UIManager => _gameManager.UIManager;
-    public UnitManager unitManager { get => _gameManager.UnitManager;}
+    public UnitManager unitManager { get => _gameManager.UnitManager; }
 
     public UprgadeList UpgradeList
     {
@@ -20,13 +20,6 @@ public class Building : Unit
             return building.upgrades;
         }
 
-    }
-
-    public void Rest()
-    {
-        SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
-        unitRenderer.color = Color.gray;
-        unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
     }
 
     public void BuildingMouseEvent()
@@ -51,6 +44,19 @@ public class Building : Unit
             }
         }
     }
+
+    public void UpdateBuilding(ScriptableBuilding newBuilding, Cell buildingCell,GameManager gm)
+    {
+        _gameManager = gm;
+        Destroy(buildingCell.Contains);
+        buildingCell.Contains = _gameManager.UnitManager.GetSpecificBuildingPerName(newBuilding.unitsName, 
+            PlayerManager.CurrentPlayer.PlayerFaction);
+        buildingCell.Contains.Init(_gameManager, UnitType.Building);
+        buildingCell.Contains.Rest();
+        PlayerManager.CurrentPlayer.Buildings.Add(this);
+        PlayerManager.CurrentPlayer.Units.Add(this);
+    }
+
     public void Update()
     {
         if (_gameManager.UnitManager.SelectedHero == this)
