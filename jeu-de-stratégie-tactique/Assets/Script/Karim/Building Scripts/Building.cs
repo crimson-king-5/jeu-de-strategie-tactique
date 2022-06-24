@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TEAM2;
 using UnityEngine;
 
@@ -22,6 +23,8 @@ public class Building : Unit
 
     }
 
+
+
     public void BuildingMouseEvent()
     {
         if (unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
@@ -29,7 +32,7 @@ public class Building : Unit
             Vector3 mouseWorldPosition = BattleGrid.GetMouseWorldPosition();
             Vector3Int gridPos = GetSpecificGridPosition(mouseWorldPosition);
             //Vector3Int place = BattleGrid.Tilemap.GetCellCenterWorld(gridPos);
-            if (BattleGrid.Tilemap.HasTile(gridPos))
+            if (BattleGrid.CellDict.ContainsKey(gridPos))
             {
                 FactionTile factionTile = (FactionTile)BattleGrid.Tilemap.GetTile(gridPos);
                 if (factionTile.faction == Faction && factionTile.currentTileType == BattleGridTile.TileType.Spawn && !PlayerManager.CheckifUnitWasHere(gridPos) && PlayerManager.CurrentPlayer.Gold >= PlayerManager.CurrentPlayer.CostGold)
@@ -40,6 +43,7 @@ public class Building : Unit
                     UIManager.InvokeUpdateUI();
                     PlayerManager.SetCharacter(character, gridPos);
                     Rest();
+                    BattleGrid.CellDict.Values.First(i => i.Position == gridPos).Contains = character;
                 }
             }
         }
