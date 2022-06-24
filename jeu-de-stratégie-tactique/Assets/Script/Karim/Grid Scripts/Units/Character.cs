@@ -94,6 +94,11 @@ public class Character : Unit
             {
                 RewindHisto();
             }
+
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                Rest();
+            }
         }
     }
 

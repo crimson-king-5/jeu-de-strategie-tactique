@@ -66,9 +66,9 @@ public class Building : Unit
                 BuildingMouseEvent();
             }
 
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetKeyDown(KeyCode.A))
             {
-                Rest();
+                //Rest();
             }
         }
     }

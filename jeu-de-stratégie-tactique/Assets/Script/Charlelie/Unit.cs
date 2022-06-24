@@ -6,6 +6,18 @@ namespace TEAM2
 {
     public class Unit : MonoBehaviour
     {
+
+        public enum Facing
+        {
+            NORTH,
+            SOUTH,
+            EAST,
+            WEST
+        }
+
+        protected Facing facing;
+
+
         protected GameManager _gameManager;
         [SerializeField]protected ScriptableUnit _scrUnit;
         UnitType _unitType;

@@ -274,7 +274,6 @@ public class Cell
     public void OnMouseClickDown()
     {
         //Debug.Log("Mouse click down: " + position);
-        Debug.Log(Contains);
         //nbs.Illum();
         //nbs.IllumWithRange(GameManager.Instance.range);
         if (Contains != null) Contains.OnClick();
