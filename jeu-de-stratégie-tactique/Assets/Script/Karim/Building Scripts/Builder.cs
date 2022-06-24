@@ -42,6 +42,7 @@ namespace TEAM2
             if (gameManager.PlayerManager.CurrentPlayer.Gold >= _uIManager.SheetUI.ScriptableUnit.unitCost)
             {
                 _uIManager.InvokeInformation("Placing structure ");
+                Destroy(_uIManager.CurrentCell.Contains);
                 _uIManager.CurrentBuilding.UpdateBuilding((ScriptableBuilding)_uIManager.SheetUI.ScriptableUnit, _uIManager.CurrentCell, gameManager);
                 BuilderUnit.DoAction();
             }

@@ -82,6 +82,11 @@ public class Building : Unit
         }
     }
 
+    public override void OnClick()
+    {
+        base.OnClick();
+    }
+
     public int GainResourcePerTurn(int currentResource)
     {
         return (int)(currentResource + _productor.resource * UpgradeList.upgrades[currentlevelBuilding].gainBonus);

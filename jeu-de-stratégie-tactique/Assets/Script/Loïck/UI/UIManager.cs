@@ -56,6 +56,7 @@ namespace TEAM2
             {
                 newBuildingCell.Contains = new Building();
             }
+            
             _currentCell = newBuildingCell;
             BuildUI.Invoke(unitBuildUI);
         }
