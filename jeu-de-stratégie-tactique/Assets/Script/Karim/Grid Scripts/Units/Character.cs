@@ -273,16 +273,6 @@ public class Character : Unit
         OccupiedTileGridPosition = GetSpecificGridPosition(newUnitPos);
     }
 
-    public void Rest()
-    {
-        SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
-        unitRenderer.color = Color.gray;
-        hasMoved = false;
-        hasAttack = false;
-        unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
-    }
-
-
     public void CheckifUnitDie()
     {
         if (Life <= 0)
