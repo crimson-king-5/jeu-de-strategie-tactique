@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 24d6b59350033aa47a0d60560ab6d755, type: 3}
-  m_Name: Base 1
+  m_Name: Spawn_Ennemy
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 0, g: 0.9620137, b: 1, a: 1}
+  m_Sprite: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
     e01: 0
@@ -32,9 +32,9 @@ MonoBehaviour:
     e32: 0
     e33: 1
   m_InstancedGameObject: {fileID: 0}
-  m_Flags: 2
+  m_Flags: 1
   m_ColliderType: 1
-  currentTileType: 4
+  currentTileType: 0
   mvRequire: 0
-  baseColor: {r: 0, g: 0.9620137, b: 1, a: 1}
+  baseColor: {r: 0, g: 0, b: 0, a: 0}
   faction: 0
