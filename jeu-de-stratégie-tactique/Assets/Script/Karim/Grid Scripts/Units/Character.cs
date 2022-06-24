@@ -27,6 +27,18 @@ public class Character : Unit
     //        return Team.TEAM1;
     //    }
     //}
+    public struct HistoricData
+    {
+        public Cell cell;
+        public Facing facing;
+
+        public HistoricData(Cell c, Facing f)
+        {
+            cell = c;
+            facing = f;
+        }
+    }
+
 
     public Builder Builder { get => GetComponent<Builder>(); }
     public float Life { get { return ScrUnit.unitStats.life; } set { ScrUnit.unitStats.life = value; } }
@@ -45,6 +57,8 @@ public class Character : Unit
     public Cell CellOn { get; set; }
     public Cell StartCell { get; set; }
 
+    
+
     private bool hasMoved = false;
     private bool hasAttack = false;
     private bool hasBuild = false;
@@ -52,10 +66,11 @@ public class Character : Unit
     private Cell moveCell;
     private Cell nextPosCell;
     private Cell tmpCell;
+    private LineRenderer lr;
     
     private List<Unit> nbsUnits = new List<Unit>();
     private List<Cell> ruins = new List<Cell>();
-    private List<Cell> historic = new List<Cell>();
+    private List<HistoricData> historic = new List<HistoricData>();
     private Character toAttack;
 
     public override void Init(GameManager gm, UnitType unitType)
@@ -83,6 +98,36 @@ public class Character : Unit
     }
 
 
+    public override void OnClick()
+    {
+        base.OnClick();
+
+        if (_gameManager.UnitManager.SelectedHero == this) CellOn.ShowWalkableCells(PlayerManager.MoveRange);
+
+        canWalkOnCell = false;
+    }
+
+    public override void OnSelect()
+    {
+        //base.OnSelect();
+        //Debug.Log(Mv);
+        lr = gameObject.AddComponent<LineRenderer>();
+        lr.material = _scrUnit.lineRendererMat;
+        lr.widthMultiplier = 0.25f;
+        lr.positionCount = 1;
+        lr.SetPosition(lr.positionCount - 1, CellOn.PosCenter);
+        StartCell = CellOn;
+        if (ScrUnit.isBuilder) BuilderRuinsAround(CellOn);
+    }
+
+    public override bool OnDeselect()
+    {
+        //base.OnDeselect();
+        Destroy(lr);
+        StartCell.HideWalkableCells(PlayerManager.MoveRange);
+        GetComponent<SpriteRenderer>().color = Color.white;
+        return true;
+    }
 
     public void Attack(Character targetCharacter)
     {
@@ -136,11 +181,14 @@ public class Character : Unit
     void MoveTile(Cell cell)
     {
         ResetLists();
-        historic.Add(CellOn);
+        historic.Add(new HistoricData(CellOn, facing));
+        facing = CheckCellRelativPos(cell);
         tmpCell = cell;
         transform.position = cell.PosCenter;
         CellOn.Contains = null;
         CellOn = cell;
+        lr.positionCount++;
+        lr.SetPosition(lr.positionCount - 1, CellOn.PosCenter);
         Mv -= CellOn.Tile.mvRequire;
         Debug.Log(Mv);
         CheckNeighbors();
@@ -151,12 +199,14 @@ public class Character : Unit
     {
         ResetLists();
         if (historic.Count <= 0) return;
-        Cell cell = historic[historic.Count - 1];
+        lr.positionCount--;
+        HistoricData hs = historic[historic.Count - 1];
         Mv += CellOn.Tile.mvRequire;
-        transform.position = cell.PosCenter;
+        transform.position = hs.cell.PosCenter;
+        facing = hs.facing;
         CellOn.Contains = null;
-        CellOn = cell;
-        tmpCell = cell;
+        CellOn = hs.cell;
+        tmpCell = hs.cell;
         historic.RemoveAt(historic.Count - 1);
         CheckNeighbors();
     }
@@ -176,6 +226,16 @@ public class Character : Unit
     {
         BuilderRuinsAround(CellOn);
         return true;
+    }
+
+    Facing CheckCellRelativPos(Cell nextCell)
+    {
+        Vector2Int v = (Vector2Int)nextCell.Position - (Vector2Int)CellOn.Position;
+        if (v == Vector2Int.up) return Facing.NORTH;
+        else if (v == Vector2Int.down) return Facing.SOUTH;
+        else if (v == Vector2Int.right) return Facing.EAST;
+        else if (v == Vector2Int.left) return Facing.WEST;
+        else return Facing.NORTH;
     }
 
     void ResetLists()
@@ -224,30 +284,8 @@ public class Character : Unit
         }
     }
 
-    public override void OnClick()
-    {
-        base.OnClick();
+    
 
-        if (_gameManager.UnitManager.SelectedHero == this) CellOn.ShowWalkableCells(PlayerManager.MoveRange);
-
-        canWalkOnCell = false;
-    }
-
-    public override void OnSelect()
-    {
-        //base.OnSelect();
-        //Debug.Log(Mv);
-        StartCell = CellOn;
-        if (ScrUnit.isBuilder) BuilderRuinsAround(CellOn);
-    }
-
-    public override bool OnDeselect()
-    {
-        //base.OnDeselect();
-        StartCell.HideWalkableCells(PlayerManager.MoveRange);
-        GetComponent<SpriteRenderer>().color = Color.white;
-        return true;
-    }
 
     void BuilderRuinsAround(Cell cell)
     {
@@ -274,7 +312,7 @@ public class Character : Unit
             else Debug.Log("Unit not found");
 
             Cell ruin = ruins.Find(x => x == cell);
-            if (ruin != null) UIManager.InvokeBuildUI(ruin);
+            if (ruin != null) Debug.Log("YOU CLICKED ON AN AVAILABLE RUIN");
         }
         return;
         
