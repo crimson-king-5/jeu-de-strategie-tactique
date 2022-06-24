@@ -145,6 +145,22 @@ public class Cell
             return list;
         }
 
+        public List<Unit> CheckAroundAllWithRange(Unit currUnit, float range)
+        {
+            List<Unit> list = new List<Unit>();
+            Dictionary<Vector3Int, Cell> dict = GameManager.Instance.BattleGrid.CellDict;
+            for (int i = 0; i < dict.Count; i++)
+            {
+                float dist = Vector3Int.Distance(dict.ElementAt(i).Value.position, curr.position);
+                if (dist <= range && (dict.ElementAt(i).Value.position != curr.position))
+                {
+                    if (dict.ElementAt(i).Value.Contains != null && dict.ElementAt(i).Value.Contains.TryGetComponent<Character>(out Character c) && c.Faction != currUnit.Faction) list.Add(a[i].Contains);
+                }
+            }
+            return list;
+        }
+
+
         public List<Cell> CheckForRuin()
         {
             List<Cell> list = new List<Cell>();
@@ -182,6 +198,11 @@ public class Cell
     public List<Unit> CheckNeighbours(Unit currUnit)
     {
         return nbs.CheckAroundAll(currUnit);
+    }
+
+    public List<Unit> CheckNeighboursWithRange(Unit currUnit, float range)
+    {
+        return nbs.CheckAroundAllWithRange(currUnit, range);
     }
 
     public List<Cell> CheckForRuin()
@@ -253,6 +274,7 @@ public class Cell
     public void OnMouseClickDown()
     {
         //Debug.Log("Mouse click down: " + position);
+        Debug.Log(Contains);
         //nbs.Illum();
         //nbs.IllumWithRange(GameManager.Instance.range);
         if (Contains != null) Contains.OnClick();

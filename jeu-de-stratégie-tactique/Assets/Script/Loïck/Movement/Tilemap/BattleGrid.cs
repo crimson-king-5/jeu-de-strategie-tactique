@@ -141,6 +141,7 @@ public class BattleGrid : MonoBehaviour
                     building.Init(_gameManager, UnitType.Building);
                     FactionTile factionTile = (FactionTile)currentTile;
                     building.ScrUnit.faction = factionTile.faction;
+                    cell.Contains = building;
                 }
             }
         }

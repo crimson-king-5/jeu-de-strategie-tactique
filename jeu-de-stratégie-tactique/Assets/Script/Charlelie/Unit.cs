@@ -2,10 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+
 namespace TEAM2
 {
     public class Unit : MonoBehaviour
     {
+        public enum Facing
+        {
+            NORTH,
+            SOUTH,
+            EAST,
+            WEST
+        }
+
+
         protected GameManager _gameManager;
         [SerializeField]protected ScriptableUnit _scrUnit;
         UnitType _unitType;
@@ -15,6 +27,8 @@ namespace TEAM2
         public int yPos;
 
         public UnitStateMachine unitStateMachine = new UnitStateMachine();
+
+        protected Facing facing;
 
         public Faction Faction
         {
@@ -79,10 +93,12 @@ namespace TEAM2
 
         virtual public void OnClick()
         {
+
+            Debug.Log("Clicked");
             
             if (_gameManager.UnitManager.SelectedHero != null)
             {
-                if(_gameManager.UnitManager.SelectedHero != this && _scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction && ((_gameManager.UnitManager.SelectedHero as Character).CellOn.Position == (_gameManager.UnitManager.SelectedHero as Character).StartCell.Position))
+                if(_gameManager.UnitManager.SelectedHero != this && _scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction /*&& ((_gameManager.UnitManager.SelectedHero as Character).CellOn.Position == (_gameManager.UnitManager.SelectedHero as Character).StartCell.Position)*/)
                     if (_gameManager.UnitManager.SelectedHero.OnDeselect())
                     {
                          _gameManager.UnitManager.SelectUnit(this);

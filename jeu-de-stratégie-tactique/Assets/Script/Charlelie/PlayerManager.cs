@@ -59,9 +59,10 @@ namespace TEAM2
             unit.Init(_gameManager,UnitType.Character);
         }
 
-        public void SetBuilding(Building unit, Vector3 unitPos)
+        public void SetBuilding(Building unit, Vector3Int unitPos)
         {
             unit.transform.position = unitPos;
+            _gameManager.BattleGrid.CellDict[unitPos].Contains = unit;
             unit.Init(_gameManager,UnitType.Building);
         }
 
