@@ -88,6 +88,11 @@ public class Cell
             }
         }
 
+        public void UpdateNeighbors()
+        {
+
+        }
+
         public void Illum()
         {
             for (int i = 0; i < a.Length; i++)

@@ -51,11 +51,8 @@ public class Character : Unit
     public UIManager UIManager { get => _gameManager.UIManager; }
     public bool HasBuild { set => hasBuild = value; }
     public bool HasMoved { get => hasMoved; }
-    public bool HasBeenUsed { get; set; }
     public bool AwaitMoveOrder { get; set; }
     public bool AwaitAttackOrder { get; set; }
-    public Cell CellOn { get; set; }
-    public Cell StartCell { get; set; }
 
     
 
@@ -127,7 +124,7 @@ public class Character : Unit
 
     public override bool OnDeselect()
     {
-        //base.OnDeselect();
+        base.OnDeselect();
         Destroy(lr);
         StartCell.HideWalkableCells(PlayerManager.MoveRange);
         GetComponent<SpriteRenderer>().color = Color.white;
@@ -263,8 +260,6 @@ public class Character : Unit
     {
         ResetLists();
         CellOn.HideWalkableCells(PlayerManager.MoveRange);
-        _gameManager.UnitManager.DeselectUnit();
-        HasBeenUsed = true;
         Rest();
     }
 

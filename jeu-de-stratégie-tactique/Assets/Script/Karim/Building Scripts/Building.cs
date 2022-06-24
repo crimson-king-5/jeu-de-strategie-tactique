@@ -68,7 +68,7 @@ public class Building : Unit
 
             if (Input.GetKeyDown(KeyCode.A))
             {
-                //Rest();
+                Rest();
             }
         }
     }

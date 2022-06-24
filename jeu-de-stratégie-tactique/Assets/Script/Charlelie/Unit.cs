@@ -28,6 +28,8 @@ namespace TEAM2
 
         public UnitStateMachine unitStateMachine = new UnitStateMachine();
 
+        public bool HasBeenUsed { get; set; }
+
         public Faction Faction
         {
             get => _scrUnit.faction;
@@ -94,10 +96,10 @@ namespace TEAM2
 
         virtual public void OnClick()
         {
-            
+            if (HasBeenUsed) return;
             if (_gameManager.UnitManager.SelectedHero != null)
             {
-                if(_gameManager.UnitManager.SelectedHero != this && _scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction && _gameManager.UnitManager.SelectedHero.CellOn.Position == _gameManager.UnitManager.SelectedHero.StartCell.Position)
+                if (_gameManager.UnitManager.SelectedHero != this && _scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction && _gameManager.UnitManager.SelectedHero.CellOn.Position == _gameManager.UnitManager.SelectedHero.StartCell.Position)
                     if (_gameManager.UnitManager.SelectedHero.OnDeselect())
                     {
                          _gameManager.UnitManager.SelectUnit(this);
@@ -118,10 +120,21 @@ namespace TEAM2
 
         virtual public bool OnDeselect()
         {
+            _gameManager.UnitManager.DeselectUnit();
             return true;
         }
 
         virtual public void EndTurn() { }
+
+        public void Rest()
+        {
+            //SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
+            //unitRenderer.color = Color.gray;
+            OnDeselect();
+            HasBeenUsed = true;
+            GetComponent<SpriteRenderer>().color = Color.gray;
+            unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
+        }
 
         public int GetTileRange(Vector3 newPos)
         {
@@ -145,13 +158,6 @@ namespace TEAM2
             return BattleGrid.Tilemap.WorldToCell(transform.position);
         }
 
-        public void Rest()
-        {
-            SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
-            unitRenderer.color = Color.gray;
-
-            unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
-        }
 
         public Vector3 GetUnitDestinationWorldPosition(Vector3Int gridPos)
         {
