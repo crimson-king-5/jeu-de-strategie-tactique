@@ -61,7 +61,7 @@ public class UnitManager : MonoBehaviour
             //SelectUnit();
         }
 
-        if (Input.GetKeyDown(KeyCode.A)) _selectedHero.DoAction();
+        if (Input.GetKeyDown(KeyCode.A)) _selectedHero.EndTurn();
     }
 
     public void Build()
@@ -348,7 +348,7 @@ public class UnitManager : MonoBehaviour
             UpdateCharactersRenderAndSate(allDeployedHeroesCharacters);
             UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings);
             UIManager.InvokeUpdateUI();
-            SelectedHero = allDeployedHeroesCharacters[0];
+            //SelectedHero = allDeployedHeroesCharacters[0];
             //SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
             UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName);
 
@@ -359,7 +359,7 @@ public class UnitManager : MonoBehaviour
             PlayerManager.index++;
             PlayerManager.CurrentPlayer.AddResource();
             UIManager.InvokeUpdateUI();
-            SelectedHero = allDeployedEnemiesCharacters[0];
+            //SelectedHero = allDeployedEnemiesCharacters[0];
             //SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
             UIManager.InvokeInformation("Tour de : " + SelectedHero.ScrUnit.unitsName);
 

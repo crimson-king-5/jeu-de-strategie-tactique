@@ -43,6 +43,7 @@ public class Character : Unit
     public bool AwaitMoveOrder { get; set; }
     public bool AwaitAttackOrder { get; set; }
     public Cell CellOn { get; set; }
+    public Cell StartCell { get; set; }
 
     private bool hasMoved = false;
     private bool hasAttack = false;
@@ -50,8 +51,11 @@ public class Character : Unit
     private bool canWalkOnCell = false;
     private Cell moveCell;
     private Cell nextPosCell;
-    private List<Unit> nbsUnits;
-    private List<Cell> ruins;
+    private Cell tmpCell;
+    
+    private List<Unit> nbsUnits = new List<Unit>();
+    private List<Cell> ruins = new List<Cell>();
+    private List<Cell> historic = new List<Cell>();
     private Character toAttack;
 
     public override void Init(GameManager gm, UnitType unitType)
@@ -64,6 +68,21 @@ public class Character : Unit
     {
         Cell.OnClickCell -= OnClickCell;
     }
+
+    private void Update()
+    {
+        if (_gameManager.UnitManager.SelectedHero == this)
+        {
+            canWalkOnCell = Mv > 0 ? CellOn.CanWalkOnCell() : false;
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                RewindHisto();
+            }
+        }
+    }
+
+
 
     public void Attack(Character targetCharacter)
     {
@@ -110,6 +129,78 @@ public class Character : Unit
         targetCharacter.Life = targetLife;
         _gameManager.InstantiateEffect(targetCharacter.GetUnitDestinationWorldPosition(targetCharacter.GetCurrentUnitGridlPosition()), 0);
         targetCharacter.CheckifUnitDie();
+
+        EndTurn();
+    }
+
+    void MoveTile(Cell cell)
+    {
+        ResetLists();
+        historic.Add(CellOn);
+        tmpCell = cell;
+        transform.position = cell.PosCenter;
+        CellOn.Contains = null;
+        CellOn = cell;
+        Mv -= CellOn.Tile.mvRequire;
+        Debug.Log(Mv);
+        CheckNeighbors();
+        CheckRuins(cell);
+    }
+
+    void RewindHisto()
+    {
+        ResetLists();
+        if (historic.Count <= 0) return;
+        Cell cell = historic[historic.Count - 1];
+        Mv += CellOn.Tile.mvRequire;
+        transform.position = cell.PosCenter;
+        CellOn.Contains = null;
+        CellOn = cell;
+        tmpCell = cell;
+        historic.RemoveAt(historic.Count - 1);
+        CheckNeighbors();
+    }
+
+    bool CheckNeighbors()
+    {
+        nbsUnits = CellOn.CheckNeighbours(this);
+        if (nbsUnits.Count > 0)
+        {
+            foreach (Unit u in nbsUnits) u.GetComponent<SpriteRenderer>().color = Color.magenta;
+            return true;
+        }
+        else return false;
+    }
+
+    bool CheckRuins(Cell cell)
+    {
+        BuilderRuinsAround(CellOn);
+        return true;
+    }
+
+    void ResetLists()
+    {
+        if (ruins.Count > 0)
+        {
+            foreach (Cell c in ruins) c.ResetColor();
+        }
+        ruins.Clear();
+
+        if (nbsUnits.Count > 0)
+        {
+            foreach (Unit u in nbsUnits) u.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+        nbsUnits.Clear();
+    }
+
+
+    override public void EndTurn()
+    {
+        ResetLists();
+        CellOn.HideWalkableCells(PlayerManager.MoveRange);
+        _gameManager.UnitManager.DeselectUnit();
+        HasBeenUsed = true;
+        Rest();
     }
 
     private IEnumerator MoveUnit(Vector3 newUnitPos, float speed)
@@ -120,24 +211,6 @@ public class Character : Unit
             yield return null;
         }
         OccupiedTileGridPosition = GetSpecificGridPosition(newUnitPos);
-    }
-
-    public override void DoAction()
-    {
-        base.DoAction();
-        CellOn.ResetColor();
-        CellOn.Contains = null;
-        CellOn = null;
-        if (moveCell != null)
-        {
-            transform.position = moveCell.PosCenter;
-            CellOn = moveCell;
-        }
-        CellOn.Contains = this;
-        if (toAttack) Attack(toAttack);
-        _gameManager.UnitManager.DeselectUnit();
-        HasBeenUsed = true;
-        Rest();
     }
 
     public void CheckifUnitDie()
@@ -151,177 +224,30 @@ public class Character : Unit
         }
     }
 
-    private void Update()
-    {
-        #region TMP
-        //if (Input.GetKeyDown(KeyCode.UpArrow) && _gameManager.UnitManager.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-        //{
-        //    yPos++;
-        //    if (BattleGrid.OntheGrid(xPos, yPos))
-        //    {
-        //        if (CanMoveTo(xPos, yPos))
-        //        {
-        //            UpdateWalkable();
-        //        }
-        //        else
-        //        {
-        //            if (BattleGrid.GetTileType(xPos, yPos) != null)
-        //            {
-        //                Attack(xPos, yPos);
-        //            }
-
-        //            yPos--;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        yPos--;
-        //    }
-        //}
-        //else if (Input.GetKeyDown(KeyCode.DownArrow) && _gameManager.UnitManager.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-        //{
-        //    yPos--;
-        //    if (BattleGrid.OntheGrid(xPos, yPos))
-        //    {
-        //        if (CanMoveTo(xPos, yPos))
-        //        {
-        //            UpdateWalkable();
-        //        }
-        //        else
-        //        {
-        //            if (BattleGrid.GetTileType(xPos, yPos) != null)
-        //            {
-        //                Attack(xPos, yPos);
-        //            }
-
-        //            yPos++;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        yPos++;
-        //    }
-        //}
-        //else if (Input.GetKeyDown(KeyCode.LeftArrow) && _gameManager.UnitManager.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-        //{
-        //    xPos--;
-        //    if (BattleGrid.OntheGrid(xPos, yPos))
-        //    {
-        //        if (CanMoveTo(xPos, yPos))
-        //        {
-        //            UpdateWalkable();
-        //        }
-        //        else
-        //        {
-        //            if (BattleGrid.GetTileType(xPos, yPos) != null)
-        //            {
-        //                Attack(xPos, yPos);
-        //            }
-
-        //            xPos++;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        xPos++;
-        //    }
-        //}
-        //else if (Input.GetKeyDown(KeyCode.RightArrow) && _gameManager.UnitManager.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-        //{
-        //    xPos++;
-        //    if (BattleGrid.OntheGrid(xPos, yPos))
-        //    {
-        //        if (CanMoveTo(xPos, yPos))
-        //        {
-        //            UpdateWalkable();
-        //        }
-        //        else
-        //        {
-        //            if (BattleGrid.GetTileType(xPos, yPos) != null)
-        //            {
-        //                Attack(xPos, yPos);
-        //            }
-
-        //            xPos--;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        xPos--;
-        //    }
-        //}
-
-
-        #endregion
-        if (_gameManager.UnitManager.SelectedHero == this)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                //CharacterMouseEvent();
-
-            }
-
-            if (AwaitMoveOrder)
-                canWalkOnCell = CellOn.CanWalkOnCell(PlayerManager.MoveRange);
-
-            if (Input.GetMouseButtonDown(1))
-            {
-                Rest();
-                UIManager.UnitBuildUI.SetActive(false);
-            }
-        }
-    }
-
-    void MouseClickMoveTo(Vector2 mouseWorldPosition)
-    {
-        Vector3Int gridPos = GetSpecificGridPosition(mouseWorldPosition);
-        Vector3 charaDestinationWorldPos = GetUnitDestinationWorldPosition(gridPos);
-        Vector3Int charaDestinationGridPos = GetUnitDestinationGridPosition(charaDestinationWorldPos);
-        if (BattleGrid.Tilemap.HasTile(gridPos))
-        {
-            StartCoroutine(MoveUnit(charaDestinationWorldPos, 15));
-            OccupiedTileGridPosition = charaDestinationGridPos;
-        }
-    }
+    
 
     public override void OnClick()
     {
         base.OnClick();
-        if (HasBeenUsed) return;
-        if (_scrUnit.faction != PlayerManager.CurrentPlayer.PlayerFaction) return;
-        if (_scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction &&
-                unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn && _gameManager.UnitManager.CanSelectUnit)
-            _gameManager.UnitManager.SelectUnit(this);
 
-        if (!AwaitAttackOrder)
-        {
-            if (_gameManager.UnitManager.SelectedHero == this) CellOn.ShowWalkableCells(PlayerManager.MoveRange);
-            else Debug.Log(_gameManager.UnitManager.SelectedHero);
-            AwaitMoveOrder = true;
-        }
-        
+        if (_gameManager.UnitManager.SelectedHero == this) CellOn.ShowWalkableCells(PlayerManager.MoveRange);
+
         canWalkOnCell = false;
     }
 
     public override void OnSelect()
     {
-        base.OnSelect();
+        //base.OnSelect();
+        //Debug.Log(Mv);
+        StartCell = CellOn;
         if (ScrUnit.isBuilder) BuilderRuinsAround(CellOn);
     }
 
     public override bool OnDeselect()
     {
         //base.OnDeselect();
-        if (!AwaitAttackOrder) CellOn.HideWalkableCells(PlayerManager.MoveRange);
-        AwaitMoveOrder = false;
-        canWalkOnCell = false; 
-        if (AwaitAttackOrder) return false;
-        if (moveCell != null)
-        {
-            moveCell.ResetColor();
-            moveCell = null;
-            nextPosCell = null;
-        }
+        StartCell.HideWalkableCells(PlayerManager.MoveRange);
+        GetComponent<SpriteRenderer>().color = Color.white;
         return true;
     }
 
@@ -337,48 +263,132 @@ public class Character : Unit
 
     void OnClickCell(Cell cell)
     {
-        if (!AwaitAttackOrder && (cell.Position == CellOn.Position || _gameManager.UnitManager.SelectedHero != this)) return;
-        Cell ruin = ruins.Find(x => x == cell);
-        if (ruin != null) UIManager.InvokeBuildUI(ruin);
-        if (canWalkOnCell && AwaitMoveOrder)
+        if ((cell.Position == CellOn.Position || _gameManager.UnitManager.SelectedHero != this)) return;
+        if (canWalkOnCell) MoveTile(cell);
+        else 
         {
-            moveCell = cell;
-            AwaitMoveOrder = false;
-            CellOn.HideWalkableCells(PlayerManager.MoveRange);
-            cell.SetColor(Color.gray);
-            nextPosCell = cell;
-            BuilderRuinsAround(nextPosCell);
-            nbsUnits = nextPosCell.CheckNeighbours(this);
-            if (nbsUnits.Count > 0)
-            {
-                foreach (Unit u in nbsUnits) u.GetComponent<SpriteRenderer>().color = Color.magenta;
-                AwaitAttackOrder = true;
-                AwaitMoveOrder = false;
-                _gameManager.UnitManager.CanSelectUnit = false;
-            }
-            return;
-        } else if (AwaitAttackOrder)
-        {
-            #region ATTACK
-            Debug.Log("Search Unit...");
             Unit search = nbsUnits.Find(x => x == cell.Contains);
             if (search)
             {
-                Debug.Log("Unit found: " + search.ScrUnit.name + "  " +  (search as Character).CellOn.Position);
-                foreach (Unit u in nbsUnits) 
-                { 
-                    if (u != search)
-                        u.GetComponent<SpriteRenderer>().color = Color.white;
-                }
-                toAttack = (Character)search;
-            } else Debug.Log("Unit not found");
-            #endregion
+                Debug.Log("Unit found: " + search.ScrUnit.name + "  " + (search as Character).CellOn.Position);
+                Attack((Character)search);
+            }
+            else Debug.Log("Unit not found");
+
+            Cell ruin = ruins.Find(x => x == cell);
+            if (ruin != null) Debug.Log("YOU CLICKED ON AN AVAILABLE RUIN");
         }
+        return;
+        
     }
+
+
+
+    #region UnusedButKeeping
+
+    //private void Update()
+    //{
+    //if (Input.GetKeyDown(KeyCode.UpArrow) && _gameManager.UnitManager.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
+    //{
+    //    yPos++;
+    //    if (BattleGrid.OntheGrid(xPos, yPos))
+    //    {
+    //        if (CanMoveTo(xPos, yPos))
+    //        {
+    //            UpdateWalkable();
+    //        }
+    //        else
+    //        {
+    //            if (BattleGrid.GetTileType(xPos, yPos) != null)
+    //            {
+    //                Attack(xPos, yPos);
+    //            }
+
+    //            yPos--;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        yPos--;
+    //    }
+    //}
+    //else if (Input.GetKeyDown(KeyCode.DownArrow) && _gameManager.UnitManager.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
+    //{
+    //    yPos--;
+    //    if (BattleGrid.OntheGrid(xPos, yPos))
+    //    {
+    //        if (CanMoveTo(xPos, yPos))
+    //        {
+    //            UpdateWalkable();
+    //        }
+    //        else
+    //        {
+    //            if (BattleGrid.GetTileType(xPos, yPos) != null)
+    //            {
+    //                Attack(xPos, yPos);
+    //            }
+
+    //            yPos++;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        yPos++;
+    //    }
+    //}
+    //else if (Input.GetKeyDown(KeyCode.LeftArrow) && _gameManager.UnitManager.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
+    //{
+    //    xPos--;
+    //    if (BattleGrid.OntheGrid(xPos, yPos))
+    //    {
+    //        if (CanMoveTo(xPos, yPos))
+    //        {
+    //            UpdateWalkable();
+    //        }
+    //        else
+    //        {
+    //            if (BattleGrid.GetTileType(xPos, yPos) != null)
+    //            {
+    //                Attack(xPos, yPos);
+    //            }
+
+    //            xPos++;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        xPos++;
+    //    }
+    //}
+    //else if (Input.GetKeyDown(KeyCode.RightArrow) && _gameManager.UnitManager.SelectedHero == this && unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
+    //{
+    //    xPos++;
+    //    if (BattleGrid.OntheGrid(xPos, yPos))
+    //    {
+    //        if (CanMoveTo(xPos, yPos))
+    //        {
+    //            UpdateWalkable();
+    //        }
+    //        else
+    //        {
+    //            if (BattleGrid.GetTileType(xPos, yPos) != null)
+    //            {
+    //                Attack(xPos, yPos);
+    //            }
+
+    //            xPos--;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        xPos--;
+    //    }
+    //}
+    //}
 
     void CharacterMouseEvent()
     {
-        
+
         /*
         if (unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
@@ -444,5 +454,19 @@ public class Character : Unit
         }
         */
     }
-        
+
+    void MouseClickMoveTo(Vector2 mouseWorldPosition)
+    {
+        Vector3Int gridPos = GetSpecificGridPosition(mouseWorldPosition);
+        Vector3 charaDestinationWorldPos = GetUnitDestinationWorldPosition(gridPos);
+        Vector3Int charaDestinationGridPos = GetUnitDestinationGridPosition(charaDestinationWorldPos);
+        if (BattleGrid.Tilemap.HasTile(gridPos))
+        {
+            StartCoroutine(MoveUnit(charaDestinationWorldPos, 15));
+            OccupiedTileGridPosition = charaDestinationGridPos;
+        }
+    }
+
+    #endregion
+
 }

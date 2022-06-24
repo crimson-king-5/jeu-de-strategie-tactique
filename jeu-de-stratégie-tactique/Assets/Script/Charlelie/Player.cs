@@ -107,6 +107,11 @@ namespace TEAM2
             }
         }
 
+        public List<Building> SpecificBuildingsListPerUnitNames(string buildingName)
+        {
+             return _buildings.Where(i => i.ScrUnit.unitsName == buildingName).ToList();
+        }
+
         public void SpawnCharacter()
         {
             Character[] list = _gameManager.UnitManager.SpawnCharacter(2, PlayerFaction);

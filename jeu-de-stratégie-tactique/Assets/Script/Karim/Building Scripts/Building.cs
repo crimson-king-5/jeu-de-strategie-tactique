@@ -53,6 +53,8 @@ public class Building : Unit
             PlayerManager.CurrentPlayer.PlayerFaction);
         buildingCell.Contains.Init(_gameManager, UnitType.Building);
         buildingCell.Contains.Rest();
+        PlayerManager.CurrentPlayer.Buildings.Add(this);
+        PlayerManager.CurrentPlayer.Units.Add(this);
     }
 
     public void Update()

@@ -7,7 +7,7 @@ namespace TEAM2
     public class Unit : MonoBehaviour
     {
         protected GameManager _gameManager;
-        [SerializeField] protected ScriptableUnit _scrUnit;
+        [SerializeField]protected ScriptableUnit _scrUnit;
         UnitType _unitType;
         private Vector3Int _occupiedTileGridPosition;
 
@@ -53,19 +53,22 @@ namespace TEAM2
             set => _scrUnit = value;
         }
 
+        public Cell CellOn { get; set; }
+        public Cell StartCell { get; set; }
+
         public Player Master { get; set; }
 
-        public virtual void Init(GameManager gm, UnitType unitType)
+        public virtual void Init(GameManager gm,UnitType unitType)
         {
             _gameManager = gm;
-            _scrUnit = _scrUnit.GetCloneUnit();
-            OccupiedTileGridPosition = GetCurrentUnitGridlPosition();
-            _unitType = unitType;
+           _scrUnit = _scrUnit.GetCloneUnit();
+           OccupiedTileGridPosition = GetCurrentUnitGridlPosition();
+           _unitType = unitType;
         }
 
         virtual public void DoAction()
         {
-
+            
         }
 
         virtual public void TakeDamage()
@@ -79,20 +82,21 @@ namespace TEAM2
 
         virtual public void OnClick()
         {
+            
             if (_gameManager.UnitManager.SelectedHero != null)
             {
-                if (_gameManager.UnitManager.SelectedHero != this)
+                if(_gameManager.UnitManager.SelectedHero != this && _scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction && _gameManager.UnitManager.SelectedHero.CellOn.Position == _gameManager.UnitManager.SelectedHero.StartCell.Position)
                     if (_gameManager.UnitManager.SelectedHero.OnDeselect())
                     {
-                        _gameManager.UnitManager.SelectedHero = this;
+                         _gameManager.UnitManager.SelectUnit(this);
                         OnSelect();
                     }
-            }
-            else if (_gameManager.UnitManager.SelectedHero == null)
+            } else if (_gameManager.UnitManager.SelectedHero == null) 
             {
-                _gameManager.UnitManager.SelectedHero = this;
+                _gameManager.UnitManager.SelectUnit(this);
                 _gameManager.UnitManager.SelectedHero.OnSelect();
             }
+            
         }
 
         virtual public void OnSelect()
@@ -104,6 +108,8 @@ namespace TEAM2
         {
             return true;
         }
+
+        virtual public void EndTurn() { }
 
         public int GetTileRange(Vector3 newPos)
         {
@@ -127,20 +133,19 @@ namespace TEAM2
             return BattleGrid.Tilemap.WorldToCell(transform.position);
         }
 
+        public void Rest()
+        {
+            SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
+            unitRenderer.color = Color.gray;
+
+            unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
+        }
 
         public Vector3 GetUnitDestinationWorldPosition(Vector3Int gridPos)
         {
             return BattleGrid.Tilemap.GetCellCenterWorld(gridPos);
         }
-
-        public void Rest()
-        {
-            SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
-            unitRenderer.color = Color.gray;
-            unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
-        }
     }
-
 
     public enum UnitType
     {
