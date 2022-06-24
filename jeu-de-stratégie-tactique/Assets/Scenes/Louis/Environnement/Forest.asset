@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Forest
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 7482667652216324306, guid: 7ac2d5b1814e54f40963e43b9d0f583e, type: 3}
-  m_Color: {r: 0.7861757, g: 0, b: 1, a: 1}
+  m_Color: {r: 0.038481355, g: 0.3584906, b: 0, a: 1}
   m_Transform:
     e00: 1
     e01: 0
@@ -34,6 +34,6 @@ MonoBehaviour:
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 2
   m_ColliderType: 1
-  currentTileType: 0
+  currentTileType: 1
   mvRequire: 2
-  baseColor: {r: 0.7861757, g: 0, b: 1, a: 1}
+  baseColor: {r: 0.038481355, g: 0.3584906, b: 0, a: 1}
