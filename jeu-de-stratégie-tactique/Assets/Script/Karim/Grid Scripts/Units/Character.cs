@@ -312,7 +312,7 @@ public class Character : Unit
             else Debug.Log("Unit not found");
 
             Cell ruin = ruins.Find(x => x == cell);
-            if (ruin != null) Debug.Log("YOU CLICKED ON AN AVAILABLE RUIN");
+            if (ruin != null) UIManager.InvokeBuildUI(ruin);
         }
         return;
         
