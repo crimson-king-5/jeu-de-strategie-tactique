@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f764359c572c7e34eba81189f08f2126, type: 3}
   m_Name: Grass
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: b610100dd27f9cf47b80341806d5d221, type: 3}
-  m_Color: {r: 0.3479886, g: 0.8583303, b: 0.8679245, a: 1}
+  m_Sprite: {fileID: 21300000, guid: b84900201ec1e364f8fea5ccb2988212, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
     e01: 0

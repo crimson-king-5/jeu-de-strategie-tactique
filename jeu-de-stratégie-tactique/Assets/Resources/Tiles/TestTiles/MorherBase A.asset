@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24d6b59350033aa47a0d60560ab6d755, type: 3}
   m_Name: MorherBase A
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 74ab21cec141770478ec5d45138a7568, type: 3}
-  m_Color: {r: 0.9339623, g: 0.6740388, b: 0.8287557, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 9237d58876c8b834385e583d91619d4b, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
     e01: 0

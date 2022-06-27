@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f764359c572c7e34eba81189f08f2126, type: 3}
   m_Name: Ruin
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 74ab21cec141770478ec5d45138a7568, type: 3}
-  m_Color: {r: 0.7924528, g: 0.10840159, b: 0.10840159, a: 1}
+  m_Sprite: {fileID: 21300000, guid: fad40c4ae7c3f2b49900ce43c268444c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
     e01: 0
