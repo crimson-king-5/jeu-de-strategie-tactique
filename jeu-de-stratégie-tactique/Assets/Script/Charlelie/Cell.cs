@@ -45,7 +45,7 @@ public class Cell
         currColor = tile.baseColor;
     }
 
-    class Neighbors
+    public class Neighbors
     {
         //Also work with refs
         internal Cell top { get { return a[4]; } }
@@ -180,6 +180,7 @@ public class Cell
     }
 
     Neighbors nbs;
+    public Neighbors _Neighbors { get => nbs; }
 
     public enum TileType
     {

@@ -43,4 +43,11 @@ public enum Faction
 public enum UnitClass
 {
     Tank,Warrior,Mage,Neutral
+    /*
+    ASSASSIN,
+    GARDIEN,
+    ELEMENTAIRE,
+    TEMPETE,
+    FAUCHEUR
+    */
 }

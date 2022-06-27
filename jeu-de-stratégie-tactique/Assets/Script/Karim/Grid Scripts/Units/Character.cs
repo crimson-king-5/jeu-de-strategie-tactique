@@ -133,6 +133,16 @@ public class Character : Unit
 
     public void Attack(Character targetCharacter)
     {
+        switch (_scrUnit.unitUnitClass)
+        {
+            case UnitClass.Mage:
+                OneAttack(targetCharacter);
+                break;
+
+            default:
+                OneAttack(targetCharacter);
+                break;
+        }
         float bonus = 1;
         switch (targetCharacter.UnitClass)
         {
@@ -189,12 +199,22 @@ public class Character : Unit
         transform.position = cell.PosCenter;
         CellOn.Contains = null;
         CellOn = cell;
+        CellOn.Contains = this;
         lr.positionCount++;
         lr.SetPosition(lr.positionCount - 1, CellOn.PosCenter);
         Mv -= CellOn.Tile.mvRequire;
         Debug.Log(Mv);
         CheckNeighbors();
         CheckRuins(cell);
+    }
+
+    void MoveTileForced(Cell cell)
+    {
+        if (cell.Contains != null) return;
+        transform.position = cell.PosCenter;
+        CellOn.Contains = null;
+        CellOn = cell;
+        CellOn.Contains = this;
     }
 
     void RewindHisto()
@@ -208,6 +228,7 @@ public class Character : Unit
         facing = hs.facing;
         CellOn.Contains = null;
         CellOn = hs.cell;
+        CellOn.Contains = this;
         tmpCell = hs.cell;
         historic.RemoveAt(historic.Count - 1);
         CheckNeighbors();
@@ -316,6 +337,34 @@ public class Character : Unit
         }
         return;
         
+    }
+
+    void OneAttack(Character chara)
+    {
+        Vector3Int vec = CellOn.Position;
+        Vector3Int vec2 = chara.CellOn.Position;
+        switch (vec2 - vec)
+        {
+            case var value when value == Vector3Int.up:
+                chara.MoveTileForced(chara.CellOn._Neighbors.top);
+                MoveTileForced(CellOn._Neighbors.bottom);
+                break;
+
+            case var value when value == Vector3Int.down:
+                chara.MoveTileForced(chara.CellOn._Neighbors.bottom);
+                MoveTileForced(CellOn._Neighbors.top);
+                break;
+
+            case var value when value == Vector3Int.left:
+                chara.MoveTileForced(chara.CellOn._Neighbors.left);
+                MoveTileForced(CellOn._Neighbors.right);
+                break;
+
+            case var value when value == Vector3Int.right:
+                chara.MoveTileForced(chara.CellOn._Neighbors.right);
+                MoveTileForced(CellOn._Neighbors.left);
+                break;
+        }
     }
 
 
