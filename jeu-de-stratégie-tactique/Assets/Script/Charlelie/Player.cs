@@ -16,6 +16,7 @@ namespace TEAM2
             set => _unitsList = value;
         }
 
+
         public List<Building> Buildings
         {
             get => _buildings ;
@@ -47,19 +48,35 @@ namespace TEAM2
             set => _costgold = value;
         }
 
+        public List<ScriptableUnit> CurrentUnlockedUnits
+        {
+            get
+            {
+                List<ScriptableUnit> Units = new List<ScriptableUnit>();
+                Units.AddRange(_defaultScriptableUnits);
+                Units.AddRange(_unlockedUnits);
+                return Units;
+            }
+        }
+
+
         public Faction PlayerFaction;
 
-        [SerializeField] private List<Unit> _unitsList = new List<Unit>();
         private List<Order> orderList = new List<Order>();
 
         private GameManager _gameManager;
         private List<Character> _characters = new List<Character>();
         private List<Building> _buildings = new List<Building>();
 
+        private List<ScriptableUnit> _unlockedUnits => _buildings.Where(i => !i.HasBeenUsed).SelectMany(i => i.UnlockedUnits).ToList();
+        [SerializeField] private List<ScriptableUnit> _defaultScriptableUnits;
+        [SerializeField] private List<Unit> _unitsList = new List<Unit>();
         [SerializeField] private int _costgold = 1;
         [SerializeField] private int _gold = 0;
 
         private bool hasFinishOrder = false;
+
+        public Order CurrentOrder { get; set; }
 
         public void Init(GameManager gm)
         {
@@ -67,7 +84,7 @@ namespace TEAM2
             SpawnCharacter();
             for (int i = 0; i < _unitsList.Count; i++)
             {
-                _unitsList[i].Init(gm,UnitType.Character);
+                //_unitsList[i].Init(gm,UnitType.Character);
             }
             for (int i = 0; i < BuildingManager.Buildings.Count; i++)
             {
@@ -105,6 +122,11 @@ namespace TEAM2
             }
         }
 
+        public List<Building> SpecificBuildingsListPerUnitNames(string buildingName)
+        {
+             return _buildings.Where(i => i.ScrUnit.unitsName == buildingName).ToList();
+        }
+
         public void SpawnCharacter()
         {
             Character[] list = _gameManager.UnitManager.SpawnCharacter(2, PlayerFaction);
@@ -112,6 +134,7 @@ namespace TEAM2
             {
                 _unitsList.Add(list[i]);
                 _characters.Add(list[i]);
+                list[i].Master = this;
             }
         }
 
@@ -121,6 +144,11 @@ namespace TEAM2
             orderList.Add(new Order(orderType));
         }
 
+        public void AddOrderToList(Order order)
+        {
+            orderList.Add(order);
+        }
+
         public void ExecuteOrders(List<Order> orderList)
         {
             //Execute both own list and received order list from client
@@ -128,6 +156,9 @@ namespace TEAM2
 
         public IEnumerable<Unit> GetUnitWithType(UnitType currentUnitType)
         {
+            var t = _unitsList.ToList();
+            var el = _unitsList.Where(i => i.UnitType == currentUnitType).ToList();
+
             return _unitsList.Where(i=> i.UnitType == currentUnitType);
         }
 
@@ -135,6 +166,7 @@ namespace TEAM2
         {
             for (int i = 0; i < _unitsList.Count; i++)
             {
+                //Debug.Log(_unitsList[i].ScrUnit.name + "   " + _unitsList[i].unitStateMachine.currentState);
                 if (_unitsList[i].unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
                 {
                     return false;
@@ -143,6 +175,15 @@ namespace TEAM2
             }
 
             return true;
+        }
+
+        public void MakeUnitsEnd()
+        {
+            for (int i = 0; i < _unitsList.Count; i++)
+            {
+                _unitsList[i].unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
+
+            }
         }
     }
 }

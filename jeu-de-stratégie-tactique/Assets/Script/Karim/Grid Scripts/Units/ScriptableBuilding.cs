@@ -8,6 +8,7 @@ namespace TEAM2
     public class ScriptableBuilding : ScriptableUnit
     {
         public UprgadeList upgrades;
+        public List<ScriptableUnit> charactersUnlocked = new List<ScriptableUnit>();
         void Reset()
         {
             faction = Faction.Building;

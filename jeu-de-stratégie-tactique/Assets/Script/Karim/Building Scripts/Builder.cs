@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CodeMonkey.Utils;
 using UnityEngine;
 
 namespace TEAM2
@@ -14,8 +15,6 @@ namespace TEAM2
         public Character BuilderUnit { get => builderUnit; set => builderUnit = value; }
         public GameObject UnitBuildUI { set => unitBuildUI = value; }
 
-        private bool showMenu = false;
-
         private void Start()
         {
             _uIManager.BuildUI += HandleSelection;
@@ -28,7 +27,6 @@ namespace TEAM2
 
         public void HandleSelection(GameObject selectedObject)
         {
-            showMenu = !showMenu;
             if (selectedObject == null)
                 return;
             HandleUnitSelection();
@@ -36,16 +34,21 @@ namespace TEAM2
 
         public void HandleUnitSelection()
         {
-            unitBuildUI.SetActive(showMenu);
+            unitBuildUI.SetActive(true);
         }
 
-        public void BuildStructure()
+        public void BuildStructure(GameManager gameManager)
         {
-            _uIManager.InvokeInformation("Placing structure ");
-            builderUnit.HasBuild = true;
-            if (builderUnit.HasMoved)
+            if (gameManager.PlayerManager.CurrentPlayer.Gold >= _uIManager.SheetUI.ScriptableUnit.unitCost)
             {
-                builderUnit.Rest();
+                _uIManager.InvokeInformation("Placing structure ");
+                Destroy(_uIManager.CurrentCell.Contains);
+                _uIManager.CurrentBuilding.UpdateBuilding((ScriptableBuilding)_uIManager.SheetUI.ScriptableUnit, _uIManager.CurrentCell, gameManager);
+                BuilderUnit.DoAction();
+            }
+            else
+            {
+                _uIManager.InvokeInformation("Gold insufficient ");
             }
         }
     }

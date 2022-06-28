@@ -32,6 +32,8 @@ public class UnitManager : MonoBehaviour
         set => _selectedHero = value;
     }
 
+    public bool CanSelectUnit { get; set; }
+
     [SerializeField] private List<ScriptableUnit> _units;
     [SerializeField] private Unit _selectedHero;
     [SerializeField] private List<ScriptableUnit> heroesUnits = new List<ScriptableUnit>();
@@ -56,8 +58,15 @@ public class UnitManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            SelectUnit();
+            //SelectUnit();
         }
+
+        if (Input.GetKeyDown(KeyCode.A)) _selectedHero.EndTurn();
+    }
+
+    public void Build()
+    {
+        SelectedHero.GetComponent<Builder>().BuildStructure(_gameManager);
     }
 
     private Character GetRandomUnitPerFaction(Faction faction)
@@ -70,7 +79,7 @@ public class UnitManager : MonoBehaviour
         newUnit.ScrUnit = FactionUnit[randomIndex];
         if (newUnit.ScrUnit.isBuilder)
         {
-           Builder builder =  unitObj.AddComponent<Builder>();
+            Builder builder = unitObj.AddComponent<Builder>();
             builder.BuilderUnit = newUnit;
             builder.UnitBuildUI = UIManager.UnitBuildUI;
             builder.UIManager = UIManager;
@@ -106,30 +115,9 @@ public class UnitManager : MonoBehaviour
         return isDead;
     }
 
-    private  IEnumerable<Building> GetFactionBuilding(Faction currentFaction)
+    private IEnumerable<Building> GetFactionBuilding(Faction currentFaction)
     {
-        return PlayerManager.Players.Where(i =>i.PlayerFaction == currentFaction).SelectMany(i => i.Buildings).ToList();
-        //List<Buildings> buildings = new List<Buildings>();
-        //Buildings localCharacter;
-        //switch (currentFaction)
-        //{
-        //    case Faction.Hero:
-        //        for (int i = 0; i < _gameManager.P1.GetUnitWithType(UnitType.Buildings).Count; i++)
-        //        {
-        //            localCharacter = (Buildings)_gameManager.P1.GetUnitWithType(UnitType.Buildings)[i];
-        //            buildings.Add(localCharacter);
-        //        }
-        //        break;
-        //    case Faction.Enemy:
-        //        for (int i = 0; i < _gameManager.P2.GetUnitWithType(UnitType.Buildings).Count; i++)
-        //        {
-
-        //            localCharacter = (Buildings)_gameManager.P2.GetUnitWithType(UnitType.Buildings)[i];
-        //            buildings.Add(localCharacter);
-        //        }
-        //        break;
-        //}
-        //return buildings;
+        return PlayerManager.Players.Where(i => i.PlayerFaction == currentFaction).SelectMany(i => i.Buildings).ToList();
     }
 
     private IEnumerable<Character> GetFactionCharacters(Faction currentFaction)
@@ -138,31 +126,24 @@ public class UnitManager : MonoBehaviour
         return PlayerManager.Players.Where(i => i.PlayerFaction == currentFaction).SelectMany(i => i.Characters);
     }
 
-    private void SelectUnit()
+    public void SelectUnit(Unit unit)
     {
-        Vector3 mousPos = BattleGrid.GetMouseWorldPosition();
-        if (PlayerManager.CheckifUnitWasHere(BattleGrid.Tilemap.WorldToCell(mousPos)))
-        {
-            Unit selectedCharacter = _gameManager.PlayerManager.GetUnit(BattleGrid.Tilemap.WorldToCell(mousPos));
-            if (selectedCharacter != null &&
-                selectedCharacter.ScrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction &&
-                selectedCharacter.unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
-            {
-                if (SelectedHero.GetComponent<SpriteRenderer>().color == Color.blue)
-                {
-                    SelectedHero.GetComponent<SpriteRenderer>().color = Color.white;
-                }
+        unit.GetComponent<SpriteRenderer>().color = Color.white;
+        SelectedHero = unit;
+        SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
+        UIManager.InvokeInformation("Tours de: " + SelectedHero.ScrUnit.unitsName);
+    }
 
-                SelectedHero = selectedCharacter;
-                SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-                UIManager.InvokeInformation("Tours de: " + SelectedHero.ScrUnit.unitsName);
-            }
-        }
+    public void DeselectUnit()
+    {
+        SelectedHero.GetComponent<SpriteRenderer>().color = Color.white;
+        SelectedHero = null;
     }
 
     public void Init(GameManager gm)
     {
         _gameManager = gm;
+        _gameManager.UnitManager.CanSelectUnit = true;
     }
 
     [Button("LoadUnits", ButtonSizes.Large)]
@@ -195,7 +176,7 @@ public class UnitManager : MonoBehaviour
         for (int i = 0; i < unitCount; i++)
         {
             Character randomPrefab = GetRandomUnitPerFaction(currentfaction);
-            Vector3 randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnUnitPerFaction(currentfaction);
+            Vector3Int randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnUnitPerFaction(currentfaction);
             _gameManager.PlayerManager.SetCharacter(randomPrefab, randomSpawnBattleGridTile);
             chars[i] = randomPrefab;
         }
@@ -275,20 +256,18 @@ public class UnitManager : MonoBehaviour
 
     public Building GetSpecificBuildingPerName(string unitName, Faction UnitFaction)
     {
-        List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(UnitFaction);
-        for (int i = 0; i < FactionUnit.Count; i++)
+        ScriptableUnit FactionUnit = _units.FirstOrDefault(i => i.unitsName == unitName);
+        FactionUnit.faction = UnitFaction;
+        GameObject unitObj = new GameObject(unitName, typeof(Building), typeof(SpriteRenderer));
+        Building newUnit = unitObj.GetComponent<Building>();
+        SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
+        newUnit.ScrUnit = FactionUnit;
+        unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
+        unitRenderer.sortingOrder = 1;
+        unitObj.name = newUnit.ScrUnit.unitsName;
+        if (newUnit.ScrUnit != null)
         {
-            if (FactionUnit[i].unitsName == unitName)
-            {
-                GameObject unitObj = new GameObject(unitName, typeof(Building), typeof(SpriteRenderer));
-                Building newUnit = unitObj.GetComponent<Building>();
-                SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
-                newUnit.ScrUnit = FactionUnit[i];
-                unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
-                unitRenderer.sortingOrder = 1;
-                unitObj.name = newUnit.ScrUnit.unitsName;
-                return newUnit;
-            }
+            return newUnit;
         }
         Debug.LogError("Unit was not found !");
         return null;
@@ -367,11 +346,12 @@ public class UnitManager : MonoBehaviour
             PlayerManager.index = 0;
             PlayerManager.CurrentPlayer.AddResource();
             UpdateCharactersRenderAndSate(allDeployedHeroesCharacters);
-            UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings);
+            UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings); 
+            //SelectedHero = allDeployedHeroesCharacters[0] ;
             UIManager.InvokeUpdateUI();
-            SelectedHero = allDeployedHeroesCharacters[0];
-            SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-            UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName);
+            //SelectedHero = allDeployedHeroesCharacters[0];
+            //SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
+            //UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
             allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero).ToList();
@@ -380,8 +360,8 @@ public class UnitManager : MonoBehaviour
             PlayerManager.index++;
             PlayerManager.CurrentPlayer.AddResource();
             UIManager.InvokeUpdateUI();
-            SelectedHero = allDeployedEnemiesCharacters[0];
-            SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
+            //SelectedHero = allDeployedEnemiesCharacters[0];
+            //SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
             UIManager.InvokeInformation("Tour de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
