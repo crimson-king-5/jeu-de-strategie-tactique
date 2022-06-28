@@ -64,6 +64,8 @@ public class BattleGrid : MonoBehaviour
         get => _gameManager.UnitManager;
     }
 
+    private PlayerManager PlayerManager => _gameManager.PlayerManager;
+
     public BattleGridTile.TileType tileType;
 
     #region Editor Function
@@ -141,7 +143,8 @@ public class BattleGrid : MonoBehaviour
                     building.Init(_gameManager, UnitType.Building);
                     FactionTile factionTile = (FactionTile)currentTile;
                     building.ScrUnit.faction = factionTile.faction;
-                    cell.Contains = building;
+                    building.StartCell = cell;
+                    PlayerManager.SetBuilding(building,position, _gameManager);
                 }
             }
         }

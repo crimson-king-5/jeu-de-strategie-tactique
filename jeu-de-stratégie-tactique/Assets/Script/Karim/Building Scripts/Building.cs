@@ -10,6 +10,8 @@ public class Building : Unit
     [SerializeField] private int index = 0;
     public int currentlevelBuilding = 0;
 
+    private ScriptableBuilding ScriptableBuilding => (ScriptableBuilding) ScrUnit;
+    public List<ScriptableUnit> UnlockedUnits => ScriptableBuilding.charactersUnlocked;
     public UIManager UIManager => _gameManager.UIManager;
     public UnitManager unitManager { get => _gameManager.UnitManager; }
 

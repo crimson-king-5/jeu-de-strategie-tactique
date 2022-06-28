@@ -20,7 +20,7 @@ namespace TEAM2
 
         protected GameManager _gameManager;
         [SerializeField]protected ScriptableUnit _scrUnit;
-        UnitType _unitType;
+        private UnitType _unitType;
         private Vector3Int _occupiedTileGridPosition;
 
         public int xPos;

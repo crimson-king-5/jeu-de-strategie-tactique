@@ -51,20 +51,39 @@ namespace TEAM2
             _players[1].PlayerFaction = Faction.Enemy;
         }
 
-        public void SetCharacter(Unit unit, Vector3Int unitPos)
+        public void SetCharacter(Character character, Vector3Int unitPos ,GameManager gm)
         {
-            unit.transform.position = _gameManager.BattleGrid.CellDict[unitPos].PosCenter;            
-            _gameManager.BattleGrid.CellDict[unitPos].Contains = unit;
-            unit.CellOn = _gameManager.BattleGrid.CellDict[unitPos];
-            Debug.Log(unit.CellOn);
-            unit.Init(_gameManager,UnitType.Character);
+            AddToCellDict(character, unitPos, gm);
+            Debug.Log(character.CellOn);
+            character.Init(gm,UnitType.Character);
+        }    
+
+        public void SetCharacter(Character character, Vector3Int unitPos)
+        {
+            AddToCellDict(character, unitPos, _gameManager);
+            Debug.Log(character.CellOn);
+            character.Init(_gameManager,UnitType.Character);
         }
 
-        public void SetBuilding(Building unit, Vector3Int unitPos)
+        private void AddToCellDict(Unit unit, Vector3Int unitPos,GameManager gm)
         {
-            unit.transform.position = unitPos;
-            _gameManager.BattleGrid.CellDict[unitPos].Contains = unit;
-            unit.Init(_gameManager,UnitType.Building);
+            unit.transform.position = gm.BattleGrid.CellDict[unitPos].PosCenter;
+            gm.BattleGrid.CellDict[unitPos].Contains = unit;
+            unit.CellOn = gm.BattleGrid.CellDict[unitPos];
+        }
+
+        public void SetBuilding(Building building, Vector3Int unitPos,GameManager gm)
+        {
+            AddToCellDict(building,unitPos, gm);
+            Debug.Log(building.CellOn);
+            building.Init(gm,UnitType.Building);
+        }
+
+        public void SetBuilding(Building building, Vector3Int unitPos)
+        {
+            AddToCellDict(building, unitPos, _gameManager);
+            Debug.Log(building.CellOn);
+            building.Init(_gameManager, UnitType.Building);
         }
 
         public void CheckIfOrdersFinished()
