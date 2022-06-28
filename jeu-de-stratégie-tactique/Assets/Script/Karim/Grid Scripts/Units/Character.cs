@@ -74,6 +74,7 @@ public class Character : Unit
     {
         base.Init(gm, unitType);
         Cell.OnClickCell += OnClickCell;
+        _gameManager.SoundManager.PlaySound(ScrUnit.appearAudioClip);
     }
 
     private void OnDestroy()
