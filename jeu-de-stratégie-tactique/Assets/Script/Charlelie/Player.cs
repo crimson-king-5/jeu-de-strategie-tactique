@@ -188,7 +188,7 @@ namespace TEAM2
 
         public void ApplyBuildingArmor(Building building)
         {
-            building.CellOn.CheckNeighbours(building).Where(i => i.UnitType == UnitType.Character).Select(i => i.ScrUnit.unitStats.armor += building.ScriptableBuilding.armorBonus );
+            building.CellOn.CheckNeighbours(building).Where(i => i.UnitType == UnitType.Character && i.Faction == PlayerFaction).Select(i => i.ScrUnit.unitStats.armor += building.ScriptableBuilding.armorBonus );
         }
     }
 }
