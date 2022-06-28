@@ -105,7 +105,7 @@ namespace TEAM2
                          _gameManager.UnitManager.SelectUnit(this);
                         OnSelect();
                     }
-            } else if (_gameManager.UnitManager.SelectedHero == null) 
+            } else if (_gameManager.UnitManager.SelectedHero == null && _scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction) 
             {
                 _gameManager.UnitManager.SelectUnit(this);
                 _gameManager.UnitManager.SelectedHero.OnSelect();
