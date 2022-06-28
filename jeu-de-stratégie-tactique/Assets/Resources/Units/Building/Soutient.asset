@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   faction: 3
   unitUnitClass: 3
-  unitsName: Ruines
+  unitsName: Soutient
   isBuilder: 0
   renderUnit: {fileID: 21300000, guid: c4a430066af0eac4ea296a1621fe844d, type: 3}
   descritpion: 

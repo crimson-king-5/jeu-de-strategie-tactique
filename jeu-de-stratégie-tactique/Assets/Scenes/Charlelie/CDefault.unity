@@ -480,7 +480,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -921,8 +921,7 @@ MonoBehaviour:
   PlayerFaction: 0
   _defaultScriptableUnits:
   - {fileID: 11400000, guid: e681db1defe9ba041b76943d4c352e17, type: 2}
-  - {fileID: 11400000, guid: 5045868d353ce634ba6e79a8699cc91b, type: 2}
-  - {fileID: 11400000, guid: 5351d965b9f0479408aa0990529746d1, type: 2}
+  - {fileID: 11400000, guid: 451ad2f1b28eb964d96c13f89c715489, type: 2}
   _unitsList: []
   _costgold: 1
   _gold: 0
@@ -955,7 +954,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -5686,7 +5685,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 0.18195976, g: 0.5161514, b: 0.8207547, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

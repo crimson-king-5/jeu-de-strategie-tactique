@@ -135,6 +135,8 @@ public class BattleGrid : MonoBehaviour
                     Building building = UnitManager.GetSpecificBuildingPerName("Ruines", Faction.Building);
                     building.Init(gm, UnitType.Building);
                     _gameManager.GridBuildingSystem.IntitializeWithBuilding(building, position);
+                    gm.BattleGrid.CellDict[position].Contains = building;
+                    building.CellOn = gm.BattleGrid.CellDict[position];
                 }
                 else if (currentTile.currentTileType == BattleGridTile.TileType.MotherBase)
                 {

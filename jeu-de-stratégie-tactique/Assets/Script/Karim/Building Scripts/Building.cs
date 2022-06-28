@@ -34,8 +34,9 @@ public class Building : Unit
                         PlayerManager.CurrentPlayer.Gold -= PlayerManager.CurrentPlayer.CostGold;
                         UIManager.InvokeUpdateUI();
                         PlayerManager.SetCharacter(character, gridPos);
-                        Rest();
                         BattleGrid.CellDict.Values.First(i => i.Position == gridPos).Contains = character;
+                        Rest();
+                        character.Rest();
                     }
                 }
             }
@@ -56,9 +57,9 @@ public class Building : Unit
     {
         _gameManager = gm;
         Destroy(buildingCell.Contains);
-        buildingCell.Contains = _gameManager.UnitManager.GetSpecificBuildingPerName(newBuilding.unitsName,
-            PlayerManager.CurrentPlayer.PlayerFaction);
+        buildingCell.Contains = _gameManager.UnitManager.GetSpecificBuildingPerName(newBuilding.unitsName, PlayerManager.CurrentPlayer.PlayerFaction);
         buildingCell.Contains.Init(_gameManager, UnitType.Building);
+        buildingCell.Contains.transform.position = buildingCell.PosCenter;
         buildingCell.Contains.Rest();
         PlayerManager.CurrentPlayer.Buildings.Add(this);
         PlayerManager.CurrentPlayer.Units.Add(this);
