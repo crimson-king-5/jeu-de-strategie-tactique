@@ -305,9 +305,6 @@ public class Character : Unit
         }
     }
 
-    
-
-
     void BuilderRuinsAround(Cell cell)
     {
         ruins = cell.CheckForRuin();

@@ -17,6 +17,8 @@ MonoBehaviour:
   unitsName: MotherBase
   isBuilder: 0
   renderUnit: {fileID: 21300000, guid: daae0687eeaef6b4e82cb03774f5fcee, type: 3}
+  descritpion: 
+  unitCost: 0
   classBonus: 0
   unitStats:
     life: 0
@@ -25,9 +27,7 @@ MonoBehaviour:
     atk: 0
     mv: 0
     range: 0
-  upgrades:
-    upgrades:
-    - gainBonus: 1
-      upgradeRender: {fileID: 7482667652216324306, guid: 7ac2d5b1814e54f40963e43b9d0f583e, type: 3}
-    - gainBonus: 2.35
-      upgradeRender: {fileID: 21300000, guid: a0e35f6b808bb7447826cc6c69ffe448, type: 3}
+  lineRendererMat: {fileID: 0}
+  charactersUnlocked: []
+  gainResource: 1
+  canAddUnits: 1
