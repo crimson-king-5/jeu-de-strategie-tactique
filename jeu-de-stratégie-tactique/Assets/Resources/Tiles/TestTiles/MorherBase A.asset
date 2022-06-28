@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24d6b59350033aa47a0d60560ab6d755, type: 3}
   m_Name: MorherBase A
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 74ab21cec141770478ec5d45138a7568, type: 3}
+  m_Sprite: {fileID: 21300000, guid: aa6beb3f419feda4c8a0ced4f2ce1d5a, type: 3}
   m_Color: {r: 0.9339623, g: 0.6740388, b: 0.8287557, a: 1}
   m_Transform:
     e00: 1
@@ -32,8 +32,9 @@ MonoBehaviour:
     e32: 0
     e33: 1
   m_InstancedGameObject: {fileID: 0}
-  m_Flags: 1
+  m_Flags: 2
   m_ColliderType: 1
   currentTileType: 4
   mvRequire: 0
+  baseColor: {r: 0.9339623, g: 0.6740388, b: 0.8287557, a: 1}
   faction: 0
