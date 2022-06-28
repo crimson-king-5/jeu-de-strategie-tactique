@@ -13,10 +13,12 @@ public class ScriptableUnit : ScriptableObject
     public Sprite renderUnit;
     [Range(0, 99)] public float classBonus = 1.5f; 
     [SerializeField] public UnitStats unitStats;
+    [SerializeField] private AudioClip _clip;
     public ScriptableUnit GetCloneUnit()
     {
        return Instantiate(this);
     }
+    
 }
 
 [System.Serializable]
