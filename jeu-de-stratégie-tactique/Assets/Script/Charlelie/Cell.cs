@@ -45,7 +45,7 @@ public class Cell
         currColor = tile.baseColor;
     }
 
-    class Neighbors
+    public class Neighbors
     {
         //Also work with refs
         internal Cell top { get { return a[4]; } }
@@ -88,6 +88,11 @@ public class Cell
             }
         }
 
+        public void UpdateNeighbors()
+        {
+
+        }
+
         public void Illum()
         {
             for (int i = 0; i < a.Length; i++)
@@ -110,8 +115,10 @@ public class Cell
             List<Cell> cells = new List<Cell>();
             for (int i = 0; i < dict.Count; i++)
             {
+                Cell tarCell = dict.ElementAt(i).Value;
+                bool not = (tr != null && tr.nbs.tr != null && tarCell == tr.nbs.tr) | (tl != null && tl.nbs.tl != null && tarCell == tl.nbs.tl) | (br != null && br.nbs.br != null && tarCell == br.nbs.br) | (bl != null && bl.nbs.bl != null && tarCell == bl.nbs.bl);
                 float dist = Vector3Int.Distance(dict.ElementAt(i).Value.position, curr.position);
-                if (dist <= range && (dict.ElementAt(i).Value.position != curr.position))
+                if (dist <= range && (dict.ElementAt(i).Value.position != curr.position) && !not)
                 {
                     cells.Add(dict.ElementAt(i).Value);
                     dict.ElementAt(i).Value._tilemap.SetColor(dict.ElementAt(i).Value.position, Color.magenta);
@@ -145,6 +152,22 @@ public class Cell
             return list;
         }
 
+        public List<Character> CheckAroundAllWithRange(Unit currUnit, float range)
+        {
+            List<Character> list = new List<Character>();
+            Dictionary<Vector3Int, Cell> dict = GameManager.Instance.BattleGrid.CellDict;
+            for (int i = 0; i < dict.Count; i++)
+            {
+                float dist = Vector3Int.Distance(dict.ElementAt(i).Value.position, curr.position);
+                if (dist <= range && (dict.ElementAt(i).Value.position != curr.position))
+                {
+                    if (dict.ElementAt(i).Value.Contains != null && dict.ElementAt(i).Value.Contains.TryGetComponent<Character>(out Character c) && c.Faction != currUnit.Faction) list.Add(a[i].Contains as Character);
+                }
+            }
+            return list;
+        }
+
+
         public List<Cell> CheckForRuin()
         {
             List<Cell> list = new List<Cell>();
@@ -159,6 +182,7 @@ public class Cell
     }
 
     Neighbors nbs;
+    public Neighbors _Neighbors { get => nbs; }
 
     public enum TileType
     {
@@ -182,6 +206,11 @@ public class Cell
     public List<Unit> CheckNeighbours(Unit currUnit)
     {
         return nbs.CheckAroundAll(currUnit);
+    }
+
+    public List<Character> CheckNeighboursWithRange(Unit currUnit, float range)
+    {
+        return nbs.CheckAroundAllWithRange(currUnit, range);
     }
 
     public List<Cell> CheckForRuin()

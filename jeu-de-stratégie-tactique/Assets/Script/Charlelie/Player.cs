@@ -16,6 +16,7 @@ namespace TEAM2
             set => _unitsList = value;
         }
 
+
         public List<Building> Buildings
         {
             get => _buildings ;
@@ -47,15 +48,29 @@ namespace TEAM2
             set => _costgold = value;
         }
 
+        public List<ScriptableUnit> CurrentUnlockedUnits
+        {
+            get
+            {
+                List<ScriptableUnit> Units = new List<ScriptableUnit>();
+                Units.AddRange(_defaultScriptableUnits);
+                Units.AddRange(_unlockedUnits);
+                return Units;
+            }
+        }
+
+
         public Faction PlayerFaction;
 
-        [SerializeField] private List<Unit> _unitsList = new List<Unit>();
         private List<Order> orderList = new List<Order>();
 
         private GameManager _gameManager;
         private List<Character> _characters = new List<Character>();
         private List<Building> _buildings = new List<Building>();
 
+        private List<ScriptableUnit> _unlockedUnits => _buildings.Where(i => !i.HasBeenUsed).SelectMany(i => i.UnlockedUnits).ToList();
+        [SerializeField] private List<ScriptableUnit> _defaultScriptableUnits;
+        [SerializeField] private List<Unit> _unitsList = new List<Unit>();
         [SerializeField] private int _costgold = 1;
         [SerializeField] private int _gold = 0;
 
@@ -169,6 +184,11 @@ namespace TEAM2
                 _unitsList[i].unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
 
             }
+        }
+
+        public void ApplyBuildingArmor(Building building)
+        {
+            building.CellOn.CheckNeighbours(building).Where(i => i.UnitType == UnitType.Character && i.Faction == PlayerFaction).Select(i => i.ScrUnit.unitStats.armor += building.ScriptableBuilding.armorBonus );
         }
     }
 }

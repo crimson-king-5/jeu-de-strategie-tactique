@@ -51,18 +51,36 @@ namespace TEAM2
             _players[1].PlayerFaction = Faction.Enemy;
         }
 
-        public void SetCharacter(Unit unit, Vector3Int unitPos)
+        public void SetCharacter(Character character, Vector3Int unitPos ,GameManager gm)
         {
-            unit.transform.position = _gameManager.BattleGrid.CellDict[unitPos].PosCenter;            
-            _gameManager.BattleGrid.CellDict[unitPos].Contains = unit;
-            (unit as Character).CellOn = _gameManager.BattleGrid.CellDict[unitPos];
-            unit.Init(_gameManager,UnitType.Character);
+            AddToCellDict(character, unitPos, gm);
+            character.Init(gm,UnitType.Character);
+        }    
+
+        public void SetCharacter(Character character, Vector3Int unitPos)
+        {
+            AddToCellDict(character, unitPos, _gameManager);
+            character.Init(_gameManager,UnitType.Character);
         }
 
-        public void SetBuilding(Building unit, Vector3 unitPos)
+        private void AddToCellDict(Unit unit, Vector3Int unitPos,GameManager gm)
         {
-            unit.transform.position = unitPos;
-            unit.Init(_gameManager,UnitType.Building);
+            unit.transform.position = gm.BattleGrid.CellDict[unitPos].PosCenter;
+            gm.BattleGrid.CellDict[unitPos].Contains = unit;
+            unit.CellOn = gm.BattleGrid.CellDict[unitPos];
+        }
+
+        public void SetBuilding(Building building, Vector3Int unitPos,GameManager gm)
+        {
+            AddToCellDict(building,unitPos, gm);
+            building.Init(gm,UnitType.Building);
+        }
+
+        public void SetBuilding(Building building, Vector3Int unitPos)
+        {
+            AddToCellDict(building, unitPos, _gameManager);
+            Debug.Log(building.CellOn);
+            building.Init(_gameManager, UnitType.Building);
         }
 
         public void CheckIfOrdersFinished()

@@ -1,57 +1,65 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TEAM2;
 using UnityEngine;
 
 public class Building : Unit
 {
-    [SerializeField] private Productor _productor = new Productor();
-    [SerializeField] private int index = 0;
-    public int currentlevelBuilding = 0;
 
+    [SerializeField] private int index = 0;
+
+    public ScriptableBuilding ScriptableBuilding => (ScriptableBuilding)ScrUnit;
+    public List<ScriptableUnit> UnlockedUnits => ScriptableBuilding.charactersUnlocked;
     public UIManager UIManager => _gameManager.UIManager;
     public UnitManager unitManager { get => _gameManager.UnitManager; }
-
-    public UprgadeList UpgradeList
-    {
-        get
-        {
-            ScriptableBuilding building = (ScriptableBuilding)_scrUnit;
-            return building.upgrades;
-        }
-
-    }
 
     public void BuildingMouseEvent()
     {
         if (unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn)
         {
-            Vector3 mouseWorldPosition = BattleGrid.GetMouseWorldPosition();
-            Vector3Int gridPos = GetSpecificGridPosition(mouseWorldPosition);
-            //Vector3Int place = BattleGrid.Tilemap.GetCellCenterWorld(gridPos);
-            if (BattleGrid.Tilemap.HasTile(gridPos))
+            if (ScriptableBuilding.canAddUnits)
             {
-                FactionTile factionTile = (FactionTile)BattleGrid.Tilemap.GetTile(gridPos);
-                if (factionTile.faction == Faction && factionTile.currentTileType == BattleGridTile.TileType.Spawn && !PlayerManager.CheckifUnitWasHere(gridPos) && PlayerManager.CurrentPlayer.Gold >= PlayerManager.CurrentPlayer.CostGold)
+                Vector3 mouseWorldPosition = BattleGrid.GetMouseWorldPosition();
+                Vector3Int gridPos = GetSpecificGridPosition(mouseWorldPosition);
+                //Vector3Int place = BattleGrid.Tilemap.GetCellCenterWorld(gridPos);
+                if (BattleGrid.CellDict.ContainsKey(gridPos) && ScriptableBuilding.unitStats.range <= GetTileRange(mouseWorldPosition))
                 {
-                    Character character = unitManager.GetSpecificCharacterPerIndex(index, Faction);
-                    PlayerManager.CurrentPlayer.Units.Add(character);
-                    PlayerManager.CurrentPlayer.Gold -= PlayerManager.CurrentPlayer.CostGold;
-                    UIManager.InvokeUpdateUI();
-                    PlayerManager.SetCharacter(character, gridPos);
-                    Rest();
+                    FactionTile factionTile = (FactionTile)BattleGrid.Tilemap.GetTile(gridPos);
+                    if (factionTile.faction == Faction && factionTile.currentTileType == BattleGridTile.TileType.Spawn && !PlayerManager.CheckifUnitWasHere(gridPos) && PlayerManager.CurrentPlayer.Gold >= PlayerManager.CurrentPlayer.CostGold)
+                    {
+                        Character character = unitManager.GetSpecificCharacterPerIndex(index, Faction);
+                        PlayerManager.CurrentPlayer.Units.Add(character);
+                        PlayerManager.CurrentPlayer.Gold -= PlayerManager.CurrentPlayer.CostGold;
+                        UIManager.InvokeUpdateUI();
+                        PlayerManager.SetCharacter(character, gridPos);
+                        BattleGrid.CellDict.Values.First(i => i.Position == gridPos).Contains = character;
+                        Rest();
+                        character.Rest();
+                    }
                 }
             }
+            else if (ScriptableBuilding.armorBonus < 0 )
+            {
+                PlayerManager.CurrentPlayer.ApplyBuildingArmor(this);
+            }
+            else
+            {
+                Rest();
+            }
         }
+
+
     }
 
-    public void UpdateBuilding(ScriptableBuilding newBuilding, Cell buildingCell,GameManager gm)
+    public void UpdateBuilding(ScriptableBuilding newBuilding, Cell buildingCell, GameManager gm)
     {
         _gameManager = gm;
         Destroy(buildingCell.Contains);
-        buildingCell.Contains = _gameManager.UnitManager.GetSpecificBuildingPerName(newBuilding.unitsName, 
-            PlayerManager.CurrentPlayer.PlayerFaction);
+        buildingCell.Contains = _gameManager.UnitManager.GetSpecificBuildingPerName(newBuilding.unitsName, PlayerManager.CurrentPlayer.PlayerFaction);
         buildingCell.Contains.Init(_gameManager, UnitType.Building);
+        buildingCell.Contains.transform.position = buildingCell.PosCenter;
         buildingCell.Contains.Rest();
         PlayerManager.CurrentPlayer.Buildings.Add(this);
         PlayerManager.CurrentPlayer.Units.Add(this);
@@ -66,36 +74,20 @@ public class Building : Unit
                 BuildingMouseEvent();
             }
 
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetKeyDown(KeyCode.A))
             {
                 Rest();
             }
         }
     }
 
-    public void Upgrade()
+    public override void OnClick()
     {
-        if (currentlevelBuilding < UpgradeList.upgrades.Count)
-        {
-            currentlevelBuilding++;
-            SwitchObject(currentlevelBuilding);
-        }
+        base.OnClick();
     }
 
-    public int GainResourcePerTurn(int currentResource)
+    public int GainResourcePerTurn(int gold)
     {
-        return (int)(currentResource + _productor.resource * UpgradeList.upgrades[currentlevelBuilding].gainBonus);
+        return gold + ScriptableBuilding.gainResource;
     }
-
-    void SwitchObject(int lvl)
-    {
-        for (int i = 0; i < UpgradeList.upgrades.Count; i++)
-        {
-            if (i == lvl)
-            {
-                GetComponent<SpriteRenderer>().sprite = UpgradeList.upgrades[i].upgradeRender;
-            }
-        }
-    }
-
 }

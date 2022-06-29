@@ -346,11 +346,12 @@ public class UnitManager : MonoBehaviour
             PlayerManager.index = 0;
             PlayerManager.CurrentPlayer.AddResource();
             UpdateCharactersRenderAndSate(allDeployedHeroesCharacters);
-            UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings);
+            UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings); 
+            //SelectedHero = allDeployedHeroesCharacters[0] ;
             UIManager.InvokeUpdateUI();
             //SelectedHero = allDeployedHeroesCharacters[0];
             //SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-            UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName);
+            //UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
             allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero).ToList();

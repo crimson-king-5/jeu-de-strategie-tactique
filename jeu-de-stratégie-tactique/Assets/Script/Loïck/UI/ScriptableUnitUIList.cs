@@ -14,14 +14,19 @@ namespace TEAM2
 
         [SerializeField] private Transform _parentTransform;
         [SerializeField] private GameObject _prefabSheet;
-        [SerializeField] private string _folderName;
-        [SerializeField] private Database _database;
+        [SerializeField] private UIManager _uiManager;
 
+        void Awake()
+        {
+            _uiManager.UpdateScriptablelist += GenerateList;
+        }
 
+        void OnDestroy()
+        {
+            _uiManager.UpdateScriptablelist -= GenerateList;
+        }
 
-
-        [Button("RefreshList")]
-        void GenerateList()
+        void GenerateList(List<ScriptableUnit> _database)
         {
             if (_parentTransform.transform.childCount != 0)
             {
@@ -31,7 +36,7 @@ namespace TEAM2
                 }
             }
 
-            foreach (var el in _database.ScriptableBuildings)
+            foreach (var el in _database)
             {
                 Instantiate(_prefabSheet, _parentTransform).GetComponent<UnitSheetUI>().Init(el);
             }
