@@ -61,7 +61,6 @@ namespace TEAM2
                         .Init(el);
                     UnitSheets.Add(unitSheetUi);
                 }
-                Debug.Log("test");
             }
         }
     }

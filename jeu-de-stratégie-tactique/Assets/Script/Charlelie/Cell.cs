@@ -116,7 +116,7 @@ public class Cell
             for (int i = 0; i < dict.Count; i++)
             {
                 Cell tarCell = dict.ElementAt(i).Value;
-                bool not = (tarCell == tr.nbs.tr) | (tarCell == tl.nbs.tl) | (tarCell == br.nbs.br) | (tarCell == bl.nbs.bl);
+                bool not = (tr != null && tr.nbs.tr != null && tarCell == tr.nbs.tr) | (tl != null && tl.nbs.tl != null && tarCell == tl.nbs.tl) | (br != null && br.nbs.br != null && tarCell == br.nbs.br) | (bl != null && bl.nbs.bl != null && tarCell == bl.nbs.bl);
                 float dist = Vector3Int.Distance(dict.ElementAt(i).Value.position, curr.position);
                 if (dist <= range && (dict.ElementAt(i).Value.position != curr.position) && !not)
                 {
