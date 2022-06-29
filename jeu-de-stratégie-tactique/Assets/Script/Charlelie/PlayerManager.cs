@@ -54,14 +54,12 @@ namespace TEAM2
         public void SetCharacter(Character character, Vector3Int unitPos ,GameManager gm)
         {
             AddToCellDict(character, unitPos, gm);
-            Debug.Log(character.CellOn);
             character.Init(gm,UnitType.Character);
         }    
 
         public void SetCharacter(Character character, Vector3Int unitPos)
         {
             AddToCellDict(character, unitPos, _gameManager);
-            Debug.Log(character.CellOn);
             character.Init(_gameManager,UnitType.Character);
         }
 
@@ -75,7 +73,6 @@ namespace TEAM2
         public void SetBuilding(Building building, Vector3Int unitPos,GameManager gm)
         {
             AddToCellDict(building,unitPos, gm);
-            Debug.Log(building.CellOn);
             building.Init(gm,UnitType.Building);
         }
 

@@ -14,7 +14,7 @@ namespace TEAM2
         void Reset()
         {
             faction = Faction.Building;
-            unitUnitClass = UnitClass.Neutral;
+            unitUnitClass = UnitClass.NEUTRAL;
             classBonus = 0;
         }
     }

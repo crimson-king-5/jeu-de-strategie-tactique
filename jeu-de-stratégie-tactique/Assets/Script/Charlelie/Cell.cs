@@ -152,16 +152,16 @@ public class Cell
             return list;
         }
 
-        public List<Unit> CheckAroundAllWithRange(Unit currUnit, float range)
+        public List<Character> CheckAroundAllWithRange(Unit currUnit, float range)
         {
-            List<Unit> list = new List<Unit>();
+            List<Character> list = new List<Character>();
             Dictionary<Vector3Int, Cell> dict = GameManager.Instance.BattleGrid.CellDict;
             for (int i = 0; i < dict.Count; i++)
             {
                 float dist = Vector3Int.Distance(dict.ElementAt(i).Value.position, curr.position);
                 if (dist <= range && (dict.ElementAt(i).Value.position != curr.position))
                 {
-                    if (dict.ElementAt(i).Value.Contains != null && dict.ElementAt(i).Value.Contains.TryGetComponent<Character>(out Character c) && c.Faction != currUnit.Faction) list.Add(a[i].Contains);
+                    if (dict.ElementAt(i).Value.Contains != null && dict.ElementAt(i).Value.Contains.TryGetComponent<Character>(out Character c) && c.Faction != currUnit.Faction) list.Add(a[i].Contains as Character);
                 }
             }
             return list;
@@ -208,7 +208,7 @@ public class Cell
         return nbs.CheckAroundAll(currUnit);
     }
 
-    public List<Unit> CheckNeighboursWithRange(Unit currUnit, float range)
+    public List<Character> CheckNeighboursWithRange(Unit currUnit, float range)
     {
         return nbs.CheckAroundAllWithRange(currUnit, range);
     }
