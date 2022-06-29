@@ -56,7 +56,6 @@ namespace TEAM2
             unit.transform.position = _gameManager.BattleGrid.CellDict[unitPos].PosCenter;            
             _gameManager.BattleGrid.CellDict[unitPos].Contains = unit;
             unit.CellOn = _gameManager.BattleGrid.CellDict[unitPos];
-            Debug.Log(unit.CellOn);
             unit.Init(_gameManager,UnitType.Character);
         }
 

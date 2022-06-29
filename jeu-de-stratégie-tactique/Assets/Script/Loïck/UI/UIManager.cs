@@ -37,6 +37,7 @@ namespace TEAM2
         public event Action<IEnumerable<Unit>,UnitType> UpdateUnitsList;
         public event Action<string> InformationUpdate;
         public event Action<GameObject> BuildUI;
+        public event Action OnBuild; 
 
         public void Init(GameManager gm)
         {
@@ -59,6 +60,7 @@ namespace TEAM2
             
             _currentCell = newBuildingCell;
             BuildUI.Invoke(unitBuildUI);
+            OnBuild.Invoke();
         }
 
         public void InvokeInformation(string information)

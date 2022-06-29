@@ -115,8 +115,10 @@ public class Cell
             List<Cell> cells = new List<Cell>();
             for (int i = 0; i < dict.Count; i++)
             {
+                Cell tarCell = dict.ElementAt(i).Value;
+                bool not = (tarCell == tr.nbs.tr) | (tarCell == tl.nbs.tl) | (tarCell == br.nbs.br) | (tarCell == bl.nbs.bl);
                 float dist = Vector3Int.Distance(dict.ElementAt(i).Value.position, curr.position);
-                if (dist <= range && (dict.ElementAt(i).Value.position != curr.position))
+                if (dist <= range && (dict.ElementAt(i).Value.position != curr.position) && !not)
                 {
                     cells.Add(dict.ElementAt(i).Value);
                     dict.ElementAt(i).Value._tilemap.SetColor(dict.ElementAt(i).Value.position, Color.magenta);

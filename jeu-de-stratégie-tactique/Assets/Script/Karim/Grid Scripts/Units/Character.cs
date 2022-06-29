@@ -74,11 +74,13 @@ public class Character : Unit
     {
         base.Init(gm, unitType);
         Cell.OnClickCell += OnClickCell;
+        UIManager.OnBuild += OnBuild;
     }
 
     private void OnDestroy()
     {
         Cell.OnClickCell -= OnClickCell;
+        UIManager.OnBuild -= OnBuild;
     }
 
     private void Update()
@@ -305,9 +307,6 @@ public class Character : Unit
         }
     }
 
-    
-
-
     void BuilderRuinsAround(Cell cell)
     {
         ruins = cell.CheckForRuin();
@@ -316,6 +315,11 @@ public class Character : Unit
             {
                 ruins[i].SetColor(Color.magenta);
             }
+    }
+
+    void OnBuild()
+    {
+        Rest();
     }
 
     void OnClickCell(Cell cell)
