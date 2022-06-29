@@ -5,12 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Karim/Main Menu.unity
     guid: ae30e0f75b2b0dc43842cca8107c4f71
-  - enabled: 0
-    path: "Assets/Scenes/Lo\xEFck/Default.unity"
-    guid: da0aba3307410fe4aa1481439570a99e
+  - enabled: 1
+    path: Assets/Scenes/Charlelie/CDefault.unity
+    guid: cad252ef6c0a49c4e84df3ca8a46b501
   - enabled: 0
     path: Assets/Scenes/Main/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
@@ -23,7 +23,4 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
-    path: Assets/Scenes/Charlelie/CDefault.unity
-    guid: cad252ef6c0a49c4e84df3ca8a46b501
   m_configObjects: {}

@@ -28,4 +28,6 @@ MonoBehaviour:
     mv: 3
     range: 2
   appearAudioClip: {fileID: 8300000, guid: 8bdcf1f7a239dce4294d59a4096141a5, type: 3}
+  attackAudioClip: {fileID: 8300000, guid: 5029c4553d6483b4888609f0f5d61b8d, type: 3}
+  backMoveAudioClip: {fileID: 8300000, guid: 860978ea32a073d46a33521b46f5bd9b, type: 3}
   lineRendererMat: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
