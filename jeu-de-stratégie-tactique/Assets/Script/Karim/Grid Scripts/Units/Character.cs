@@ -70,6 +70,7 @@ public class Character : Unit
     private List<HistoricData> historic = new List<HistoricData>();
     private Character toAttack;
     private List<Character> setupAttChars = new List<Character>();
+    private Character enemyClicked;
 
     public override void Init(GameManager gm, UnitType unitType)
     {
@@ -134,58 +135,54 @@ public class Character : Unit
         return true;
     }
 
-    public void Attack(Character targetCharacter)
+    public void Attack(Character targetCharacter, int baseDamage)
     {
-        for (int i = 0; i < setupAttChars.Count; i++)
+        float bonus = 1;
+        /*
+        switch (targetCharacter.UnitClass)
         {
-            targetCharacter = setupAttChars[i];
-            float bonus = 1;
-            /*
-            switch (targetCharacter.UnitClass)
-            {
-                case UnitClass.Tank:
-                    if (UnitClass == UnitClass.Mage)
-                    {
-                        bonus = Atk * ClassBonus;
-                    }
-                    else if (UnitClass == UnitClass.Warrior)
-                    {
-                        bonus = Atk / ClassBonus;
-                    }
-                    break;
-                case UnitClass.Mage:
-                    if (UnitClass == UnitClass.Warrior)
-                    {
-                        bonus = Atk * ClassBonus;
-                    }
-                    else if (UnitClass == UnitClass.Tank)
-                    {
-                        bonus = Atk / ClassBonus;
-                    }
-                    break;
-                case UnitClass.Warrior:
-                    if (UnitClass == UnitClass.Tank)
-                    {
-                        bonus = Atk * ClassBonus;
-                    }
-                    if (UnitClass == UnitClass.Mage)
-                    {
-                        bonus = Atk / ClassBonus;
-                    }
-                    break;
-            }
-            */
-            float damage = bonus * Atk;
-            float targetLife = targetCharacter.Life;
-            float targetArmor = targetCharacter.Armor;
-            UIManager.InvokeInformation("Unit " + targetCharacter.ScrUnit.unitsName + " take " + (damage - targetArmor) + " damage");
-            targetLife -= damage - targetArmor;
-            UIManager.InvokeInformation("Unit :" + targetCharacter.ScrUnit.unitsName + " have " + targetLife + " Life now !");
-            targetCharacter.Life = targetLife;
-            _gameManager.InstantiateEffect(targetCharacter.GetUnitDestinationWorldPosition(targetCharacter.GetCurrentUnitGridlPosition()), 0);
-            targetCharacter.CheckifUnitDie();
+            case UnitClass.Tank:
+                if (UnitClass == UnitClass.Mage)
+                {
+                    bonus = Atk * ClassBonus;
+                }
+                else if (UnitClass == UnitClass.Warrior)
+                {
+                    bonus = Atk / ClassBonus;
+                }
+                break;
+            case UnitClass.Mage:
+                if (UnitClass == UnitClass.Warrior)
+                {
+                    bonus = Atk * ClassBonus;
+                }
+                else if (UnitClass == UnitClass.Tank)
+                {
+                    bonus = Atk / ClassBonus;
+                }
+                break;
+            case UnitClass.Warrior:
+                if (UnitClass == UnitClass.Tank)
+                {
+                    bonus = Atk * ClassBonus;
+                }
+                if (UnitClass == UnitClass.Mage)
+                {
+                    bonus = Atk / ClassBonus;
+                }
+                break;
         }
-        
+        */
+        float damage = bonus * Atk;
+        float targetLife = targetCharacter.Life;
+        float targetArmor = targetCharacter.Armor;
+        UIManager.InvokeInformation("Unit " + targetCharacter.ScrUnit.unitsName + " take " + (damage - targetArmor) + " damage");
+        targetLife -= damage - targetArmor;
+        UIManager.InvokeInformation("Unit :" + targetCharacter.ScrUnit.unitsName + " have " + targetLife + " Life now !");
+        targetCharacter.Life = targetLife;
+        _gameManager.InstantiateEffect(targetCharacter.GetUnitDestinationWorldPosition(targetCharacter.GetCurrentUnitGridlPosition()), 0);
+        targetCharacter.CheckifUnitDie();
+
 
         EndTurn();
     }
@@ -436,11 +433,11 @@ public class Character : Unit
         if (canWalkOnCell) MoveTile(cell);
         else 
         {
-            Unit search = nbsUnits.Find(x => x == cell.Contains);
+            Unit search = setupAttChars.Find(x => x == cell.Contains);
             if (search)
             {
                 Debug.Log("Unit found: " + search.ScrUnit.name + "  " + (search as Character).CellOn.Position);
-                Attack((Character)search);
+                ChooseAttack(false);//Attack((Character)search);
             }
             else Debug.Log("Unit not found");
 
@@ -482,7 +479,7 @@ public class Character : Unit
 
     void AssassinAttack()
     {
-        Character chara = setupAttChars[1];
+        Character chara = setupAttChars[0];
         Vector3Int vec = CellOn.Position;
         Vector3Int vec2 = chara.CellOn.Position;
         switch (vec2 - vec)
@@ -507,6 +504,7 @@ public class Character : Unit
                 MoveTileForced(CellOn._Neighbors.left);
                 break;
         }
+        Attack(chara, 2);
     }
 
     void GardienAttackSetup()
@@ -539,7 +537,7 @@ public class Character : Unit
 
     void GardienAttack()
     {
-        Character chara = setupAttChars[1];
+        Character chara = setupAttChars[0];
         switch (facing)
         {
             case Facing.NORTH:
@@ -558,6 +556,7 @@ public class Character : Unit
                 chara.MoveTileForced(CellOn._Neighbors.left);
                 break;
         }
+        Attack(chara, 2);
     }
 
     void ElementaireAttackSetup()
@@ -568,7 +567,7 @@ public class Character : Unit
 
     void ElementaireAttack()
     {
-        //List<Unit> units = CellOn.CheckNeighboursWithRange(this, 6);
+        Attack(enemyClicked, 2);//List<Unit> units = CellOn.CheckNeighboursWithRange(this, 6);
     }
 
     void TempeteAttackSetup()
@@ -580,10 +579,15 @@ public class Character : Unit
     void TempeteAttack()
     {
         List<Character> tmp = new List<Character>();
-        if (toAttack.CellOn._Neighbors.top.Contains != null && (toAttack.CellOn._Neighbors.top.Contains as Character).ScrUnit.faction != ScrUnit.faction) tmp.Add(toAttack.CellOn._Neighbors.top.Contains as Character);
-        if (toAttack.CellOn._Neighbors.bottom.Contains != null && (toAttack.CellOn._Neighbors.bottom.Contains as Character).ScrUnit.faction != ScrUnit.faction) tmp.Add(toAttack.CellOn._Neighbors.bottom.Contains as Character);
-        if (toAttack.CellOn._Neighbors.left.Contains != null && (toAttack.CellOn._Neighbors.left.Contains as Character).ScrUnit.faction != ScrUnit.faction) tmp.Add(toAttack.CellOn._Neighbors.left.Contains as Character);
-        if (toAttack.CellOn._Neighbors.right.Contains != null && (toAttack.CellOn._Neighbors.right.Contains as Character).ScrUnit.faction != ScrUnit.faction) tmp.Add(toAttack.CellOn._Neighbors.right.Contains as Character);
+        if (enemyClicked.CellOn._Neighbors.top.Contains != null && (enemyClicked.CellOn._Neighbors.top.Contains as Character).ScrUnit.faction != ScrUnit.faction) tmp.Add(enemyClicked.CellOn._Neighbors.top.Contains as Character);
+        if (enemyClicked.CellOn._Neighbors.bottom.Contains != null && (enemyClicked.CellOn._Neighbors.bottom.Contains as Character).ScrUnit.faction != ScrUnit.faction) tmp.Add(enemyClicked.CellOn._Neighbors.bottom.Contains as Character);
+        if (enemyClicked.CellOn._Neighbors.left.Contains != null && (enemyClicked.CellOn._Neighbors.left.Contains as Character).ScrUnit.faction != ScrUnit.faction) tmp.Add(enemyClicked.CellOn._Neighbors.left.Contains as Character);
+        if (enemyClicked.CellOn._Neighbors.right.Contains != null && (enemyClicked.CellOn._Neighbors.right.Contains as Character).ScrUnit.faction != ScrUnit.faction) tmp.Add(enemyClicked.CellOn._Neighbors.right.Contains as Character);
+        Attack(enemyClicked, 1);
+        for (int i = 0; i < tmp.Count; i++)
+        {
+            Attack(tmp[i], 1);
+        }
     }
 
     void FaucheurAttackSetup()
@@ -624,7 +628,13 @@ public class Character : Unit
 
     void FaucheurAttack()
     {
-        if (setupAttChars.Count >= 2) return;
+        if (setupAttChars.Count >= 2)
+        {
+            for (int i = 0; i < setupAttChars.Count; i++)
+            {
+                Attack(setupAttChars[i], 1);
+            }
+        }
         else if (setupAttChars.Count == 1)
         {
             Character c = setupAttChars[0];
@@ -646,6 +656,7 @@ public class Character : Unit
                     c.MoveTileForced(c.CellOn._Neighbors.right);
                     break;
             }
+            Attack(c, 3);
         }
     }
 
