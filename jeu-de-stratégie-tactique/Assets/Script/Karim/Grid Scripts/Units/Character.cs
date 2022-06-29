@@ -134,6 +134,7 @@ public class Character : Unit
 
     public void Attack(Character targetCharacter)
     {
+        _gameManager.SoundManager.PlaySound(ScrUnit.attackAudioClip);
         switch (_scrUnit.unitUnitClass)
         {
             case UnitClass.Mage:
@@ -220,6 +221,7 @@ public class Character : Unit
 
     void RewindHisto()
     {
+        _gameManager.SoundManager.PlaySound(ScrUnit.backMoveAudioClip);
         ResetLists();
         if (historic.Count <= 0) return;
         lr.positionCount--;
