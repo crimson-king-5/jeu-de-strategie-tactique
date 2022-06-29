@@ -69,6 +69,7 @@ public class Character : Unit
     private List<Cell> ruins = new List<Cell>();
     private List<HistoricData> historic = new List<HistoricData>();
     private Character toAttack;
+    private List<Character> setupAttChars = new List<Character>();
 
     public override void Init(GameManager gm, UnitType unitType)
     {
@@ -135,59 +136,56 @@ public class Character : Unit
 
     public void Attack(Character targetCharacter)
     {
-        switch (_scrUnit.unitUnitClass)
+        for (int i = 0; i < setupAttChars.Count; i++)
         {
-            case UnitClass.Mage:
-                OneAttack(targetCharacter);
-                break;
-
-            default:
-                OneAttack(targetCharacter);
-                break;
+            targetCharacter = setupAttChars[i];
+            float bonus = 1;
+            /*
+            switch (targetCharacter.UnitClass)
+            {
+                case UnitClass.Tank:
+                    if (UnitClass == UnitClass.Mage)
+                    {
+                        bonus = Atk * ClassBonus;
+                    }
+                    else if (UnitClass == UnitClass.Warrior)
+                    {
+                        bonus = Atk / ClassBonus;
+                    }
+                    break;
+                case UnitClass.Mage:
+                    if (UnitClass == UnitClass.Warrior)
+                    {
+                        bonus = Atk * ClassBonus;
+                    }
+                    else if (UnitClass == UnitClass.Tank)
+                    {
+                        bonus = Atk / ClassBonus;
+                    }
+                    break;
+                case UnitClass.Warrior:
+                    if (UnitClass == UnitClass.Tank)
+                    {
+                        bonus = Atk * ClassBonus;
+                    }
+                    if (UnitClass == UnitClass.Mage)
+                    {
+                        bonus = Atk / ClassBonus;
+                    }
+                    break;
+            }
+            */
+            float damage = bonus * Atk;
+            float targetLife = targetCharacter.Life;
+            float targetArmor = targetCharacter.Armor;
+            UIManager.InvokeInformation("Unit " + targetCharacter.ScrUnit.unitsName + " take " + (damage - targetArmor) + " damage");
+            targetLife -= damage - targetArmor;
+            UIManager.InvokeInformation("Unit :" + targetCharacter.ScrUnit.unitsName + " have " + targetLife + " Life now !");
+            targetCharacter.Life = targetLife;
+            _gameManager.InstantiateEffect(targetCharacter.GetUnitDestinationWorldPosition(targetCharacter.GetCurrentUnitGridlPosition()), 0);
+            targetCharacter.CheckifUnitDie();
         }
-        float bonus = 1;
-        switch (targetCharacter.UnitClass)
-        {
-            case UnitClass.Tank:
-                if (UnitClass == UnitClass.Mage)
-                {
-                    bonus = Atk * ClassBonus;
-                }
-                else if (UnitClass == UnitClass.Warrior)
-                {
-                    bonus = Atk / ClassBonus;
-                }
-                break;
-            case UnitClass.Mage:
-                if (UnitClass == UnitClass.Warrior)
-                {
-                    bonus = Atk * ClassBonus;
-                }
-                else if (UnitClass == UnitClass.Tank)
-                {
-                    bonus = Atk / ClassBonus;
-                }
-                break;
-            case UnitClass.Warrior:
-                if (UnitClass == UnitClass.Tank)
-                {
-                    bonus = Atk * ClassBonus;
-                }
-                if (UnitClass == UnitClass.Mage)
-                {
-                    bonus = Atk / ClassBonus;
-                }
-                break;
-        }
-        float damage = bonus * Atk;
-        float targetLife = targetCharacter.Life;
-        float targetArmor = targetCharacter.Armor;
-        UIManager.InvokeInformation("Unit " + targetCharacter.ScrUnit.unitsName + " take " + (damage - targetArmor) + " damage");
-        targetLife -= damage - targetArmor;
-        UIManager.InvokeInformation("Unit :" + targetCharacter.ScrUnit.unitsName + " have " + targetLife + " Life now !");
-        targetCharacter.Life = targetLife;
-        _gameManager.InstantiateEffect(targetCharacter.GetUnitDestinationWorldPosition(targetCharacter.GetCurrentUnitGridlPosition()), 0);
-        targetCharacter.CheckifUnitDie();
+        
 
         EndTurn();
     }
@@ -204,9 +202,28 @@ public class Character : Unit
         CellOn.Contains = this;
         lr.positionCount++;
         lr.SetPosition(lr.positionCount - 1, CellOn.PosCenter);
+        Debug.Log(facing);
+        switch (facing)
+        {
+            case Facing.NORTH:
+                transform.rotation = UnityEngine.Quaternion.Euler(0, 0, 0);
+                break;
+
+            case Facing.SOUTH:
+                transform.rotation = UnityEngine.Quaternion.Euler(0, 0, 180);
+                break;
+
+            case Facing.EAST:
+                transform.rotation = UnityEngine.Quaternion.Euler(0, 0, -90);
+                break;
+
+            case Facing.WEST:
+                transform.rotation = UnityEngine.Quaternion.Euler(0, 0, 90);
+                break;
+        }
         Mv -= CellOn.Tile.mvRequire;
         Debug.Log(Mv);
-        CheckNeighbors();
+        ChooseAttack(true);
         CheckRuins(cell);
     }
 
@@ -232,8 +249,82 @@ public class Character : Unit
         CellOn = hs.cell;
         CellOn.Contains = this;
         tmpCell = hs.cell;
+        switch (facing)
+        {
+            case Facing.NORTH:
+                transform.eulerAngles = Vector3.up;
+                break;
+
+            case Facing.SOUTH:
+                transform.eulerAngles = Vector3.down;
+                break;
+
+            case Facing.EAST:
+                transform.eulerAngles = Vector3.left;
+                break;
+
+            case Facing.WEST:
+                transform.eulerAngles = Vector3.right;
+                break;
+        }
         historic.RemoveAt(historic.Count - 1);
         CheckNeighbors();
+    }
+
+    void ChooseAttack(bool isSetup)
+    {
+        if (isSetup)
+        {
+            switch (ScrUnit.unitUnitClass)
+            {
+                case UnitClass.ASSASSIN:
+                    AssassinAttackSetup();
+                    break;
+
+                case UnitClass.GARDIEN:
+                    GardienAttackSetup();
+                    break;
+
+                case UnitClass.ELEMENTAIRE:
+                    ElementaireAttackSetup();
+                    break;
+
+                case UnitClass.TEMPETE:
+                    TempeteAttackSetup();
+                    break;
+
+                case UnitClass.FAUCHEUR:
+                    FaucheurAttackSetup();
+                    break;
+
+            }
+        }
+        else
+        {
+            switch (ScrUnit.unitUnitClass)
+            {
+                case UnitClass.ASSASSIN:
+                    AssassinAttack();
+                    break;
+
+                case UnitClass.GARDIEN:
+                    GardienAttack();
+                    break;
+
+                case UnitClass.ELEMENTAIRE:
+                    ElementaireAttack();
+                    break;
+
+                case UnitClass.TEMPETE:
+                    TempeteAttack();
+                    break;
+
+                case UnitClass.FAUCHEUR:
+                    FaucheurAttack();
+                    break;
+
+            }
+        }
     }
 
     bool CheckNeighbors()
@@ -245,6 +336,23 @@ public class Character : Unit
             return true;
         }
         else return false;
+    }
+
+    void SetupChars()
+    {
+        foreach (Character c in setupAttChars)
+        {
+            c.GetComponent<SpriteRenderer>().color = Color.magenta;
+        }
+    }
+
+    void ResetSetup()
+    {
+        foreach (Character c in setupAttChars)
+        {
+            c.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+        setupAttChars.Clear();
     }
 
     bool CheckRuins(Cell cell)
@@ -282,7 +390,7 @@ public class Character : Unit
     override public void EndTurn()
     {
         ResetLists();
-        CellOn.HideWalkableCells(PlayerManager.MoveRange);
+        StartCell.HideWalkableCells(PlayerManager.MoveRange);
         Rest();
     }
 
@@ -343,8 +451,38 @@ public class Character : Unit
         
     }
 
-    void OneAttack(Character chara)
+    void AssassinAttackSetup()
     {
+        Cell c = CellOn;
+        for (int i = 0; i < 3; i++)
+        {
+            switch (facing)
+            {
+                case Facing.NORTH:
+                    c = CellOn._Neighbors.top;
+                    break;
+
+                case Facing.SOUTH:
+                    c = CellOn._Neighbors.bottom;
+                    break;
+
+                case Facing.EAST:
+                    c = CellOn._Neighbors.right;
+                    break;
+
+                case Facing.WEST:
+                    c = CellOn._Neighbors.left;
+                    break;
+            }
+            if (c.Contains != null && (c.Contains as Character) && c.Contains.ScrUnit.faction != ScrUnit.faction) setupAttChars.Add(c.Contains as Character);
+        }
+        SetupChars();
+    }
+
+
+    void AssassinAttack()
+    {
+        Character chara = setupAttChars[1];
         Vector3Int vec = CellOn.Position;
         Vector3Int vec2 = chara.CellOn.Position;
         switch (vec2 - vec)
@@ -371,7 +509,145 @@ public class Character : Unit
         }
     }
 
+    void GardienAttackSetup()
+    {
+        Cell c = CellOn;
+        for (int i = 0; i < 3; i++)
+        {
+            switch (facing)
+            {
+                case Facing.NORTH:
+                    c = CellOn._Neighbors.top;
+                    break;
 
+                case Facing.SOUTH:
+                    c = CellOn._Neighbors.bottom;
+                    break;
+
+                case Facing.EAST:
+                    c = CellOn._Neighbors.right;
+                    break;
+
+                case Facing.WEST:
+                    c = CellOn._Neighbors.left;
+                    break;
+            }
+            if (c.Contains != null && (c.Contains as Character) && c.Contains.ScrUnit.faction != ScrUnit.faction) setupAttChars.Add(c.Contains as Character);
+        }
+        SetupChars();
+    }
+
+    void GardienAttack()
+    {
+        Character chara = setupAttChars[1];
+        switch (facing)
+        {
+            case Facing.NORTH:
+                chara.MoveTileForced(CellOn._Neighbors.top);
+                break;
+
+            case Facing.SOUTH:
+                chara.MoveTileForced(CellOn._Neighbors.bottom);
+                break;
+
+            case Facing.EAST:
+                chara.MoveTileForced(CellOn._Neighbors.right);
+                break;
+
+            case Facing.WEST:
+                chara.MoveTileForced(CellOn._Neighbors.left);
+                break;
+        }
+    }
+
+    void ElementaireAttackSetup()
+    {
+        setupAttChars = CellOn.CheckNeighboursWithRange(this, 6);
+        SetupChars();
+    }
+
+    void ElementaireAttack()
+    {
+        //List<Unit> units = CellOn.CheckNeighboursWithRange(this, 6);
+    }
+
+    void TempeteAttackSetup()
+    {
+        setupAttChars = CellOn.CheckNeighboursWithRange(this, 5);
+        SetupChars();
+    }
+
+    void TempeteAttack()
+    {
+        List<Character> tmp = new List<Character>();
+        if (toAttack.CellOn._Neighbors.top.Contains != null && (toAttack.CellOn._Neighbors.top.Contains as Character).ScrUnit.faction != ScrUnit.faction) tmp.Add(toAttack.CellOn._Neighbors.top.Contains as Character);
+        if (toAttack.CellOn._Neighbors.bottom.Contains != null && (toAttack.CellOn._Neighbors.bottom.Contains as Character).ScrUnit.faction != ScrUnit.faction) tmp.Add(toAttack.CellOn._Neighbors.bottom.Contains as Character);
+        if (toAttack.CellOn._Neighbors.left.Contains != null && (toAttack.CellOn._Neighbors.left.Contains as Character).ScrUnit.faction != ScrUnit.faction) tmp.Add(toAttack.CellOn._Neighbors.left.Contains as Character);
+        if (toAttack.CellOn._Neighbors.right.Contains != null && (toAttack.CellOn._Neighbors.right.Contains as Character).ScrUnit.faction != ScrUnit.faction) tmp.Add(toAttack.CellOn._Neighbors.right.Contains as Character);
+    }
+
+    void FaucheurAttackSetup()
+    {
+        Cell one = null;
+        Cell two = null;
+        Cell three = null;
+        switch (facing)
+        {
+            case Facing.NORTH:
+                one = CellOn._Neighbors.tl;
+                two = CellOn._Neighbors.top;
+                three = CellOn._Neighbors.tr;
+                break;
+
+            case Facing.SOUTH:
+                one = CellOn._Neighbors.bl;
+                two = CellOn._Neighbors.bottom;
+                three = CellOn._Neighbors.br;
+                break;
+
+            case Facing.EAST:
+                one = CellOn._Neighbors.tr;
+                two = CellOn._Neighbors.right;
+                three = CellOn._Neighbors.br;
+                break;
+
+            case Facing.WEST:
+                one = CellOn._Neighbors.tl;
+                two = CellOn._Neighbors.left;
+                three = CellOn._Neighbors.bl;
+                break;
+        }
+        if (one.Contains != null && (one.Contains as Character).ScrUnit.faction != ScrUnit.faction) setupAttChars.Add(one.Contains as Character);
+        if (two.Contains != null && (two.Contains as Character).ScrUnit.faction != ScrUnit.faction) setupAttChars.Add(two.Contains as Character);
+        if (three.Contains != null && (three.Contains as Character).ScrUnit.faction != ScrUnit.faction) setupAttChars.Add(three.Contains as Character);
+    }
+
+    void FaucheurAttack()
+    {
+        if (setupAttChars.Count >= 2) return;
+        else if (setupAttChars.Count == 1)
+        {
+            Character c = setupAttChars[0];
+            switch (c.facing)
+            {
+                case Facing.NORTH:
+                    c.MoveTileForced(c.CellOn._Neighbors.bottom);
+                    break;
+
+                case Facing.SOUTH:
+                    c.MoveTileForced(c.CellOn._Neighbors.top);
+                    break;
+
+                case Facing.EAST:
+                    c.MoveTileForced(c.CellOn._Neighbors.left);
+                    break;
+
+                case Facing.WEST:
+                    c.MoveTileForced(c.CellOn._Neighbors.right);
+                    break;
+            }
+        }
+    }
 
     #region UnusedButKeeping
 
