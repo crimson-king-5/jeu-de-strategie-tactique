@@ -35,6 +35,8 @@ public class Building : Unit
                         UIManager.InvokeUpdateUI();
                         PlayerManager.SetCharacter(character, gridPos);
                         BattleGrid.CellDict.Values.First(i => i.Position == gridPos).Contains = character;
+                        PlayerManager.CurrentPlayer.Units.Add(character);
+                        PlayerManager.CurrentPlayer.Characters.Add(character);
                         Rest();
                         character.Rest();
                     }
@@ -56,9 +58,8 @@ public class Building : Unit
     public void UpdateBuilding(ScriptableBuilding newBuilding, Cell buildingCell, GameManager gm)
     {
         _gameManager = gm;
-        Destroy(buildingCell.Contains);
-        buildingCell.Contains = _gameManager.UnitManager.GetSpecificBuildingPerName(newBuilding.unitsName, PlayerManager.CurrentPlayer.PlayerFaction);
         buildingCell.Contains.Init(_gameManager, UnitType.Building);
+        buildingCell.Contains = _gameManager.UnitManager.GetSpecificBuildingPerName(newBuilding.unitsName, PlayerManager.CurrentPlayer.PlayerFaction);
         buildingCell.Contains.transform.position = buildingCell.PosCenter;
         buildingCell.Contains.Rest();
         PlayerManager.CurrentPlayer.Buildings.Add(this);

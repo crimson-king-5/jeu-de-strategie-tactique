@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
+using Sirenix.Utilities;
 using TEAM2;
 using UnityEngine;
 
@@ -64,12 +65,20 @@ public class UnitManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A)) _selectedHero.EndTurn();
     }
 
+    public void EndTurn()
+    {
+        if (!SelectedHero)
+        {
+            PlayerManager.CurrentPlayer.Units.Where(i => i.unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn).ForEach(i => i.Rest());
+        }
+    }
+
     public void Build()
     {
         SelectedHero.GetComponent<Builder>().BuildStructure(_gameManager);
     }
 
-    private Character GetRandomUnitPerFaction(Faction faction)
+    private Character GetRandomCharacterPerFaction(Faction faction)
     {
         List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(faction);
         int randomIndex = Random.Range(0, FactionUnit.Count);
@@ -97,17 +106,10 @@ public class UnitManager : MonoBehaviour
 
     private bool UpdateAndCheckifTeamisDead(Faction currentFaction)
     {
-        bool isDead = true;
-        List<Character> factionUnits = GetFactionCharacters(currentFaction).ToList();
-        for (int i = 0; i < factionUnits.Count; i++)
-        {
-            if (factionUnits[i].gameObject.activeSelf)
-            {
-                isDead = false;
-                break;
-            }
-        }
-
+        bool isDead = PlayerManager.GetPlayerPerFaction(currentFaction).Units.Count(i =>
+                          i.ScrUnit.unitsName == "MotherBase" &&
+                          i.unitStateMachine.currentState == UnitStateMachine.UnitState.Dead) ==
+                      1;
         if (isDead)
         {
             UIManager.InvokeInformation("Partie terminé ! Faction " + currentFaction + " battue !");
@@ -175,7 +177,7 @@ public class UnitManager : MonoBehaviour
 
         for (int i = 0; i < unitCount; i++)
         {
-            Character randomPrefab = GetRandomUnitPerFaction(currentfaction);
+            Character randomPrefab = GetRandomCharacterPerFaction(currentfaction);
             Vector3Int randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnUnitPerFaction(currentfaction);
             _gameManager.PlayerManager.SetCharacter(randomPrefab, randomSpawnBattleGridTile);
             chars[i] = randomPrefab;
@@ -297,6 +299,7 @@ public class UnitManager : MonoBehaviour
                 SpriteRenderer uniRenderer = units[i].GetComponent<SpriteRenderer>();
                 uniRenderer.color = Color.white;
                 units[i].unitStateMachine.currentState = UnitStateMachine.UnitState.None;
+                units[i].HasBeenUsed = false;
             }
         }
     }
@@ -310,6 +313,7 @@ public class UnitManager : MonoBehaviour
                 SpriteRenderer uniRenderer = units[i].GetComponent<SpriteRenderer>();
                 uniRenderer.color = Color.white;
                 units[i].unitStateMachine.currentState = UnitStateMachine.UnitState.None;
+                units[i].HasBeenUsed = false;
             }
         }
     }
@@ -346,7 +350,7 @@ public class UnitManager : MonoBehaviour
             PlayerManager.index = 0;
             PlayerManager.CurrentPlayer.AddResource();
             UpdateCharactersRenderAndSate(allDeployedHeroesCharacters);
-            UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings); 
+            UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings);
             //SelectedHero = allDeployedHeroesCharacters[0] ;
             UIManager.InvokeUpdateUI();
             //SelectedHero = allDeployedHeroesCharacters[0];
@@ -362,7 +366,7 @@ public class UnitManager : MonoBehaviour
             UIManager.InvokeUpdateUI();
             //SelectedHero = allDeployedEnemiesCharacters[0];
             //SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-            UIManager.InvokeInformation("Tour de : " + SelectedHero.ScrUnit.unitsName);
+            //UIManager.InvokeInformation("Tour de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
 

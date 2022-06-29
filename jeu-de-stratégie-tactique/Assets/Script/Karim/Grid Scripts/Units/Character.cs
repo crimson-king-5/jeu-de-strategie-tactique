@@ -74,13 +74,11 @@ public class Character : Unit
     {
         base.Init(gm, unitType);
         Cell.OnClickCell += OnClickCell;
-        UIManager.OnBuild += OnBuild;
     }
 
     private void OnDestroy()
     {
         Cell.OnClickCell -= OnClickCell;
-        UIManager.OnBuild -= OnBuild;
     }
 
     private void Update()
@@ -306,6 +304,10 @@ public class Character : Unit
             UIManager.InvokeUpdateUI();
         }
     }
+    public void OnBuild()
+    {
+       Rest();
+    }
 
     void BuilderRuinsAround(Cell cell)
     {
@@ -317,10 +319,6 @@ public class Character : Unit
             }
     }
 
-    void OnBuild()
-    {
-        Rest();
-    }
 
     void OnClickCell(Cell cell)
     {
@@ -337,7 +335,7 @@ public class Character : Unit
             else Debug.Log("Unit not found");
 
             Cell ruin = ruins.Find(x => x == cell);
-            if (ruin != null) UIManager.InvokeBuildUI(ruin);
+            if (ruin != null && Builder) UIManager.InvokeBuildUI(ruin);
         }
         return;
         

@@ -12,7 +12,7 @@ namespace TEAM2
         private Cell _currentCell;
         [SerializeField] private GameObject unitBuildUI;
         [SerializeField] private GameObject _sheetUI;
-        public Building CurrentBuilding { get => (Building)_currentCell.Contains;}
+        public Building CurrentBuilding { get => (Building)_currentCell.Contains; }
         public Cell CurrentCell { get => _currentCell; set => _currentCell = value; }
         public GameObject UnitBuildUI { get => unitBuildUI; }
         public UnitSheetUI SheetUI => _sheetUI.transform.GetChild(1).GetComponent<UnitSheetUI>();
@@ -30,14 +30,13 @@ namespace TEAM2
         private int Gold
         {
             get => Player.Gold;
-        }  
+        }
 
 
-        public event Action<int,string> UpdateResource;
-        public event Action<IEnumerable<Unit>,UnitType> UpdateUnitsList;
+        public event Action<int, string> UpdateResource;
+        public event Action<IEnumerable<Unit>, UnitType> UpdateUnitsList;
         public event Action<string> InformationUpdate;
         public event Action<GameObject> BuildUI;
-        public event Action OnBuild;
         public event Action<List<ScriptableUnit>> UpdateScriptablelist;
 
         public void Init(GameManager gm)
@@ -45,11 +44,11 @@ namespace TEAM2
             _gameManager = gm;
         }
 
-       public void InvokeUpdateUI()
+        public void InvokeUpdateUI()
         {
-            UpdateResource?.Invoke(Gold,Player.name);
-            UpdateUnitsList?.Invoke(Player.GetUnitWithType(UnitType.Character),UnitType.Character);
-            UpdateUnitsList?.Invoke(Player.GetUnitWithType(UnitType.Building),UnitType.Building);
+            UpdateResource?.Invoke(Gold, Player.name);
+            UpdateUnitsList?.Invoke(Player.GetUnitWithType(UnitType.Character), UnitType.Character);
+            UpdateUnitsList?.Invoke(Player.GetUnitWithType(UnitType.Building), UnitType.Building);
         }
 
         public void InvokeBuildUI(Cell newBuildingCell)
@@ -58,16 +57,15 @@ namespace TEAM2
             {
                 newBuildingCell.Contains = new Building();
             }
-            
+
             _currentCell = newBuildingCell;
             BuildUI?.Invoke(unitBuildUI);
             UpdateScriptablelist?.Invoke(Player.CurrentUnlockedUnits);
-            OnBuild.Invoke();
         }
 
         public void InvokeInformation(string information)
-       {
-           InformationUpdate?.Invoke(information);
-       }
+        {
+            InformationUpdate?.Invoke(information);
+        }
     }
 }
