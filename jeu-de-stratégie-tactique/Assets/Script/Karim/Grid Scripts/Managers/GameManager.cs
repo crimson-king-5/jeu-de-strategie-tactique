@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GridBuildingSystem _gridBuildingSystem;
     [SerializeField] private BuildingManager _buildingManager;
     [SerializeField] private UIManager _uiManager;
+    [SerializeField] private SoundManager _soundManager;
 
     public GridBuildingSystem GridBuildingSystem
     {
@@ -26,6 +27,8 @@ public class GameManager : MonoBehaviour
         set => _uiManager = value;
     }
 
+    public SoundManager SoundManager => _soundManager;
+ 
     public BuildingManager BuildingManager
     {
         get => _buildingManager;
@@ -98,6 +101,7 @@ public class GameManager : MonoBehaviour
         _gridBuildingSystem = _gridBuildingSystem ?? GetComponent<GridBuildingSystem>() ?? gameObject.AddComponent<GridBuildingSystem>();
         _buildingManager = _buildingManager ?? GetComponent<BuildingManager>() ?? gameObject.AddComponent<BuildingManager>();
         _uiManager = _uiManager ?? GetComponent<UIManager>() ?? gameObject.AddComponent<UIManager>();
+        _soundManager = _soundManager ?? GetComponent<SoundManager>() ?? gameObject.AddComponent<SoundManager>();
         effectManager.effects = Resources.LoadAll<GameObject>("Effect").ToList();
         gameObject.tag = "GameManager";
     }

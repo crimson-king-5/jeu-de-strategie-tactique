@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   faction: 3
   unitUnitClass: 3
-  unitsName: Ruines
+  unitsName: Soutient
   isBuilder: 0
-  renderUnit: {fileID: 21300000, guid: 3bf8576929ac5dd44be9a766adecffb9, type: 3}
+  renderUnit: {fileID: 21300000, guid: c4a430066af0eac4ea296a1621fe844d, type: 3}
+  descritpion: 
+  unitCost: 0
   classBonus: 0
   unitStats:
     life: 10
@@ -25,7 +27,9 @@ MonoBehaviour:
     atk: 0
     mv: 0
     range: 0
-  upgrades:
-    upgrades:
-    - gainBonus: 1
-      upgradeRender: {fileID: 21300000, guid: c1b3b841975a2dd4cb78a56793e9f492, type: 3}
+  appearAudioClip: {fileID: 0}
+  lineRendererMat: {fileID: 0}
+  charactersUnlocked: []
+  gainResource: 1
+  armorBonus: 0
+  canAddUnits: 0

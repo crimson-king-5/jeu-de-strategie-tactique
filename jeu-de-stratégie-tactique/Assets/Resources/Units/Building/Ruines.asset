@@ -27,5 +27,9 @@ MonoBehaviour:
     atk: 0
     mv: 0
     range: 0
-  upgrades:
-    upgrades: []
+  appearAudioClip: {fileID: 0}
+  lineRendererMat: {fileID: 0}
+  charactersUnlocked: []
+  gainResource: 1
+  armorBonus: 0
+  canAddUnits: 0

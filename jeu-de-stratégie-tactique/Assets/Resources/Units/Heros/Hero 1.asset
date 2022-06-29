@@ -16,7 +16,7 @@ MonoBehaviour:
   unitUnitClass: 1
   unitsName: Bebou
   isBuilder: 1
-  renderUnit: {fileID: 21300000, guid: 3564a7ec5490cc943b84ef4157df2150, type: 3}
+  renderUnit: {fileID: 21300000, guid: 5c769e5242bbd6b459e6f2bd07c69273, type: 3}
   descritpion: 
   unitCost: 0
   classBonus: 1.5
@@ -27,4 +27,5 @@ MonoBehaviour:
     atk: 2
     mv: 3
     range: 2
+  appearAudioClip: {fileID: 8300000, guid: 8bdcf1f7a239dce4294d59a4096141a5, type: 3}
   lineRendererMat: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
