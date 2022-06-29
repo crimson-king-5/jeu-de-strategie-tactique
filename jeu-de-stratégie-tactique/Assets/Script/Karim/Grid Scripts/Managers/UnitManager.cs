@@ -258,7 +258,7 @@ public class UnitManager : MonoBehaviour
 
     public Building GetSpecificBuildingPerName(string unitName, Faction UnitFaction)
     {
-        ScriptableUnit FactionUnit = _units.FirstOrDefault(i => i.unitsName == unitName);
+        ScriptableUnit FactionUnit = _units.FirstOrDefault(i => i.unitsName == unitName).GetCloneUnit();
         FactionUnit.faction = UnitFaction;
         GameObject unitObj = new GameObject(unitName, typeof(Building), typeof(SpriteRenderer));
         Building newUnit = unitObj.GetComponent<Building>();

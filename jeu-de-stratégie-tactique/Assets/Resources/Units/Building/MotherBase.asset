@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MotherBase
   m_EditorClassIdentifier: 
   faction: 3
-  unitUnitClass: 3
+  unitUnitClass: 0
   unitsName: MotherBase
   isBuilder: 0
   renderUnit: {fileID: 21300000, guid: d6297abafb3544046b04a4bca2183ae7, type: 3}

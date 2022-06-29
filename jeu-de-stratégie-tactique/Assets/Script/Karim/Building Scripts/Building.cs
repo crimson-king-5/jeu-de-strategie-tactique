@@ -12,7 +12,7 @@ public class Building : Unit
 
     public ScriptableBuilding ScriptableBuilding => (ScriptableBuilding)ScrUnit;
     public List<ScriptableUnit> UnlockedUnits => ScriptableBuilding.charactersUnlocked;
-    public UIManager UIManager => _gameManager.UIManager;
+    public UIManager UIManager => unitManager.UIManager;
     public UnitManager unitManager { get => _gameManager.UnitManager; }
 
     public void BuildingMouseEvent()
@@ -58,8 +58,8 @@ public class Building : Unit
     public void UpdateBuilding(ScriptableBuilding newBuilding, Cell buildingCell, GameManager gm)
     {
         _gameManager = gm;
-        buildingCell.Contains.Init(_gameManager, UnitType.Building);
         buildingCell.Contains = _gameManager.UnitManager.GetSpecificBuildingPerName(newBuilding.unitsName, PlayerManager.CurrentPlayer.PlayerFaction);
+        buildingCell.Contains.Init(_gameManager, UnitType.Building);
         buildingCell.Contains.transform.position = buildingCell.PosCenter;
         buildingCell.Contains.Rest();
         PlayerManager.CurrentPlayer.Buildings.Add(this);

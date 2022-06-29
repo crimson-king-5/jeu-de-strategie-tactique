@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Ruines
   m_EditorClassIdentifier: 
   faction: 3
-  unitUnitClass: 3
+  unitUnitClass: 0
   unitsName: Ruines
   isBuilder: 0
   renderUnit: {fileID: 0}

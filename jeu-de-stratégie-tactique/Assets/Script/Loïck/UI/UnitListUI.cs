@@ -10,14 +10,14 @@ namespace TEAM2
 {
     public class UnitListUI : MonoBehaviour
     {
-#region INTERNAL TYPES
+        #region INTERNAL TYPES
         [System.Serializable]
         struct UnitTypeToRoot
         {
             public UnitType UnitType;
             public Transform Root;
         }
-#endregion
+        #endregion
 
         [SerializeField] private GameObject _parentCharacterGameObject;
         [SerializeField] private GameObject _parentBuildingsGameObject;
@@ -48,9 +48,12 @@ namespace TEAM2
                 // Sheet a trop d'élements 	Void TEAM2.UIManager:InvokeUpdateUI ()+0x3d at F:\AganecyGame\jeu-de-stratégie-tactique\Assets\Script\Loïck\UI\UIManager.cs:[43:13-43:100]	C#
 
                 foreach (var el in AllUnitPerSheet().Except(units)
-                    .SelectMany((u => UnitSheets.Where(i => i.UnitReferenced==u)))) 
+                    .SelectMany((u => UnitSheets.Where(i => i.UnitReferenced == u))))
                 {
-                    Destroy(el.gameObject);
+                    if (el)
+                    {
+                        Destroy(el.gameObject);
+                    }
                 }
 
                 // Unit a de nouvelles instances
