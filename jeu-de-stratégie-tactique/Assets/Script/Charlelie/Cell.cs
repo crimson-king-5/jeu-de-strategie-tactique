@@ -285,7 +285,7 @@ public class Cell
         //nbs.Illum();
         //nbs.IllumWithRange(GameManager.Instance.range);
         if (Contains != null) Contains.OnClick();
-        OnClickCell.Invoke(this);
+        OnClickCell?.Invoke(this);
         clicked = true;
     }
 

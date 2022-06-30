@@ -300,6 +300,7 @@ public class UnitManager : MonoBehaviour
                 uniRenderer.color = Color.white;
                 units[i].unitStateMachine.currentState = UnitStateMachine.UnitState.None;
                 units[i].HasBeenUsed = false;
+                units[i].InitCurrentMv();
             }
         }
     }

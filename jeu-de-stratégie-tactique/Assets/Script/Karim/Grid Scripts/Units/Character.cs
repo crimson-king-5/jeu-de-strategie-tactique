@@ -72,6 +72,7 @@ public class Character : Unit
     private Character toAttack;
     private List<Character> setupAttChars = new List<Character>();
     private Character enemyClicked;
+    private int CurrentMV { get; set; }
 
     public override void Init(GameManager gm, UnitType unitType)
     {
@@ -88,7 +89,7 @@ public class Character : Unit
     {
         if (_gameManager.UnitManager.SelectedHero == this)
         {
-            canWalkOnCell = Mv > 0 ? CellOn.CanWalkOnCell() : false;
+            canWalkOnCell = CurrentMV > 0 ? CellOn.CanWalkOnCell() : false;
 
             if (Input.GetMouseButtonDown(1))
             {
@@ -102,6 +103,11 @@ public class Character : Unit
         }
     }
 
+
+    public void InitCurrentMv()
+    {
+        CurrentMV = Mv;
+    }
 
     public override void OnClick()
     {
@@ -221,8 +227,8 @@ public class Character : Unit
                 transform.rotation = UnityEngine.Quaternion.Euler(0, 0, 90);
                 break;
         }
-        Mv -= CellOn.Tile.mvRequire;
-        Debug.Log(Mv);
+        CurrentMV -= CellOn.Tile.mvRequire;
+        Debug.Log(CurrentMV);
         ChooseAttack(true);
         CheckRuins(cell);
     }
@@ -242,7 +248,7 @@ public class Character : Unit
         if (historic.Count <= 0) return;
         lr.positionCount--;
         HistoricData hs = historic[historic.Count - 1];
-        Mv += CellOn.Tile.mvRequire;
+        CurrentMV += CellOn.Tile.mvRequire;
         transform.position = hs.cell.PosCenter;
         facing = hs.facing;
         CellOn.Contains = null;
