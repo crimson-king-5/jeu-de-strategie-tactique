@@ -86,17 +86,22 @@ public class UnitManager : MonoBehaviour
         Character newUnit = unitObj.GetComponent<Character>();
         SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
         newUnit.ScrUnit = FactionUnit[randomIndex];
-        if (newUnit.ScrUnit.isBuilder)
-        {
-            Builder builder = unitObj.AddComponent<Builder>();
-            builder.BuilderUnit = newUnit;
-            builder.UnitBuildUI = UIManager.UnitBuildUI;
-            builder.UIManager = UIManager;
-        }
+        CheckifBuilder(newUnit);
         unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
         unitRenderer.sortingOrder = 1;
         unitObj.name = newUnit.ScrUnit.unitsName;
         return newUnit;
+    }
+
+    private void CheckifBuilder(Character newUnit)
+    {
+        if (newUnit.ScrUnit.isBuilder)
+        {
+            Builder builder = newUnit.gameObject.AddComponent<Builder>();
+            builder.BuilderUnit = newUnit;
+            builder.UnitBuildUI = UIManager.UnitBuildUI;
+            builder.UIManager = UIManager;
+        }
     }
 
     internal void UpdateUnitsList()
@@ -250,6 +255,7 @@ public class UnitManager : MonoBehaviour
         Character newUnit = unitObj.GetComponent<Character>();
         SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
         newUnit.ScrUnit = FactionUnit[index];
+        CheckifBuilder(newUnit);
         unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
         unitRenderer.sortingOrder = 1;
         unitObj.name = newUnit.ScrUnit.unitsName;
@@ -300,6 +306,7 @@ public class UnitManager : MonoBehaviour
                 uniRenderer.color = Color.white;
                 units[i].unitStateMachine.currentState = UnitStateMachine.UnitState.None;
                 units[i].HasBeenUsed = false;
+                units[i].InitCurrentMv();
             }
         }
     }
