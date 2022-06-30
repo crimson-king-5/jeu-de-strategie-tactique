@@ -16,6 +16,7 @@ public class ScriptableUnit : ScriptableObject
     [Range(0, 99)] public float classBonus = 1.5f; 
     [SerializeField] public UnitStats unitStats;
     public AudioClip appearAudioClip;
+    public AudioClip backAudioClip;
     public Material lineRendererMat;
 
     public ScriptableUnit GetCloneUnit()
