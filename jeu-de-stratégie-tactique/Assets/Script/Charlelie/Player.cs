@@ -73,6 +73,7 @@ namespace TEAM2
         [SerializeField] private List<Unit> _unitsList = new List<Unit>();
         [SerializeField] private int _costgold = 1;
         [SerializeField] private int _gold = 0;
+        [SerializeField] private int charsToCreate = 0;
 
         private bool hasFinishOrder = false;
 
@@ -129,7 +130,7 @@ namespace TEAM2
 
         public void SpawnCharacter()
         {
-            Character[] list = _gameManager.UnitManager.SpawnCharacter(2, PlayerFaction);
+            Character[] list = _gameManager.UnitManager.SpawnCharacter(charsToCreate, PlayerFaction);
             for (int i = _unitsList.Count; i < list.Length; i++)
             {
                 _unitsList.Add(list[i]);

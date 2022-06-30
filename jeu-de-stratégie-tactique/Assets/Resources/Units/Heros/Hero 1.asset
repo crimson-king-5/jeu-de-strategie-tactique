@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   faction: 0
   unitUnitClass: 1
-  unitsName: Bebou
+  unitsName: Assassin
   isBuilder: 1
   renderUnit: {fileID: 21300000, guid: 5c769e5242bbd6b459e6f2bd07c69273, type: 3}
   descritpion: 

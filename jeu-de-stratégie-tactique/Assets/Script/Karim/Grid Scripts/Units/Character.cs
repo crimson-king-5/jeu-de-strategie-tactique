@@ -199,7 +199,6 @@ public class Character : Unit
         CellOn.Contains = this;
         lr.positionCount++;
         lr.SetPosition(lr.positionCount - 1, CellOn.PosCenter);
-        Debug.Log(facing);
         switch (facing)
         {
             case Facing.NORTH:
@@ -270,6 +269,7 @@ public class Character : Unit
 
     void ChooseAttack(bool isSetup)
     {
+        Debug.Log(ScrUnit.unitUnitClass);
         if (isSetup)
         {
             switch (ScrUnit.unitUnitClass)
@@ -456,22 +456,23 @@ public class Character : Unit
             switch (facing)
             {
                 case Facing.NORTH:
-                    c = CellOn._Neighbors.top;
+                    c = c._Neighbors.top;
                     break;
 
                 case Facing.SOUTH:
-                    c = CellOn._Neighbors.bottom;
+                    c = c._Neighbors.bottom;
                     break;
 
                 case Facing.EAST:
-                    c = CellOn._Neighbors.right;
+                    c = c._Neighbors.right;
                     break;
 
                 case Facing.WEST:
-                    c = CellOn._Neighbors.left;
+                    c = c._Neighbors.left;
                     break;
             }
-            if (c.Contains != null && (c.Contains as Character) && c.Contains.ScrUnit.faction != ScrUnit.faction) setupAttChars.Add(c.Contains as Character);
+            if (c.Contains != null)
+                if ((c.Contains as Character) && c.Contains.ScrUnit.faction != ScrUnit.faction) { setupAttChars.Add(c.Contains as Character); break; }
         }
         SetupChars();
     }
@@ -510,27 +511,32 @@ public class Character : Unit
     void GardienAttackSetup()
     {
         Cell c = CellOn;
+        Debug.Log("HERE");
         for (int i = 0; i < 3; i++)
         {
             switch (facing)
             {
                 case Facing.NORTH:
-                    c = CellOn._Neighbors.top;
+                    c = c._Neighbors.top;
                     break;
 
                 case Facing.SOUTH:
-                    c = CellOn._Neighbors.bottom;
+                    c = c._Neighbors.bottom;
                     break;
 
                 case Facing.EAST:
-                    c = CellOn._Neighbors.right;
+                    c = c._Neighbors.right;
                     break;
 
                 case Facing.WEST:
-                    c = CellOn._Neighbors.left;
+                    c = c._Neighbors.left;
                     break;
             }
-            if (c.Contains != null && (c.Contains as Character) && c.Contains.ScrUnit.faction != ScrUnit.faction) setupAttChars.Add(c.Contains as Character);
+            if (c.Contains != null)
+            {
+                if ((c.Contains as Character) && c.Contains.ScrUnit.faction != ScrUnit.faction) { setupAttChars.Add(c.Contains as Character); Debug.Log("GOOD"); break; }
+            }
+            
         }
         SetupChars();
     }
