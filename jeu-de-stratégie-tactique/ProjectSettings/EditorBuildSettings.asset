@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Karim/Main Menu.unity
     guid: ae30e0f75b2b0dc43842cca8107c4f71
   - enabled: 1
