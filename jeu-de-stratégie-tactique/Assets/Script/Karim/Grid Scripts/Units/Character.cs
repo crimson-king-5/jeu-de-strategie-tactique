@@ -54,17 +54,18 @@ public class Character : Unit
     public bool AwaitMoveOrder { get; set; }
     public bool AwaitAttackOrder { get; set; }
 
-    
+
 
     private bool hasMoved = false;
     private bool hasAttack = false;
     private bool hasBuild = false;
     private bool canWalkOnCell = false;
+    private bool isSelected = false;
     private Cell moveCell;
     private Cell nextPosCell;
     private Cell tmpCell;
     private LineRenderer lr;
-    
+
     private List<Unit> nbsUnits = new List<Unit>();
     private List<Cell> ruins = new List<Cell>();
     private List<HistoricData> historic = new List<HistoricData>();
@@ -106,7 +107,11 @@ public class Character : Unit
     {
         base.OnClick();
 
-        if (_gameManager.UnitManager.SelectedHero == this) CellOn.ShowWalkableCells(PlayerManager.MoveRange);
+        if (_gameManager.UnitManager.SelectedHero == this && !isSelected)
+        {
+            isSelected = true;
+            CellOn.ShowWalkableCells(PlayerManager.MoveRange);
+        }
 
         canWalkOnCell = false;
     }
@@ -130,6 +135,7 @@ public class Character : Unit
         Destroy(lr);
         StartCell.HideWalkableCells(PlayerManager.MoveRange);
         GetComponent<SpriteRenderer>().color = Color.white;
+        isSelected = false;
         return true;
     }
 
@@ -411,7 +417,7 @@ public class Character : Unit
     }
     public void OnBuild()
     {
-       Rest();
+        Rest();
     }
 
     void BuilderRuinsAround(Cell cell)
@@ -429,7 +435,7 @@ public class Character : Unit
     {
         if ((cell.Position == CellOn.Position || _gameManager.UnitManager.SelectedHero != this)) return;
         if (canWalkOnCell) MoveTile(cell);
-        else 
+        else
         {
             Unit search = setupAttChars.Find(x => x == cell.Contains);
             if (search)
@@ -443,7 +449,7 @@ public class Character : Unit
             if (ruin != null && Builder) UIManager.InvokeBuildUI(ruin);
         }
         return;
-        
+
     }
 
     void AssassinAttackSetup()
