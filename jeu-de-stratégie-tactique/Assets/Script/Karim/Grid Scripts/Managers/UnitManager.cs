@@ -83,6 +83,7 @@ public class UnitManager : MonoBehaviour
     {
         var buildSpawnUnit = SelectedHero.GetComponent<Building>();
        buildSpawnUnit.SpawnUnit(UIManager.SheetUI.ScriptableUnit.unitsName);
+       UIManager.InvokeUpdateUI();
     }
 
     private Character GetRandomCharacterPerFaction(Faction faction)
@@ -326,11 +327,11 @@ public class UnitManager : MonoBehaviour
                 uniRenderer.color = Color.white;
                 units[i].unitStateMachine.currentState = UnitStateMachine.UnitState.None;
                 units[i].HasBeenUsed = false;
-                if (units[i].ScriptableBuilding.armorBonus > 0)
+                if (units[i].ScriptableBuilding.armorBonus > 0 && units[i].ScriptableBuilding.charactersUnlocked.Count < 0)
                 {
                     units[i].BuildingMouseEvent();
                 }
-                else if (units[i].ScriptableBuilding.charactersUnlocked != null)
+                else if (units[i].ScriptableBuilding.charactersUnlocked.Count > 0 )
                 {
                     PlayerManager.CurrentPlayer.UpdateDefaultScriptableUnits(units[i].ScriptableBuilding.charactersUnlocked);
                 }
