@@ -68,8 +68,8 @@ namespace TEAM2
         //        // Unit a de nouvelles instances
         //        foreach (var el in units.Except(AllUnitPerSheet())) // Sheet a trop d'élements
         //        {
-        //            UnitSheetUI unitSheetUi = Instantiate(_prefabSheet, _parentUnitsGameObject.transform)
-        //                .GetComponent<UnitSheetUI>()
+        //            BuildingSheetUI unitSheetUi = Instantiate(_prefabSheet, _parentUnitsGameObject.transform)
+        //                .GetComponent<BuildingSheetUI>()
         //                .Init(el);
         //            UnitSheets.Add(unitSheetUi);
         //        }

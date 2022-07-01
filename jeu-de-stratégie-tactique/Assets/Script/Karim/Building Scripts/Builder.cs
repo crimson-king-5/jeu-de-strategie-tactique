@@ -14,10 +14,10 @@ namespace TEAM2
 
         public void BuildStructure(GameManager gameManager)
         {
-            if (gameManager.PlayerManager.CurrentPlayer.Gold >= _uIManager.SheetUI.ScriptableUnit.unitCost)
+            if (gameManager.PlayerManager.CurrentPlayer.Gold >= _uIManager.UnitSheetUI.ScriptableUnit.unitCost)
             {
                 _uIManager.InvokeInformation("Placing structure ");
-                _uIManager.CurrentBuilding.UpdateBuilding((ScriptableBuilding)_uIManager.SheetUI.ScriptableUnit, _uIManager.CurrentCell, gameManager);
+                _uIManager.CurrentBuilding.UpdateBuilding((ScriptableBuilding)_uIManager.UnitSheetUI.ScriptableUnit, _uIManager.CurrentCell, gameManager);
                 builderUnit.OnBuild();
             }
             else
