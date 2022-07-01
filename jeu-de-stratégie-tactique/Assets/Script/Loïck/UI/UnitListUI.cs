@@ -5,19 +5,20 @@ using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.UI;
 
 namespace TEAM2
 {
     public class UnitListUI : MonoBehaviour
     {
-#region INTERNAL TYPES
+        #region INTERNAL TYPES
         [System.Serializable]
         struct UnitTypeToRoot
         {
             public UnitType UnitType;
             public Transform Root;
         }
-#endregion
+        #endregion
 
         [SerializeField] private GameObject _parentCharacterGameObject;
         [SerializeField] private GameObject _parentBuildingsGameObject;
@@ -25,6 +26,11 @@ namespace TEAM2
         [SerializeField] private UIManager _uIManager;
 
         [SerializeField] private UnitTypeToRoot[] _unitTypeRoots;
+
+        private Vector3 mousPos => Input.mousePosition;
+        private Image background => GetComponent<Image>();
+
+        
 
         public List<UnitSheetUI> UnitSheets { get; private set; }
 
@@ -39,6 +45,10 @@ namespace TEAM2
             _uIManager.UpdateUnitsList -= UpdateList;
         }
 
+        public void MouseMove()
+        {
+            transform.position = new Vector2(mousPos.x, transform.position.y);
+        }
         void UpdateList(IEnumerable<Unit> units, UnitType unitType)
         {
             IEnumerable<Unit> AllUnitPerSheet() => UnitSheets.Select(i => i.UnitReferenced).Where(i => i.UnitType == unitType);
@@ -48,9 +58,12 @@ namespace TEAM2
                 // Sheet a trop d'élements 	Void TEAM2.UIManager:InvokeUpdateUI ()+0x3d at F:\AganecyGame\jeu-de-stratégie-tactique\Assets\Script\Loïck\UI\UIManager.cs:[43:13-43:100]	C#
 
                 foreach (var el in AllUnitPerSheet().Except(units)
-                    .SelectMany((u => UnitSheets.Where(i => i.UnitReferenced==u)))) 
+                    .SelectMany((u => UnitSheets.Where(i => i.UnitReferenced == u))))
                 {
-                    Destroy(el.gameObject);
+                    if (el)
+                    {
+                        Destroy(el.gameObject);
+                    }
                 }
 
                 // Unit a de nouvelles instances

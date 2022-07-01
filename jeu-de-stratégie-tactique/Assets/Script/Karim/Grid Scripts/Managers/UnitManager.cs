@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
+using Sirenix.OdinInspector.Editor.Validation;
+using Sirenix.Utilities;
 using TEAM2;
 using UnityEngine;
 
@@ -9,7 +11,7 @@ public class UnitManager : MonoBehaviour
 {
 
     [SerializeField] private GameManager _gameManager;
-
+    [SerializeField] private AudioClip _endTurnAudioClip;
     public BattleGrid BattleGrid
     {
         get => _gameManager.BattleGrid;
@@ -64,12 +66,26 @@ public class UnitManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A)) _selectedHero.EndTurn();
     }
 
+    public void EndTurn()
+    {
+        if (!SelectedHero)
+        {
+            PlayerManager.CurrentPlayer.Units.Where(i => i.unitStateMachine.currentState != UnitStateMachine.UnitState.EndTurn).ForEach(i => i.Rest());
+        }
+    }
+
     public void Build()
     {
         SelectedHero.GetComponent<Builder>().BuildStructure(_gameManager);
     }
 
-    private Character GetRandomUnitPerFaction(Faction faction)
+    public void SpawnUnit()
+    {
+        var buildSpawnUnit = SelectedHero.GetComponent<Building>();
+       buildSpawnUnit.SpawnUnit(UIManager.SheetUI.ScriptableUnit.unitsName);
+    }
+
+    private Character GetRandomCharacterPerFaction(Faction faction)
     {
         List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(faction);
         int randomIndex = Random.Range(0, FactionUnit.Count);
@@ -77,17 +93,20 @@ public class UnitManager : MonoBehaviour
         Character newUnit = unitObj.GetComponent<Character>();
         SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
         newUnit.ScrUnit = FactionUnit[randomIndex];
-        if (newUnit.ScrUnit.isBuilder)
-        {
-            Builder builder = unitObj.AddComponent<Builder>();
-            builder.BuilderUnit = newUnit;
-            builder.UnitBuildUI = UIManager.UnitBuildUI;
-            builder.UIManager = UIManager;
-        }
+        CheckifBuilder(newUnit);
         unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
         unitRenderer.sortingOrder = 1;
         unitObj.name = newUnit.ScrUnit.unitsName;
         return newUnit;
+    }
+
+    private void CheckifBuilder(Character newUnit)
+    {
+        if (newUnit.ScrUnit.isBuilder)
+        {
+            Builder builder = newUnit.gameObject.AddComponent<Builder>();
+            builder.BuilderUnit = newUnit;
+        }
     }
 
     internal void UpdateUnitsList()
@@ -97,17 +116,10 @@ public class UnitManager : MonoBehaviour
 
     private bool UpdateAndCheckifTeamisDead(Faction currentFaction)
     {
-        bool isDead = true;
-        List<Character> factionUnits = GetFactionCharacters(currentFaction).ToList();
-        for (int i = 0; i < factionUnits.Count; i++)
-        {
-            if (factionUnits[i].gameObject.activeSelf)
-            {
-                isDead = false;
-                break;
-            }
-        }
-
+        bool isDead = PlayerManager.GetPlayerPerFaction(currentFaction).Units.Count(i =>
+                          i.ScrUnit.unitsName == "MotherBase" &&
+                          i.unitStateMachine.currentState == UnitStateMachine.UnitState.Dead) ==
+                      1;
         if (isDead)
         {
             UIManager.InvokeInformation("Partie terminé ! Faction " + currentFaction + " battue !");
@@ -131,7 +143,7 @@ public class UnitManager : MonoBehaviour
         unit.GetComponent<SpriteRenderer>().color = Color.white;
         SelectedHero = unit;
         SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-        UIManager.InvokeInformation("Tours de: " + SelectedHero.ScrUnit.unitsName);
+        UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName + ".\n Appuyer sur A pour finir son action.");
     }
 
     public void DeselectUnit()
@@ -175,7 +187,7 @@ public class UnitManager : MonoBehaviour
 
         for (int i = 0; i < unitCount; i++)
         {
-            Character randomPrefab = GetRandomUnitPerFaction(currentfaction);
+            Character randomPrefab = GetRandomCharacterPerFaction(currentfaction);
             Vector3Int randomSpawnBattleGridTile = _gameManager.BattleGrid.SpawnUnitPerFaction(currentfaction);
             _gameManager.PlayerManager.SetCharacter(randomPrefab, randomSpawnBattleGridTile);
             chars[i] = randomPrefab;
@@ -233,7 +245,7 @@ public class UnitManager : MonoBehaviour
                 unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
                 unitRenderer.sortingOrder = 1;
                 unitObj.name = newUnit.ScrUnit.unitsName;
-
+                CheckifBuilder(newUnit);
                 return newUnit;
             }
         }
@@ -248,6 +260,7 @@ public class UnitManager : MonoBehaviour
         Character newUnit = unitObj.GetComponent<Character>();
         SpriteRenderer unitRenderer = unitObj.GetComponent<SpriteRenderer>();
         newUnit.ScrUnit = FactionUnit[index];
+        CheckifBuilder(newUnit);
         unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
         unitRenderer.sortingOrder = 1;
         unitObj.name = newUnit.ScrUnit.unitsName;
@@ -256,7 +269,7 @@ public class UnitManager : MonoBehaviour
 
     public Building GetSpecificBuildingPerName(string unitName, Faction UnitFaction)
     {
-        ScriptableUnit FactionUnit = _units.FirstOrDefault(i => i.unitsName == unitName);
+        ScriptableUnit FactionUnit = _units.FirstOrDefault(i => i.unitsName == unitName).GetCloneUnit();
         FactionUnit.faction = UnitFaction;
         GameObject unitObj = new GameObject(unitName, typeof(Building), typeof(SpriteRenderer));
         Building newUnit = unitObj.GetComponent<Building>();
@@ -297,6 +310,8 @@ public class UnitManager : MonoBehaviour
                 SpriteRenderer uniRenderer = units[i].GetComponent<SpriteRenderer>();
                 uniRenderer.color = Color.white;
                 units[i].unitStateMachine.currentState = UnitStateMachine.UnitState.None;
+                units[i].HasBeenUsed = false;
+                units[i].InitCurrentMv();
             }
         }
     }
@@ -310,6 +325,15 @@ public class UnitManager : MonoBehaviour
                 SpriteRenderer uniRenderer = units[i].GetComponent<SpriteRenderer>();
                 uniRenderer.color = Color.white;
                 units[i].unitStateMachine.currentState = UnitStateMachine.UnitState.None;
+                units[i].HasBeenUsed = false;
+                if (units[i].ScriptableBuilding.armorBonus > 0)
+                {
+                    units[i].BuildingMouseEvent();
+                }
+                else if (units[i].ScriptableBuilding.charactersUnlocked != null)
+                {
+                    PlayerManager.CurrentPlayer.UpdateDefaultScriptableUnits(units[i].ScriptableBuilding.charactersUnlocked);
+                }
             }
         }
     }
@@ -336,17 +360,13 @@ public class UnitManager : MonoBehaviour
         #region TMP
 
         UIManager.InvokeInformation("Debut de Game");
-        List<Character> allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero).ToList();
-        List<Building> allDeployedHeroesBuildings = GetFactionBuilding(Faction.Hero).ToList();
-        List<Character> allDeployedEnemiesCharacters = GetFactionCharacters(Faction.Enemy).ToList();
-        List<Building> allDeployedEnemiesBuildings = GetFactionBuilding(Faction.Enemy).ToList();
         bool gameOver = false;
         while (!gameOver)
         {
             PlayerManager.index = 0;
             PlayerManager.CurrentPlayer.AddResource();
-            UpdateCharactersRenderAndSate(allDeployedHeroesCharacters);
-            UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings); 
+            UpdateCharactersRenderAndSate(PlayerManager.CurrentPlayer.Characters);
+            UpdateBuildingsRenderAndSate(PlayerManager.CurrentPlayer.Buildings);
             //SelectedHero = allDeployedHeroesCharacters[0] ;
             UIManager.InvokeUpdateUI();
             //SelectedHero = allDeployedHeroesCharacters[0];
@@ -354,22 +374,21 @@ public class UnitManager : MonoBehaviour
             //UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
-            allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero).ToList();
             gameOver = UpdateAndCheckifTeamisDead(Faction.Hero);
+            _gameManager.SoundManager.PlaySound(_endTurnAudioClip);
 
             PlayerManager.index++;
             PlayerManager.CurrentPlayer.AddResource();
             UIManager.InvokeUpdateUI();
             //SelectedHero = allDeployedEnemiesCharacters[0];
             //SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-            UIManager.InvokeInformation("Tour de : " + SelectedHero.ScrUnit.unitsName);
+            //UIManager.InvokeInformation("Tour de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
-
-            allDeployedEnemiesCharacters = GetFactionCharacters(Faction.Enemy).ToList();
             gameOver = UpdateAndCheckifTeamisDead(Faction.Enemy);
-            UpdateCharactersRenderAndSate(allDeployedEnemiesCharacters);
-            UpdateBuildingsRenderAndSate(allDeployedEnemiesBuildings);
+            UpdateCharactersRenderAndSate(PlayerManager.CurrentPlayer.Characters);
+            UpdateBuildingsRenderAndSate(PlayerManager.CurrentPlayer.Buildings);
+            _gameManager.SoundManager.PlaySound(_endTurnAudioClip);
         }
 
         yield return null;

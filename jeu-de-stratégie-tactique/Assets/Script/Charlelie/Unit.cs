@@ -19,7 +19,7 @@ namespace TEAM2
 
 
         protected GameManager _gameManager;
-        [SerializeField]protected ScriptableUnit _scrUnit;
+        [SerializeField] protected ScriptableUnit _scrUnit;
         private UnitType _unitType;
         private Vector3Int _occupiedTileGridPosition;
 
@@ -72,17 +72,17 @@ namespace TEAM2
 
         public Player Master { get; set; }
 
-        public virtual void Init(GameManager gm,UnitType unitType)
+        public virtual void Init(GameManager gm, UnitType unitType)
         {
             _gameManager = gm;
-           _scrUnit = _scrUnit.GetCloneUnit();
-           OccupiedTileGridPosition = GetCurrentUnitGridlPosition();
-           _unitType = unitType;
+            _scrUnit = _scrUnit.GetCloneUnit();
+            OccupiedTileGridPosition = GetCurrentUnitGridlPosition();
+            _unitType = unitType;
         }
 
         virtual public void DoAction()
         {
-            
+
         }
 
         virtual public void TakeDamage()
@@ -102,15 +102,16 @@ namespace TEAM2
                 if (_gameManager.UnitManager.SelectedHero != this && _scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction && _gameManager.UnitManager.SelectedHero.CellOn.Position == _gameManager.UnitManager.SelectedHero.StartCell.Position)
                     if (_gameManager.UnitManager.SelectedHero.OnDeselect())
                     {
-                         _gameManager.UnitManager.SelectUnit(this);
+                        _gameManager.UnitManager.SelectUnit(this);
                         OnSelect();
                     }
-            } else if (_gameManager.UnitManager.SelectedHero == null && _scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction) 
+            }
+            else if (_gameManager.UnitManager.SelectedHero == null && _scrUnit.faction == PlayerManager.CurrentPlayer.PlayerFaction)
             {
                 _gameManager.UnitManager.SelectUnit(this);
                 _gameManager.UnitManager.SelectedHero.OnSelect();
             }
-            
+
         }
 
         virtual public void OnSelect()
@@ -130,10 +131,18 @@ namespace TEAM2
         {
             //SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
             //unitRenderer.color = Color.gray;
-            OnDeselect();
+            if (_gameManager.UnitManager.SelectedHero == this)
+            {
+                OnDeselect();
+            }
             HasBeenUsed = true;
             GetComponent<SpriteRenderer>().color = Color.gray;
             unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
+        }
+
+        public void AddArmor(int bonusArmor)
+        {
+            ScrUnit.unitStats.armor += bonusArmor;
         }
 
         public int GetTileRange(Vector3 newPos)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Sirenix.OdinInspector;
 using TEAM2;
@@ -54,42 +55,42 @@ public class Character : Unit
     public bool AwaitMoveOrder { get; set; }
     public bool AwaitAttackOrder { get; set; }
 
-    
+
 
     private bool hasMoved = false;
     private bool hasAttack = false;
     private bool hasBuild = false;
     private bool canWalkOnCell = false;
+    private bool isSelected = false;
     private Cell moveCell;
     private Cell nextPosCell;
     private Cell tmpCell;
     private LineRenderer lr;
-    
+
     private List<Unit> nbsUnits = new List<Unit>();
     private List<Cell> ruins = new List<Cell>();
     private List<HistoricData> historic = new List<HistoricData>();
     private Character toAttack;
     private List<Character> setupAttChars = new List<Character>();
     private Character enemyClicked;
+    private int CurrentMV { get; set; }
 
     public override void Init(GameManager gm, UnitType unitType)
     {
         base.Init(gm, unitType);
         Cell.OnClickCell += OnClickCell;
-        UIManager.OnBuild += OnBuild;
     }
 
     private void OnDestroy()
     {
         Cell.OnClickCell -= OnClickCell;
-        UIManager.OnBuild -= OnBuild;
     }
 
     private void Update()
     {
         if (_gameManager.UnitManager.SelectedHero == this)
         {
-            canWalkOnCell = Mv > 0 ? CellOn.CanWalkOnCell() : false;
+            canWalkOnCell = CurrentMV > 0 ? CellOn.CanWalkOnCell() : false;
 
             if (Input.GetMouseButtonDown(1))
             {
@@ -104,11 +105,20 @@ public class Character : Unit
     }
 
 
+    public void InitCurrentMv()
+    {
+        CurrentMV = Mv;
+    }
+
     public override void OnClick()
     {
         base.OnClick();
 
-        if (_gameManager.UnitManager.SelectedHero == this) CellOn.ShowWalkableCells(PlayerManager.MoveRange);
+        if (_gameManager.UnitManager.SelectedHero == this && !isSelected)
+        {
+            isSelected = true;
+            CellOn.ShowWalkableCells(PlayerManager.MoveRange);
+        }
 
         canWalkOnCell = false;
     }
@@ -132,6 +142,7 @@ public class Character : Unit
         Destroy(lr);
         StartCell.HideWalkableCells(PlayerManager.MoveRange);
         GetComponent<SpriteRenderer>().color = Color.white;
+        isSelected = false;
         return true;
     }
 
@@ -199,7 +210,6 @@ public class Character : Unit
         CellOn.Contains = this;
         lr.positionCount++;
         lr.SetPosition(lr.positionCount - 1, CellOn.PosCenter);
-        Debug.Log(facing);
         switch (facing)
         {
             case Facing.NORTH:
@@ -218,8 +228,8 @@ public class Character : Unit
                 transform.rotation = UnityEngine.Quaternion.Euler(0, 0, 90);
                 break;
         }
-        Mv -= CellOn.Tile.mvRequire;
-        Debug.Log(Mv);
+        CurrentMV -= CellOn.Tile.mvRequire;
+        Debug.Log(CurrentMV);
         ChooseAttack(true);
         CheckRuins(cell);
     }
@@ -239,7 +249,7 @@ public class Character : Unit
         if (historic.Count <= 0) return;
         lr.positionCount--;
         HistoricData hs = historic[historic.Count - 1];
-        Mv += CellOn.Tile.mvRequire;
+        CurrentMV += CellOn.Tile.mvRequire;
         transform.position = hs.cell.PosCenter;
         facing = hs.facing;
         CellOn.Contains = null;
@@ -270,6 +280,7 @@ public class Character : Unit
 
     void ChooseAttack(bool isSetup)
     {
+        Debug.Log(ScrUnit.unitUnitClass);
         if (isSetup)
         {
             switch (ScrUnit.unitUnitClass)
@@ -405,11 +416,17 @@ public class Character : Unit
     {
         if (Life <= 0)
         {
+            StartCell.Contains = null;
+            CellOn.Contains = null;
             unitStateMachine.currentState = UnitStateMachine.UnitState.Dead;
-            gameObject.SetActive(false);
             PlayerManager.GetPlayerPerFaction(_scrUnit.faction).Units.Remove(this);
             UIManager.InvokeUpdateUI();
+            gameObject.SetActive(false);
         }
+    }
+    public void OnBuild()
+    {
+        Rest();
     }
 
     void BuilderRuinsAround(Cell cell)
@@ -422,16 +439,12 @@ public class Character : Unit
             }
     }
 
-    void OnBuild()
-    {
-        Rest();
-    }
 
     void OnClickCell(Cell cell)
     {
         if ((cell.Position == CellOn.Position || _gameManager.UnitManager.SelectedHero != this)) return;
         if (canWalkOnCell) MoveTile(cell);
-        else 
+        else
         {
             Unit search = setupAttChars.Find(x => x == cell.Contains);
             if (search)
@@ -442,10 +455,10 @@ public class Character : Unit
             else Debug.Log("Unit not found");
 
             Cell ruin = ruins.Find(x => x == cell);
-            if (ruin != null) UIManager.InvokeBuildUI(ruin);
+            if (ruin != null && Builder && ruin.Contains.ScrUnit.unitsName == "Ruines") UIManager.InvokeBuildUI(ruin,PlayerManager.CurrentPlayer.DefaultScriptable.Where(i => i.faction == Faction.Building).ToList());
         }
         return;
-        
+
     }
 
     void AssassinAttackSetup()
@@ -456,22 +469,23 @@ public class Character : Unit
             switch (facing)
             {
                 case Facing.NORTH:
-                    c = CellOn._Neighbors.top;
+                    c = c._Neighbors.top;
                     break;
 
                 case Facing.SOUTH:
-                    c = CellOn._Neighbors.bottom;
+                    c = c._Neighbors.bottom;
                     break;
 
                 case Facing.EAST:
-                    c = CellOn._Neighbors.right;
+                    c = c._Neighbors.right;
                     break;
 
                 case Facing.WEST:
-                    c = CellOn._Neighbors.left;
+                    c = c._Neighbors.left;
                     break;
             }
-            if (c.Contains != null && (c.Contains as Character) && c.Contains.ScrUnit.faction != ScrUnit.faction) setupAttChars.Add(c.Contains as Character);
+            if (c.Contains != null)
+                if ((c.Contains as Character) && c.Contains.ScrUnit.faction != ScrUnit.faction) { setupAttChars.Add(c.Contains as Character); break; }
         }
         SetupChars();
     }
@@ -510,27 +524,32 @@ public class Character : Unit
     void GardienAttackSetup()
     {
         Cell c = CellOn;
+        Debug.Log("HERE");
         for (int i = 0; i < 3; i++)
         {
             switch (facing)
             {
                 case Facing.NORTH:
-                    c = CellOn._Neighbors.top;
+                    c = c._Neighbors.top;
                     break;
 
                 case Facing.SOUTH:
-                    c = CellOn._Neighbors.bottom;
+                    c = c._Neighbors.bottom;
                     break;
 
                 case Facing.EAST:
-                    c = CellOn._Neighbors.right;
+                    c = c._Neighbors.right;
                     break;
 
                 case Facing.WEST:
-                    c = CellOn._Neighbors.left;
+                    c = c._Neighbors.left;
                     break;
             }
-            if (c.Contains != null && (c.Contains as Character) && c.Contains.ScrUnit.faction != ScrUnit.faction) setupAttChars.Add(c.Contains as Character);
+            if (c.Contains != null)
+            {
+                if ((c.Contains as Character) && c.Contains.ScrUnit.faction != ScrUnit.faction) { setupAttChars.Add(c.Contains as Character); Debug.Log("GOOD"); break; }
+            }
+            
         }
         SetupChars();
     }

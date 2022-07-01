@@ -44,11 +44,11 @@ public enum Faction
 public enum UnitClass
 {
     //Tank,Warrior,Mage,Neutral
-    NEUTRAL,
-    ASSASSIN,
-    GARDIEN,
-    ELEMENTAIRE,
-    TEMPETE,
-    FAUCHEUR
+    NEUTRAL = 0,
+    ASSASSIN = 1,
+    GARDIEN = 2,
+    ELEMENTAIRE = 3,
+    TEMPETE = 4,
+    FAUCHEUR = 5
     
 }

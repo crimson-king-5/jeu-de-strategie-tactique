@@ -21,7 +21,7 @@ public class Cell
 
     float prevRange = 0;
 
-    public Unit Contains { get; set; } 
+    public Unit Contains { get; set; }
 
     public Vector3Int Position { get => position; }
 
@@ -56,7 +56,7 @@ public class Cell
         internal Cell tl { get => a[2]; }
         internal Cell br { get => a[5]; } //?
         internal Cell bl { get => a[0]; } //?
-        internal Cell curr; 
+        internal Cell curr;
         internal Cell[] a;
 
         public Neighbors(Dictionary<Vector3Int, Cell> dict, Vector3Int pos)
@@ -83,7 +83,7 @@ public class Cell
                             a[index] = nCell;
                         }
                         index++;
-                    } 
+                    }
                 }
             }
         }
@@ -134,7 +134,7 @@ public class Cell
             for (int i = 0; i < dict.Count; i++)
             {
                 float dist = Vector3Int.Distance(dict.ElementAt(i).Value.position, curr.position);
-                if (dist <= range && (dict.ElementAt(i).Value.position != curr.position)) 
+                if (dist <= range && (dict.ElementAt(i).Value.position != curr.position))
                 {
                     dict.ElementAt(i).Value._tilemap.SetColor(dict.ElementAt(i).Value.position, dict.ElementAt(i).Value._tile.baseColor);
                     dict.ElementAt(i).Value.currColor = dict.ElementAt(i).Value._tile.baseColor;
@@ -148,6 +148,16 @@ public class Cell
             for (int i = 0; i < a.Length; i++)
             {
                 if (a[i] != null && a[i].Contains != null && a[i].Contains.TryGetComponent<Character>(out Character c) && c.Faction != currUnit.Faction) list.Add(a[i].Contains);
+            }
+            return list;
+        }
+
+        public List<Unit> CheckAroundAlly(Unit currUnit)
+        {
+            List<Unit> list = new List<Unit>();
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[i] != null && a[i].Contains != null && a[i].Contains.TryGetComponent<Character>(out Character c) && c.Faction == currUnit.Faction) list.Add(a[i].Contains);
             }
             return list;
         }
@@ -197,11 +207,13 @@ public class Cell
     {
         nbs = new Neighbors(dict, position);
     }
-   
+
     public void ShowWalkableCells(float range)
     {
         nbs.IllumWithRange(range);
     }
+
+    public List<Unit> CheckAllyNeighbours(Unit currUnit) => nbs.CheckAroundAlly(currUnit);
 
     public List<Unit> CheckNeighbours(Unit currUnit)
     {
@@ -226,7 +238,7 @@ public class Cell
     public bool CanWalkOnCell()
     {
         if (battleGrid.MouseOverCell == null) return false;
-        if ((battleGrid.MouseOverCell == nbs.top && !nbs.top.Contains) | (battleGrid.MouseOverCell == nbs.bottom && !nbs.bottom.Contains) | (battleGrid.MouseOverCell == nbs.left && !nbs.left.Contains) |( battleGrid.MouseOverCell == nbs.right && !nbs.right.Contains))
+        if ((battleGrid.MouseOverCell == nbs.top && !nbs.top.Contains) | (battleGrid.MouseOverCell == nbs.bottom && !nbs.bottom.Contains) | (battleGrid.MouseOverCell == nbs.left && !nbs.left.Contains) | (battleGrid.MouseOverCell == nbs.right && !nbs.right.Contains))
         {
             _tilemap.SetColor(battleGrid.MouseOverCell.position, Color.white);
             return true;
@@ -243,7 +255,8 @@ public class Cell
         {
             _tilemap.SetColor(battleGrid.MouseOverCell.position, Color.white);
             return true;
-        } else return false;
+        }
+        else return false;
 
     }
 
@@ -285,7 +298,7 @@ public class Cell
         //nbs.Illum();
         //nbs.IllumWithRange(GameManager.Instance.range);
         if (Contains != null) Contains.OnClick();
-        OnClickCell.Invoke(this);
+        OnClickCell?.Invoke(this);
         clicked = true;
     }
 
