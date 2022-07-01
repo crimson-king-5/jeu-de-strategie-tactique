@@ -176,7 +176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSpacing: 10.25
   horizontalMargin: 0
-  verticalMargin: 20
+  verticalMargin: 25
   horizontal: 0
   vertical: 1
 --- !u!225 &13212282
@@ -808,9 +808,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerFaction: 0
   _defaultScriptableUnits:
+  - {fileID: 11400000, guid: ff45ea3da578c98488a119fc959e05ee, type: 2}
+  - {fileID: 11400000, guid: 451ad2f1b28eb964d96c13f89c715489, type: 2}
   - {fileID: 11400000, guid: e681db1defe9ba041b76943d4c352e17, type: 2}
-  - {fileID: 11400000, guid: 5045868d353ce634ba6e79a8699cc91b, type: 2}
-  - {fileID: 11400000, guid: 5351d965b9f0479408aa0990529746d1, type: 2}
+  - {fileID: 11400000, guid: 0df031915e39ee1458bcf1ab57334f93, type: 2}
   _unitsList: []
   _costgold: 1
   _gold: 0
@@ -6671,21 +6672,34 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0df031915e39ee1458bcf1ab57334f93, type: 2}
   - {fileID: 11400000, guid: a3679c3d62297b946a052583712bb94b, type: 2}
   - {fileID: 11400000, guid: e9795dab835e1c14eb80ad793bfa7805, type: 2}
+  - {fileID: 11400000, guid: 1ed36c94367165348a29a4d4eda3853e, type: 2}
   - {fileID: 11400000, guid: 55aa6012ed93b124b9e98d1eca418ba9, type: 2}
-  - {fileID: 11400000, guid: 5045868d353ce634ba6e79a8699cc91b, type: 2}
-  - {fileID: 11400000, guid: 5351d965b9f0479408aa0990529746d1, type: 2}
-  - {fileID: 11400000, guid: b5947f9c028a32b4cbbcb4a7f4c21ce2, type: 2}
-  - {fileID: 11400000, guid: 20e82ae5e4961a34884f7074753baa2d, type: 2}
-  - {fileID: 11400000, guid: 4ff7b36db1ab56a4690b36c04b152a83, type: 2}
+  - {fileID: 11400000, guid: 79443b3f01cb17f4db80aeb203c8f1a5, type: 2}
+  - {fileID: 11400000, guid: 63029380671e943498a35f8b3f893005, type: 2}
+  - {fileID: 11400000, guid: 9bcc8117a1f9cd54ea4337d101ad4bed, type: 2}
+  - {fileID: 11400000, guid: 2d49842cd83a5bc40864b77ab8624cf9, type: 2}
+  - {fileID: 11400000, guid: 490006c8e67dbda499737b37c4b48bd3, type: 2}
+  - {fileID: 11400000, guid: ff45ea3da578c98488a119fc959e05ee, type: 2}
+  - {fileID: 11400000, guid: 6c881fd225cfa9a47bd03861d84a9e6a, type: 2}
+  - {fileID: 11400000, guid: 1a23c60dd5be9054aba53d0b312ced33, type: 2}
+  - {fileID: 11400000, guid: 615d98d5f469fe940b47b3d86063799b, type: 2}
+  - {fileID: 11400000, guid: 762f542013eab234da0bf0aa7edbcc3d, type: 2}
+  - {fileID: 11400000, guid: 30641e23ddb47554b992c9113fc6c610, type: 2}
   _selectedHero: {fileID: 0}
   heroesUnits:
-  - {fileID: 11400000, guid: 5045868d353ce634ba6e79a8699cc91b, type: 2}
-  - {fileID: 11400000, guid: 5351d965b9f0479408aa0990529746d1, type: 2}
-  - {fileID: 11400000, guid: b5947f9c028a32b4cbbcb4a7f4c21ce2, type: 2}
-  - {fileID: 11400000, guid: 20e82ae5e4961a34884f7074753baa2d, type: 2}
-  - {fileID: 11400000, guid: 4ff7b36db1ab56a4690b36c04b152a83, type: 2}
+  - {fileID: 11400000, guid: ff45ea3da578c98488a119fc959e05ee, type: 2}
+  - {fileID: 11400000, guid: 6c881fd225cfa9a47bd03861d84a9e6a, type: 2}
+  - {fileID: 11400000, guid: 1a23c60dd5be9054aba53d0b312ced33, type: 2}
+  - {fileID: 11400000, guid: 615d98d5f469fe940b47b3d86063799b, type: 2}
+  - {fileID: 11400000, guid: 762f542013eab234da0bf0aa7edbcc3d, type: 2}
+  - {fileID: 11400000, guid: 30641e23ddb47554b992c9113fc6c610, type: 2}
   enemyUnits:
   - {fileID: 11400000, guid: 55aa6012ed93b124b9e98d1eca418ba9, type: 2}
+  - {fileID: 11400000, guid: 79443b3f01cb17f4db80aeb203c8f1a5, type: 2}
+  - {fileID: 11400000, guid: 63029380671e943498a35f8b3f893005, type: 2}
+  - {fileID: 11400000, guid: 9bcc8117a1f9cd54ea4337d101ad4bed, type: 2}
+  - {fileID: 11400000, guid: 2d49842cd83a5bc40864b77ab8624cf9, type: 2}
+  - {fileID: 11400000, guid: 490006c8e67dbda499737b37c4b48bd3, type: 2}
   buildingUnits:
   - {fileID: 11400000, guid: e681db1defe9ba041b76943d4c352e17, type: 2}
   - {fileID: 11400000, guid: 451ad2f1b28eb964d96c13f89c715489, type: 2}
@@ -6693,6 +6707,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0df031915e39ee1458bcf1ab57334f93, type: 2}
   - {fileID: 11400000, guid: a3679c3d62297b946a052583712bb94b, type: 2}
   - {fileID: 11400000, guid: e9795dab835e1c14eb80ad793bfa7805, type: 2}
+  - {fileID: 11400000, guid: 1ed36c94367165348a29a4d4eda3853e, type: 2}
 --- !u!114 &1197974414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6799,6 +6814,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e681db1defe9ba041b76943d4c352e17, type: 2}
   - {fileID: 11400000, guid: 451ad2f1b28eb964d96c13f89c715489, type: 2}
   - {fileID: 11400000, guid: 55aa6012ed93b124b9e98d1eca418ba9, type: 2}
+  - {fileID: 11400000, guid: 0df031915e39ee1458bcf1ab57334f93, type: 2}
   _unitsList: []
   _costgold: 1
   _gold: 0
@@ -6843,7 +6859,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 310.27, y: -0.23176575}
+  m_AnchoredPosition: {x: 310.27, y: -0.23175049}
   m_SizeDelta: {x: -620.5319, y: -0.0038}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1232277511

@@ -30,11 +30,11 @@ namespace TEAM2
         {
             get
             {
-                if (_sheetUI.transform.childCount == 1)
+                if (_sheetUI.transform.childCount <= 1)
                 {
                     return _sheetUI.transform.GetChild(0).GetComponent<UnitSheetUI>();
                 }
-                return _sheetUI.transform.GetChild(0).GetComponent<UnitSheetUI>();
+                return _sheetUI.transform.GetChild(1).GetComponent<UnitSheetUI>();
             }
         }
 

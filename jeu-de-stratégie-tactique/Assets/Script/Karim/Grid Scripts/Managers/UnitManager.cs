@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
-using Sirenix.OdinInspector.Editor.Validation;
 using Sirenix.Utilities;
 using TEAM2;
 using UnityEngine;

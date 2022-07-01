@@ -31,7 +31,14 @@ MonoBehaviour:
   backAudioClip: {fileID: 0}
   attackAudioClip: {fileID: 0}
   lineRendererMat: {fileID: 0}
-  charactersUnlocked: []
+  charactersUnlocked:
+  - {fileID: 11400000, guid: 6c881fd225cfa9a47bd03861d84a9e6a, type: 2}
+  - {fileID: 11400000, guid: 79443b3f01cb17f4db80aeb203c8f1a5, type: 2}
+  - {fileID: 11400000, guid: 490006c8e67dbda499737b37c4b48bd3, type: 2}
+  - {fileID: 11400000, guid: 30641e23ddb47554b992c9113fc6c610, type: 2}
+  - {fileID: 11400000, guid: 9bcc8117a1f9cd54ea4337d101ad4bed, type: 2}
+  - {fileID: 11400000, guid: 615d98d5f469fe940b47b3d86063799b, type: 2}
+  - {fileID: 11400000, guid: 1ed36c94367165348a29a4d4eda3853e, type: 2}
   uiSprite: {fileID: 21300000, guid: 21f4fb11a2488094080dd30d28793b93, type: 3}
   gainResource: 1
   armorBonus: 0
