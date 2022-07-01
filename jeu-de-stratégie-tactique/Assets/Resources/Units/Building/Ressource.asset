@@ -16,7 +16,7 @@ MonoBehaviour:
   unitUnitClass: 0
   unitsName: Ressource
   isBuilder: 0
-  renderUnit: {fileID: 21300000, guid: 7729977c1994f4d4bb99e20ffa0b5b38, type: 3}
+  renderUnit: {fileID: 21300000, guid: 5a83da0f987b98043a2cd6cc2a104968, type: 3}
   descritpion: 
   unitCost: 0
   classBonus: 0
@@ -28,6 +28,8 @@ MonoBehaviour:
     mv: 0
     range: 0
   appearAudioClip: {fileID: 0}
+  backAudioClip: {fileID: 0}
+  attackAudioClip: {fileID: 0}
   lineRendererMat: {fileID: 0}
   charactersUnlocked: []
   gainResource: 1
