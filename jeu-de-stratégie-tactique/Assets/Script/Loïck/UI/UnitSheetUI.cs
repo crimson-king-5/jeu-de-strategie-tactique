@@ -21,6 +21,11 @@ namespace TEAM2
             _scriptableUnit = unit;
             _cost.text = "Cost : " + unit.unitCost;
             _image.sprite = unit.renderUnit;
+            if (unit.faction == Faction.Building)
+            {
+                var h = (ScriptableBuilding)unit;
+                _image.sprite = h.uiSprite;
+            }
             _description.text = unit.descritpion;
             return this;
         }
