@@ -8,6 +8,8 @@ namespace TEAM2
     public class ScriptableBuilding : ScriptableUnit
     {
         public List<ScriptableUnit> charactersUnlocked = new List<ScriptableUnit>();
+        public Sprite uiSprite;
+
         public int gainResource = 1;
         public int armorBonus = 0;
         public bool canAddUnits;
