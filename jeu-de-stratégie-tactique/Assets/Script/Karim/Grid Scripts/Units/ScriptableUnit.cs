@@ -17,6 +17,7 @@ public class ScriptableUnit : ScriptableObject
     [SerializeField] public UnitStats unitStats;
     public AudioClip appearAudioClip;
     public AudioClip backAudioClip;
+    public AudioClip attackAudioClip;
     public Material lineRendererMat;
 
     public ScriptableUnit GetCloneUnit()

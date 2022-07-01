@@ -147,6 +147,7 @@ public class Character : Unit
 
     public void Attack(Character targetCharacter, int baseDamage)
     {
+        _gameManager.SoundManager.PlaySound(ScrUnit.attackAudioClip);
         float bonus = 1;
         /*
         switch (targetCharacter.UnitClass)
@@ -244,6 +245,7 @@ public class Character : Unit
 
     void RewindHisto()
     {
+        _gameManager.SoundManager.PlaySound(ScrUnit.backAudioClip);
         ResetLists();
         if (historic.Count <= 0) return;
         lr.positionCount--;
