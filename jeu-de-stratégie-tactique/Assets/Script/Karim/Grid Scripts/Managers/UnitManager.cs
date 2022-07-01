@@ -82,7 +82,7 @@ public class UnitManager : MonoBehaviour
     public void SpawnUnit()
     {
         var buildSpawnUnit = SelectedHero.GetComponent<Building>();
-       buildSpawnUnit.SpawnUnit(UIManager.SheetUI.ScriptableUnit.unitsName);
+       buildSpawnUnit.SpawnUnit(UIManager.UnitSheetUI.ScriptableUnit.unitsName);
        UIManager.InvokeUpdateUI();
     }
 

@@ -12,6 +12,8 @@ namespace TEAM2
         [SerializeField] [Range(1,11)] private int lineMax = 11;
         private List<string> _allInformation = new List<string>();
 
+        private Vector2 mousPos => Input.mousePosition;
+
         void Start()
         {
             _uIManager.InformationUpdate += AddInformation;
@@ -19,6 +21,11 @@ namespace TEAM2
         void OnDestroy()
         {
             _uIManager.InformationUpdate -= AddInformation;
+        }
+
+        public void MouseMove()
+        {
+            _informationTurnText.gameObject.transform.position = new Vector3(transform.position.x, mousPos.y );
         }
 
         void AddInformation(string information)
