@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f764359c572c7e34eba81189f08f2126, type: 3}
   m_Name: Ruine
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 7482667652216324306, guid: 7ac2d5b1814e54f40963e43b9d0f583e, type: 3}
-  m_Color: {r: 0.87121296, g: 0, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: b9f0955cdfab7034daed452c959cb8bc, type: 3}
+  m_Color: {r: 0.990566, g: 0.990566, b: 0.990566, a: 1}
   m_Transform:
     e00: 1
     e01: 0
@@ -36,4 +36,4 @@ MonoBehaviour:
   m_ColliderType: 1
   currentTileType: 3
   mvRequire: 0
-  baseColor: {r: 0.87121296, g: 0, b: 1, a: 1}
+  baseColor: {r: 0.990566, g: 0.990566, b: 0.990566, a: 1}
