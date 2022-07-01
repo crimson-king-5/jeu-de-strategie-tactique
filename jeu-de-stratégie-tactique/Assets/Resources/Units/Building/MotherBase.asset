@@ -21,8 +21,8 @@ MonoBehaviour:
   unitCost: 0
   classBonus: 0
   unitStats:
-    life: 0
-    lifemax: 0
+    life: 10
+    lifemax: 10
     armor: 0
     atk: 0
     mv: 0
@@ -32,6 +32,7 @@ MonoBehaviour:
   attackAudioClip: {fileID: 0}
   lineRendererMat: {fileID: 0}
   charactersUnlocked: []
+  uiSprite: {fileID: 21300000, guid: 7d23b0e636534954dbdd655e694a580d, type: 3}
   gainResource: 1
   armorBonus: 0
   canAddUnits: 1
