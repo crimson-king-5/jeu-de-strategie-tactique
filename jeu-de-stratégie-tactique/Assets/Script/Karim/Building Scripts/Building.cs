@@ -58,19 +58,9 @@ public class Building : Unit
         if (!PlayerManager.CheckifUnitWasHere(gridPos) &&
             PlayerManager.CurrentPlayer.Gold >= PlayerManager.CurrentPlayer.CostGold)
         {
-            bool isMotherBase = false;
-            bool isCasern = false;
-            if (ScrUnit.unitsName == "MotherBase")
-            {
-                
-                isMotherBase = mouseCell.Tile.currentTileType == BattleGridTile.TileType.Spawn;
-            }
-            else
-            {
-                isMotherBase = false;
-                isCasern = CellOn._Neighbors.a.FirstOrDefault(i => i == mouseCell).Contains == null;
-            }
-            if (isMotherBase || isCasern)
+            bool isCasern = CellOn._Neighbors.a.FirstOrDefault(i => i == mouseCell).Contains == null;
+            
+            if (isCasern)
             {
                 Character character = unitManager.GetSpecificCharacterPerName(unitname, Faction);
                 PlayerManager.CurrentPlayer.Gold -= PlayerManager.CurrentPlayer.CostGold;
