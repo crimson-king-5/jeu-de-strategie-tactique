@@ -129,6 +129,7 @@ namespace TEAM2
 
         public void Rest()
         {
+            _gameManager.SoundManager.PlaySound(_gameManager.SoundManager.ValidAction);
             //SpriteRenderer unitRenderer = GetComponent<SpriteRenderer>();
             //unitRenderer.color = Color.gray;
             if (_gameManager.UnitManager.SelectedHero == this)

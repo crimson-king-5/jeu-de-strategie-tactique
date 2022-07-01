@@ -5501,6 +5501,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _musicSource: {fileID: 900454847}
   _effectsSource: {fileID: 213113477}
+  _validAction: {fileID: 8300000, guid: fd25722f4ccb59a46a19fc8b28c0e2e1, type: 3}
 --- !u!1 &1215691546
 GameObject:
   m_ObjectHideFlags: 0
