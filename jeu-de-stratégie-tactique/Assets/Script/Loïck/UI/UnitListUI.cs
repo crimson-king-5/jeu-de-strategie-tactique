@@ -11,26 +11,11 @@ namespace TEAM2
 {
     public class UnitListUI : MonoBehaviour
     {
-        #region INTERNAL TYPES
-        [System.Serializable]
-        struct UnitTypeToRoot
-        {
-            public UnitType UnitType;
-            public Transform Root;
-        }
-        #endregion
-
-        [SerializeField] private GameObject _parentCharacterGameObject;
-        [SerializeField] private GameObject _parentBuildingsGameObject;
+        [SerializeField] private GameObject _parentUnitsGameObject;
         [SerializeField] private GameObject _prefabSheet;
         [SerializeField] private UIManager _uIManager;
-
-        [SerializeField] private UnitTypeToRoot[] _unitTypeRoots;
-
         private Vector3 mousPos => Input.mousePosition;
         private Image background => GetComponent<Image>();
-
-        
 
         public List<UnitSheetUI> UnitSheets { get; private set; }
 
@@ -49,9 +34,9 @@ namespace TEAM2
         {
             transform.position = new Vector2(mousPos.x, transform.position.y);
         }
-        void UpdateList(IEnumerable<Unit> units, UnitType unitType)
+        void UpdateList(IEnumerable<Unit> units)
         {
-            IEnumerable<Unit> AllUnitPerSheet() => UnitSheets.Select(i => i.UnitReferenced).Where(i => i.UnitType == unitType);
+            IEnumerable<Unit> AllUnitPerSheet() => UnitSheets.Select(i => i.UnitReferenced);
 
             if (units.Intersect(AllUnitPerSheet()).Count() != units.Count())      // Difference between the two collections
             {
@@ -69,7 +54,7 @@ namespace TEAM2
                 // Unit a de nouvelles instances
                 foreach (var el in units.Except(AllUnitPerSheet())) // Sheet a trop d'élements
                 {
-                    UnitSheetUI unitSheetUi = Instantiate(_prefabSheet, _unitTypeRoots.FirstOrDefault(i => i.UnitType == unitType).Root)
+                    UnitSheetUI unitSheetUi = Instantiate(_prefabSheet, _parentUnitsGameObject.transform)
                         .GetComponent<UnitSheetUI>()
                         .Init(el);
                     UnitSheets.Add(unitSheetUi);
