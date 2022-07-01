@@ -30,7 +30,7 @@ MonoBehaviour:
   appearAudioClip: {fileID: 0}
   lineRendererMat: {fileID: 0}
   charactersUnlocked:
-  - {fileID: 11400000}
-  gainResource: 1
-  armorBonus: 0
+  - {fileID: 11400000, guid: 0df031915e39ee1458bcf1ab57334f93, type: 2}
+  gainResource: 0
+  armorBonus: 1
   canAddUnits: 0

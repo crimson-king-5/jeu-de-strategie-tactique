@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Sirenix.OdinInspector;
 using TEAM2;
@@ -415,10 +416,12 @@ public class Character : Unit
     {
         if (Life <= 0)
         {
+            StartCell.Contains = null;
+            CellOn.Contains = null;
             unitStateMachine.currentState = UnitStateMachine.UnitState.Dead;
-            gameObject.SetActive(false);
             PlayerManager.GetPlayerPerFaction(_scrUnit.faction).Units.Remove(this);
             UIManager.InvokeUpdateUI();
+            gameObject.SetActive(false);
         }
     }
     public void OnBuild()
@@ -452,7 +455,7 @@ public class Character : Unit
             else Debug.Log("Unit not found");
 
             Cell ruin = ruins.Find(x => x == cell);
-            if (ruin != null && Builder) UIManager.InvokeBuildUI(ruin);
+            if (ruin != null && Builder && ruin.Contains.ScrUnit.unitsName == "Ruines") UIManager.InvokeBuildUI(ruin,PlayerManager.CurrentPlayer.DefaultScriptable.Where(i => i.faction == Faction.Building).ToList());
         }
         return;
 

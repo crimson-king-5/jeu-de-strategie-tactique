@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using Sirenix.Utilities;
+using UnityEngine;
 
 public class ScrollContent : MonoBehaviour
 {
@@ -91,7 +93,21 @@ public class ScrollContent : MonoBehaviour
     [SerializeField]
     private bool horizontal, vertical;
 
+    private CanvasGroup canvasGroup => GetComponent<CanvasGroup>();
+
     #endregion
+
+   public void Hide()
+    {
+        canvasGroup.alpha = 0f; //this makes everything transparent
+        canvasGroup.blocksRaycasts = false; //this prevents the UI element to receive input events
+    }
+
+   public void Show()
+   {
+       canvasGroup.alpha = 1;
+       canvasGroup.blocksRaycasts = true;
+   }
 
     private void Start()
     {

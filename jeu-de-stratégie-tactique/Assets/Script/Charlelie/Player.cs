@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Sirenix.Utilities;
 using TMPro;
 using UnityEngine;
 
@@ -19,18 +20,21 @@ namespace TEAM2
 
         public List<Building> Buildings
         {
-            get => _buildings ;
+            get => _unitsList.Where(i => i.UnitType == UnitType.Building).Cast<Building>().ToList();
         }
 
         public List<Character> Characters
         {
-            get => _characters ;
+            get => _unitsList.Where(i => i.UnitType == UnitType.Character).Cast<Character>().ToList() ;
         }
 
         public BuildingManager BuildingManager
         {
             get => _gameManager.BuildingManager;
         }
+
+        public  List<ScriptableUnit> DefaultScriptable => _defaultScriptableUnits;
+
 
         public bool Ready
         {
@@ -48,27 +52,13 @@ namespace TEAM2
             set => _costgold = value;
         }
 
-        public List<ScriptableUnit> CurrentUnlockedUnits
-        {
-            get
-            {
-                List<ScriptableUnit> Units = new List<ScriptableUnit>();
-                Units.AddRange(_defaultScriptableUnits);
-                Units.AddRange(_unlockedUnits);
-                return Units;
-            }
-        }
-
 
         public Faction PlayerFaction;
 
         private List<Order> orderList = new List<Order>();
 
         private GameManager _gameManager;
-        private List<Character> _characters = new List<Character>();
-        private List<Building> _buildings = new List<Building>();
 
-        private List<ScriptableUnit> _unlockedUnits => _buildings.Where(i => !i.HasBeenUsed).SelectMany(i => i.UnlockedUnits).ToList();
         [SerializeField] private List<ScriptableUnit> _defaultScriptableUnits;
         [SerializeField] private List<Unit> _unitsList = new List<Unit>();
         [SerializeField] private int _costgold = 1;
@@ -92,7 +82,6 @@ namespace TEAM2
                 if (BuildingManager.Buildings[i].Faction == PlayerFaction)
                 {
                     _unitsList.Add(BuildingManager.Buildings[i]);
-                    _buildings.Add(BuildingManager.Buildings[i]);
                 }
             }
         }
@@ -123,9 +112,14 @@ namespace TEAM2
             }
         }
 
+        public void UpdateDefaultScriptableUnits(List<ScriptableUnit> scriptableUnits)
+        {
+            _defaultScriptableUnits.AddRange( scriptableUnits.Except(_defaultScriptableUnits).ToList());
+        }
+
         public List<Building> SpecificBuildingsListPerUnitNames(string buildingName)
         {
-             return _buildings.Where(i => i.ScrUnit.unitsName == buildingName).ToList();
+             return _unitsList.Where(i => i.ScrUnit.unitsName == buildingName && i.UnitType == UnitType.Building).Cast<Building>().ToList();
         }
 
         public void SpawnCharacter()
@@ -134,7 +128,6 @@ namespace TEAM2
             for (int i = _unitsList.Count; i < list.Length; i++)
             {
                 _unitsList.Add(list[i]);
-                _characters.Add(list[i]);
                 list[i].Master = this;
             }
         }
@@ -185,8 +178,8 @@ namespace TEAM2
         }
 
         public void ApplyBuildingArmor(Building building)
-        {
-            building.CellOn.CheckNeighbours(building).Where(i => i.UnitType == UnitType.Character && i.Faction == PlayerFaction).Select(i => i.ScrUnit.unitStats.armor += building.ScriptableBuilding.armorBonus );
+        { 
+            building.CellOn.CheckAllyNeighbours(building).Where(i => i.UnitType == UnitType.Character).ForEach( i => i.AddArmor(building.ScriptableBuilding.armorBonus));
         }
     }
 }

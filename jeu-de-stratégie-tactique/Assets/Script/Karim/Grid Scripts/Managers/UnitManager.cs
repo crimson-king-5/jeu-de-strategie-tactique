@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
+using Sirenix.OdinInspector.Editor.Validation;
 using Sirenix.Utilities;
 using TEAM2;
 using UnityEngine;
@@ -10,7 +11,7 @@ public class UnitManager : MonoBehaviour
 {
 
     [SerializeField] private GameManager _gameManager;
-
+    [SerializeField] private AudioClip _endTurnAudioClip;
     public BattleGrid BattleGrid
     {
         get => _gameManager.BattleGrid;
@@ -78,6 +79,12 @@ public class UnitManager : MonoBehaviour
         SelectedHero.GetComponent<Builder>().BuildStructure(_gameManager);
     }
 
+    public void SpawnUnit()
+    {
+        var buildSpawnUnit = SelectedHero.GetComponent<Building>();
+       buildSpawnUnit.SpawnUnit(UIManager.SheetUI.ScriptableUnit.unitsName);
+    }
+
     private Character GetRandomCharacterPerFaction(Faction faction)
     {
         List<ScriptableUnit> FactionUnit = GetFactionScriptableUnits(faction);
@@ -99,8 +106,6 @@ public class UnitManager : MonoBehaviour
         {
             Builder builder = newUnit.gameObject.AddComponent<Builder>();
             builder.BuilderUnit = newUnit;
-            builder.UnitBuildUI = UIManager.UnitBuildUI;
-            builder.UIManager = UIManager;
         }
     }
 
@@ -138,7 +143,7 @@ public class UnitManager : MonoBehaviour
         unit.GetComponent<SpriteRenderer>().color = Color.white;
         SelectedHero = unit;
         SelectedHero.GetComponent<SpriteRenderer>().color = Color.blue;
-        UIManager.InvokeInformation("Tours de: " + SelectedHero.ScrUnit.unitsName);
+        UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName + ".\n Appuyer sur A pour finir son action.");
     }
 
     public void DeselectUnit()
@@ -240,7 +245,7 @@ public class UnitManager : MonoBehaviour
                 unitRenderer.sprite = newUnit.ScrUnit.renderUnit;
                 unitRenderer.sortingOrder = 1;
                 unitObj.name = newUnit.ScrUnit.unitsName;
-
+                CheckifBuilder(newUnit);
                 return newUnit;
             }
         }
@@ -321,6 +326,14 @@ public class UnitManager : MonoBehaviour
                 uniRenderer.color = Color.white;
                 units[i].unitStateMachine.currentState = UnitStateMachine.UnitState.None;
                 units[i].HasBeenUsed = false;
+                if (units[i].ScriptableBuilding.armorBonus > 0)
+                {
+                    units[i].BuildingMouseEvent();
+                }
+                else if (units[i].ScriptableBuilding.charactersUnlocked != null)
+                {
+                    PlayerManager.CurrentPlayer.UpdateDefaultScriptableUnits(units[i].ScriptableBuilding.charactersUnlocked);
+                }
             }
         }
     }
@@ -347,17 +360,13 @@ public class UnitManager : MonoBehaviour
         #region TMP
 
         UIManager.InvokeInformation("Debut de Game");
-        List<Character> allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero).ToList();
-        List<Building> allDeployedHeroesBuildings = GetFactionBuilding(Faction.Hero).ToList();
-        List<Character> allDeployedEnemiesCharacters = GetFactionCharacters(Faction.Enemy).ToList();
-        List<Building> allDeployedEnemiesBuildings = GetFactionBuilding(Faction.Enemy).ToList();
         bool gameOver = false;
         while (!gameOver)
         {
             PlayerManager.index = 0;
             PlayerManager.CurrentPlayer.AddResource();
-            UpdateCharactersRenderAndSate(allDeployedHeroesCharacters);
-            UpdateBuildingsRenderAndSate(allDeployedHeroesBuildings);
+            UpdateCharactersRenderAndSate(PlayerManager.CurrentPlayer.Characters);
+            UpdateBuildingsRenderAndSate(PlayerManager.CurrentPlayer.Buildings);
             //SelectedHero = allDeployedHeroesCharacters[0] ;
             UIManager.InvokeUpdateUI();
             //SelectedHero = allDeployedHeroesCharacters[0];
@@ -365,8 +374,8 @@ public class UnitManager : MonoBehaviour
             //UIManager.InvokeInformation("Tours de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
-            allDeployedHeroesCharacters = GetFactionCharacters(Faction.Hero).ToList();
             gameOver = UpdateAndCheckifTeamisDead(Faction.Hero);
+            _gameManager.SoundManager.PlaySound(_endTurnAudioClip);
 
             PlayerManager.index++;
             PlayerManager.CurrentPlayer.AddResource();
@@ -376,11 +385,10 @@ public class UnitManager : MonoBehaviour
             //UIManager.InvokeInformation("Tour de : " + SelectedHero.ScrUnit.unitsName);
 
             yield return new WaitUntil(() => PlayerManager.CurrentPlayer.CheckifAllUnitsHasEndTurn());
-
-            allDeployedEnemiesCharacters = GetFactionCharacters(Faction.Enemy).ToList();
             gameOver = UpdateAndCheckifTeamisDead(Faction.Enemy);
-            UpdateCharactersRenderAndSate(allDeployedEnemiesCharacters);
-            UpdateBuildingsRenderAndSate(allDeployedEnemiesBuildings);
+            UpdateCharactersRenderAndSate(PlayerManager.CurrentPlayer.Characters);
+            UpdateBuildingsRenderAndSate(PlayerManager.CurrentPlayer.Buildings);
+            _gameManager.SoundManager.PlaySound(_endTurnAudioClip);
         }
 
         yield return null;
