@@ -141,6 +141,11 @@ namespace TEAM2
             unitStateMachine.currentState = UnitStateMachine.UnitState.EndTurn;
         }
 
+        public void AddArmor(int bonusArmor)
+        {
+            ScrUnit.unitStats.armor += bonusArmor;
+        }
+
         public int GetTileRange(Vector3 newPos)
         {
             Vector3Int GridposDestination = GetUnitDestinationGridPosition(newPos);

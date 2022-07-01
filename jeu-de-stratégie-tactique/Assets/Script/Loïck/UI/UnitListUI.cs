@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.UI;
 
 namespace TEAM2
 {
@@ -26,6 +27,11 @@ namespace TEAM2
 
         [SerializeField] private UnitTypeToRoot[] _unitTypeRoots;
 
+        private Vector3 mousPos => Input.mousePosition;
+        private Image background => GetComponent<Image>();
+
+        
+
         public List<UnitSheetUI> UnitSheets { get; private set; }
 
         void Awake()
@@ -39,6 +45,10 @@ namespace TEAM2
             _uIManager.UpdateUnitsList -= UpdateList;
         }
 
+        public void MouseMove()
+        {
+            transform.position = new Vector2(mousPos.x, transform.position.y);
+        }
         void UpdateList(IEnumerable<Unit> units, UnitType unitType)
         {
             IEnumerable<Unit> AllUnitPerSheet() => UnitSheets.Select(i => i.UnitReferenced).Where(i => i.UnitType == unitType);

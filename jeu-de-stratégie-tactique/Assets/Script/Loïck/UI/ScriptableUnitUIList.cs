@@ -32,7 +32,7 @@ namespace TEAM2
             {
                 foreach (Transform child in _parentTransform)
                 {
-                    DestroyImmediate(child.gameObject);
+                    Destroy(child.gameObject);
                 }
             }
 

@@ -16,7 +16,7 @@ MonoBehaviour:
   unitUnitClass: 0
   unitsName: Caserne
   isBuilder: 0
-  renderUnit: {fileID: 21300000, guid: c4a430066af0eac4ea296a1621fe844d, type: 3}
+  renderUnit: {fileID: 21300000, guid: 19a05a5349461f24d90db4dd69ed92d1, type: 3}
   descritpion: 
   unitCost: 0
   classBonus: 0

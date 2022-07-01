@@ -31,5 +31,5 @@ MonoBehaviour:
   lineRendererMat: {fileID: 0}
   charactersUnlocked: []
   gainResource: 1
-  armorBonus: 0
+  armorBonus: 1
   canAddUnits: 0
