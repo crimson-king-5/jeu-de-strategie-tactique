@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 240227d1eb5ce9244afb28a5866784ef, type: 3}
-  m_Name: Hero 2
+  m_Name: Mage Faucheur enemy 1
   m_EditorClassIdentifier: 
-  faction: 0
-  unitUnitClass: 2
-  unitsName: Gardien
+  faction: 1
+  unitUnitClass: 5
+  unitsName: Faucheur
   isBuilder: 1
-  renderUnit: {fileID: 21300000, guid: 0e5e13f57e742394580733d686549ff3, type: 3}
+  renderUnit: {fileID: 21300000, guid: 4f8ca7323571bd7428544f5d54f98d60, type: 3}
   descritpion: 
-  unitCost: 0
+  unitCost: 2
   classBonus: 1.5
   unitStats:
-    life: 5
-    lifemax: 5
+    life: 4
+    lifemax: 4
     armor: 0
-    atk: 2
-    mv: 3
-    range: 2
+    atk: 1
+    mv: 4
+    range: 3
   appearAudioClip: {fileID: 8300000, guid: 8bdcf1f7a239dce4294d59a4096141a5, type: 3}
   backAudioClip: {fileID: 8300000, guid: 860978ea32a073d46a33521b46f5bd9b, type: 3}
   attackAudioClip: {fileID: 8300000, guid: 5029c4553d6483b4888609f0f5d61b8d, type: 3}
