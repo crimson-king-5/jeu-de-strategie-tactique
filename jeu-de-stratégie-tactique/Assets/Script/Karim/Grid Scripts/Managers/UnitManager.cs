@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
-using Sirenix.OdinInspector.Editor.Validation;
 using Sirenix.Utilities;
 using TEAM2;
 using UnityEngine;
@@ -82,7 +81,8 @@ public class UnitManager : MonoBehaviour
     public void SpawnUnit()
     {
         var buildSpawnUnit = SelectedHero.GetComponent<Building>();
-       buildSpawnUnit.SpawnUnit(UIManager.SheetUI.ScriptableUnit.unitsName);
+       buildSpawnUnit.SpawnUnit(UIManager.UnitSheetUI.ScriptableUnit.unitsName);
+       UIManager.InvokeUpdateUI();
     }
 
     private Character GetRandomCharacterPerFaction(Faction faction)
@@ -326,11 +326,11 @@ public class UnitManager : MonoBehaviour
                 uniRenderer.color = Color.white;
                 units[i].unitStateMachine.currentState = UnitStateMachine.UnitState.None;
                 units[i].HasBeenUsed = false;
-                if (units[i].ScriptableBuilding.armorBonus > 0)
+                if (units[i].ScriptableBuilding.armorBonus > 0 && units[i].ScriptableBuilding.charactersUnlocked.Count < 0)
                 {
                     units[i].BuildingMouseEvent();
                 }
-                else if (units[i].ScriptableBuilding.charactersUnlocked != null)
+                else if (units[i].ScriptableBuilding.charactersUnlocked.Count > 0 )
                 {
                     PlayerManager.CurrentPlayer.UpdateDefaultScriptableUnits(units[i].ScriptableBuilding.charactersUnlocked);
                 }

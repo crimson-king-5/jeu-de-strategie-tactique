@@ -18,11 +18,11 @@ MonoBehaviour:
   isBuilder: 0
   renderUnit: {fileID: 21300000, guid: 47c0eb4f615dd6e4293e43ef5826ebd1, type: 3}
   descritpion: 
-  unitCost: 0
+  unitCost: 3
   classBonus: 0
   unitStats:
-    life: 10
-    lifemax: 0
+    life: 5
+    lifemax: 5
     armor: 0
     atk: 0
     mv: 0
@@ -32,7 +32,8 @@ MonoBehaviour:
   attackAudioClip: {fileID: 0}
   lineRendererMat: {fileID: 0}
   charactersUnlocked:
-  - {fileID: 11400000, guid: 0df031915e39ee1458bcf1ab57334f93, type: 2}
+  - {fileID: 11400000, guid: e9795dab835e1c14eb80ad793bfa7805, type: 2}
+  uiSprite: {fileID: 21300000, guid: f4341284127b23547b8b9737e01c1115, type: 3}
   gainResource: 0
   armorBonus: 1
   canAddUnits: 0

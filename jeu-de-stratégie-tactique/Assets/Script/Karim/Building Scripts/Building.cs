@@ -8,8 +8,6 @@ using UnityEngine.Tilemaps;
 
 public class Building : Unit
 {
-
-
     public ScriptableBuilding ScriptableBuilding => (ScriptableBuilding)ScrUnit;
     public List<ScriptableUnit> UnlockedUnits => ScriptableBuilding.charactersUnlocked;
     public UIManager UIManager => unitManager.UIManager;
@@ -19,7 +17,7 @@ public class Building : Unit
     private Vector3Int gridPos;
     private BuildingManager BuildingManager => _gameManager.BuildingManager;
 
-    private bool _activeMouseEvent = false; 
+    private bool _activeMouseEvent = false;
 
     public void BuildingMouseEvent()
     {
@@ -29,11 +27,13 @@ public class Building : Unit
             {
                 Vector3 mouseWorldPosition = BattleGrid.GetMouseWorldPosition();
                 Vector3Int gridPos = GetSpecificGridPosition(mouseWorldPosition);
-                if (BattleGrid.CellDict.ContainsKey(gridPos) && BattleGrid.CellDict[gridPos] != CellOn && !_activeMouseEvent)
+
+                if (BattleGrid.CellDict.ContainsKey(gridPos) && BattleGrid.CellDict[gridPos] != CellOn &&
+                    !_activeMouseEvent && CellOn._Neighbors.a.FirstOrDefault(i => i == BattleGrid.CellDict[gridPos]).Contains == null)
                 {
                     _activeMouseEvent = true;
-                    this.gridPos = gridPos; 
-                    var units = PlayerManager.CurrentPlayer.DefaultScriptable.Where(i =>i.faction == PlayerManager.CurrentPlayer.PlayerFaction).ToList();
+                    this.gridPos = gridPos;
+                    var units = PlayerManager.CurrentPlayer.DefaultScriptable.Where(i => i.faction == PlayerManager.CurrentPlayer.PlayerFaction).ToList();
                     UIManager.InvokeUnitUI(CellOn, units);
                 }
             }
@@ -52,25 +52,18 @@ public class Building : Unit
 
     }
 
-  public void SpawnUnit(string unitname)
+    public void SpawnUnit(string unitname)
     {
-        Cell mouseCell = BattleGrid.CellDict[gridPos];
-        if (!PlayerManager.CheckifUnitWasHere(gridPos) &&
+        if (BattleGrid.CellDict[gridPos].Contains == null &&
             PlayerManager.CurrentPlayer.Gold >= PlayerManager.CurrentPlayer.CostGold)
         {
-            bool isCasern = CellOn._Neighbors.a.FirstOrDefault(i => i == mouseCell).Contains == null;
-            
-            if (isCasern)
-            {
-                Character character = unitManager.GetSpecificCharacterPerName(unitname, Faction);
-                PlayerManager.CurrentPlayer.Gold -= PlayerManager.CurrentPlayer.CostGold;
-                PlayerManager.SetCharacter(character, gridPos);
-                PlayerManager.CurrentPlayer.Units.Add(character);
-                UIManager.InvokeUpdateUI();
-                _activeMouseEvent = false;
-                Rest();
-                character.Rest();
-            }
+            Character character = unitManager.GetSpecificCharacterPerName(unitname, Faction);
+            PlayerManager.CurrentPlayer.Gold -= PlayerManager.CurrentPlayer.CostGold;
+            PlayerManager.SetCharacter(character, gridPos);
+            PlayerManager.CurrentPlayer.Units.Add(character);
+            _activeMouseEvent = false;
+            Rest();
+            character.Rest();
         }
         else
         {

@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 240227d1eb5ce9244afb28a5866784ef, type: 3}
-  m_Name: Hero 1
+  m_Name: Batisseur
   m_EditorClassIdentifier: 
   faction: 0
-  unitUnitClass: 1
-  unitsName: Assassin
+  unitUnitClass: 0
+  unitsName: Builder
   isBuilder: 1
   renderUnit: {fileID: 21300000, guid: 5c769e5242bbd6b459e6f2bd07c69273, type: 3}
   descritpion: 
-  unitCost: 0
+  unitCost: 1
   classBonus: 1.5
   unitStats:
-    life: 5
-    lifemax: 5
+    life: 3
+    lifemax: 0
     armor: 0
     atk: 2
-    mv: 3
+    mv: 4
     range: 2
   appearAudioClip: {fileID: 8300000, guid: 8bdcf1f7a239dce4294d59a4096141a5, type: 3}
   backAudioClip: {fileID: 8300000, guid: 860978ea32a073d46a33521b46f5bd9b, type: 3}

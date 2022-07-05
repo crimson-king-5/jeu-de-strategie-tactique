@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Karim/Main Menu.unity
     guid: ae30e0f75b2b0dc43842cca8107c4f71
   - enabled: 1
+    path: Assets/Scenes/Main/Final.unity
+    guid: 6f8842c1ab1c11e4abcc201d32015a8a
+  - enabled: 0
     path: Assets/Scenes/Charlelie/CDefault.unity
     guid: cad252ef6c0a49c4e84df3ca8a46b501
   - enabled: 0

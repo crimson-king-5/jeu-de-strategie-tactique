@@ -114,7 +114,7 @@ namespace TEAM2
 
         public void UpdateDefaultScriptableUnits(List<ScriptableUnit> scriptableUnits)
         {
-            _defaultScriptableUnits.AddRange( scriptableUnits.Except(_defaultScriptableUnits).ToList());
+            _defaultScriptableUnits.AddRange( scriptableUnits.Where(i => i.faction == PlayerFaction).Except(_defaultScriptableUnits).ToList());
         }
 
         public List<Building> SpecificBuildingsListPerUnitNames(string buildingName)

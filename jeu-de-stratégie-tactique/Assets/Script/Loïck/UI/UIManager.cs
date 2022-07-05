@@ -14,9 +14,29 @@ namespace TEAM2
         [SerializeField] private GameObject _buttonBuilding;
         [SerializeField] private GameObject _buttonUnit;
         [SerializeField] private GameObject _sheetUI;
-        public Building CurrentBuilding { get => (Building)_currentCell.Contains; }
-        public Cell CurrentCell { get => _currentCell; set => _currentCell = value; }
-        public UnitSheetUI SheetUI => _sheetUI.transform.GetChild(1).GetComponent<UnitSheetUI>();
+
+        public Building CurrentBuilding
+        {
+            get => (Building)_currentCell.Contains;
+        }
+
+        public Cell CurrentCell
+        {
+            get => _currentCell;
+            set => _currentCell = value;
+        }
+
+        public UnitSheetUI UnitSheetUI
+        {
+            get
+            {
+                if (_sheetUI.transform.childCount <= 1)
+                {
+                    return _sheetUI.transform.GetChild(0).GetComponent<UnitSheetUI>();
+                }
+                return _sheetUI.transform.GetChild(1).GetComponent<UnitSheetUI>();
+            }
+        }
 
         public PlayerManager PlayerManager
         {
@@ -55,14 +75,14 @@ namespace TEAM2
         {
             if (!_unitUI.activeSelf && !_buttonBuilding.activeSelf)
             {
-                InvokeUI(newBuildingCell,units);
-                
+                InvokeUI(newBuildingCell, units);
+
                 _buttonBuilding.SetActive(true);
                 UpdateScriptablelist?.Invoke(units);
             }
         }
 
-       public void InvokeUnitUI(Cell newBuildingCell, List<ScriptableUnit> units)
+        public void InvokeUnitUI(Cell newBuildingCell, List<ScriptableUnit> units)
         {
             if (!_unitUI.activeSelf && !_buttonUnit.activeSelf)
             {
